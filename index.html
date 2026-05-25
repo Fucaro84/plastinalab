@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlastinaLab — Gestione Laboratorio di Plastinazione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f6f5f1;--color-surface:#faf9f6;--color-surface-2:#ffffff;
+  --color-surface-offset:#eeecea;--color-surface-offset-2:#e7e5e1;
+  --color-surface-dynamic:#dddbd6;--color-divider:#d8d5d0;--color-border:#ccc9c3;
+  --color-text:#1e1c18;--color-text-muted:#6b6a65;--color-text-faint:#b0aea8;--color-text-inverse:#f8f7f3;
+  --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-active:#0f3638;--color-primary-highlight:#ccdcda;
+  --color-warning:#964219;--color-warning-hover:#713417;--color-warning-highlight:#ddd0c6;
+  --color-error:#a12c7b;--color-error-hover:#7d1e5e;--color-error-highlight:#e0ced7;
+  --color-success:#437a22;--color-success-hover:#2e5c10;--color-success-highlight:#d4dfcc;
+  --color-gold:#b07a00;--color-gold-highlight:#ede0c6;
+  --color-navy:#1a3556;--color-navy-hover:#0f2540;--color-navy-highlight:#c8d4e3;
+  --color-purple:#7a39bb;--color-purple-highlight:#e8d5f5;
+  --shadow-sm:0 1px 2px oklch(0.2 0.01 80/0.06);--shadow-md:0 4px 12px oklch(0.2 0.01 80/0.08);--shadow-lg:0 12px 32px oklch(0.2 0.01 80/0.12);
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --transition-interactive:180ms cubic-bezier(0.16,1,0.3,1);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --font-display:'DM Serif Display',Georgia,serif;--font-body:'Inter','Helvetica Neue',sans-serif;
+  --content-default:960px;--content-wide:1280px;
+}
+[data-theme="dark"]{
+  --color-bg:#131210;--color-surface:#1a1917;--color-surface-2:#1f1e1c;
+  --color-surface-offset:#1c1b19;--color-surface-offset-2:#222120;--color-surface-dynamic:#2c2b29;
+  --color-divider:#252421;--color-border:#383633;
+  --color-text:#cdccc9;--color-text-muted:#787774;--color-text-faint:#565451;--color-text-inverse:#2a2925;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-active:#1a626b;--color-primary-highlight:#2f3b3c;
+  --color-warning:#bb653b;--color-warning-hover:#993d10;--color-warning-highlight:#56483e;
+  --color-error:#d163a7;--color-error-hover:#9b2f76;--color-error-highlight:#4c3d45;
+  --color-success:#6daa45;--color-success-hover:#387015;--color-success-highlight:#384433;
+  --color-gold:#e8af34;--color-gold-highlight:#4d4230;
+  --color-navy:#4a7ab5;--color-navy-hover:#3560a0;--color-navy-highlight:#2a3a50;
+  --color-purple:#a86fdf;--color-purple-highlight:#3d2e52;
+  --shadow-sm:0 1px 2px oklch(0 0 0/.2);--shadow-md:0 4px 12px oklch(0 0 0/.3);--shadow-lg:0 12px 32px oklch(0 0 0/.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}
+body{min-height:100dvh;line-height:1.6;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg)}
+img,svg{display:block;max-width:100%}
+input,button,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+table{border-collapse:collapse;width:100%}
+a,button,[role="button"],input,textarea,select{transition:color var(--transition-interactive),background var(--transition-interactive),border-color var(--transition-interactive),box-shadow var(--transition-interactive)}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+
+/* LAYOUT */
+.app-layout{display:flex;height:100dvh;overflow:hidden}
+.sidebar{width:260px;background:var(--color-surface);border-right:1px solid var(--color-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-logo{padding:var(--space-5) var(--space-5) var(--space-4);border-bottom:1px solid var(--color-divider)}
+.logo-mark{display:flex;align-items:center;gap:var(--space-3)}
+.logo-icon{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.logo-text{font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-text);line-height:1.1}
+.logo-version{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:2px}
+.sidebar-user{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);display:flex;align-items:center;gap:var(--space-3)}
+.user-avatar{width:32px;height:32px;border-radius:var(--radius-full);background:var(--color-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:700;flex-shrink:0}
+.user-name{font-size:var(--text-sm);font-weight:500;color:var(--color-text)}
+.user-logout{margin-left:auto;font-size:var(--text-xs);color:var(--color-text-muted);cursor:pointer;padding:2px 6px;border-radius:var(--radius-sm)}
+.user-logout:hover{background:var(--color-error-highlight);color:var(--color-error)}
+.sidebar-nav{padding:var(--space-3) var(--space-3);flex:1}
+.nav-section-label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-faint);font-weight:600;padding:var(--space-2) var(--space-2) var(--space-1);margin-top:var(--space-2)}
+.nav-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);cursor:pointer;font-size:var(--text-sm);color:var(--color-text-muted);font-weight:450;transition:background var(--transition-interactive),color var(--transition-interactive)}
+.nav-item:hover{background:var(--color-surface-offset);color:var(--color-text)}
+.nav-item.active{background:var(--color-primary-highlight);color:var(--color-primary);font-weight:600}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.nav-badge{margin-left:auto;background:var(--color-primary-highlight);color:var(--color-primary);font-size:10px;font-weight:700;padding:1px 6px;border-radius:var(--radius-full)}
+.sidebar-footer{padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-divider)}
+.theme-toggle{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted);cursor:pointer;padding:var(--space-2) var(--space-2);border-radius:var(--radius-md)}
+.theme-toggle:hover{background:var(--color-surface-offset)}
+.main-content{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:var(--space-4) var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-shrink:0}
+.topbar-title{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-text);display:flex;align-items:center;gap:var(--space-2)}
+.topbar-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:2px}
+.topbar-actions{display:flex;align-items:center;gap:var(--space-2);flex-shrink:0}
+.phase-nav{background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:0 var(--space-6);display:flex;gap:var(--space-1);overflow-x:auto;flex-shrink:0}
+.phase-pill{padding:var(--space-3) var(--space-4);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all var(--transition-interactive)}
+.phase-pill:hover{color:var(--color-text)}
+.phase-pill.active{color:var(--color-primary);border-bottom-color:var(--color-primary);font-weight:600}
+.page-content{padding:var(--space-6);max-width:var(--content-wide);width:100%}
+
+/* CARDS */
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.card-header{padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--color-divider);display:flex;align-items:center;gap:var(--space-3);background:var(--color-surface-2)}
+.card-body{padding:var(--space-5)}
+.mb-4{margin-bottom:var(--space-4)}.mb-6{margin-bottom:var(--space-6)}.mt-4{margin-top:var(--space-4)}.mt-3{margin-top:var(--space-3)}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--space-4)}
+.form-group{display:flex;flex-direction:column;gap:var(--space-1)}
+.form-label{font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted)}
+.form-input{width:100%;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2);font-size:var(--text-sm);color:var(--color-text);transition:border-color var(--transition-interactive),box-shadow var(--transition-interactive)}
+.form-input:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-highlight)}
+textarea.form-input{resize:vertical;min-height:80px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;transition:all var(--transition-interactive)}
+.btn-primary{background:var(--color-primary);color:#fff}
+.btn-primary:hover{background:var(--color-primary-hover)}
+.btn-ghost{color:var(--color-text-muted);border:1px solid var(--color-border)}
+.btn-ghost:hover{background:var(--color-surface-offset);color:var(--color-text)}
+.btn-sm{padding:var(--space-1) var(--space-3);font-size:var(--text-xs)}
+
+/* CHECKLIST */
+.checklist-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);cursor:pointer;margin-bottom:var(--space-2);border:1px solid var(--color-border);background:var(--color-surface-2);transition:background var(--transition-interactive)}
+.checklist-item:hover{background:var(--color-surface-offset)}
+.checklist-item.checked{background:var(--color-success-highlight);border-color:var(--color-success)}
+.checklist-item.checked .check-box{background:var(--color-success);border-color:var(--color-success)}
+.checklist-item.checked .check-box::after{content:'✓';color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.checklist-item.critical{border-left:3px solid var(--color-error)}
+.checklist-item.warning-item{border-left:3px solid var(--color-warning)}
+.check-box{width:20px;height:20px;border:2px solid var(--color-border);border-radius:var(--radius-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.check-label{flex:1;font-size:var(--text-sm)}
+.check-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:var(--radius-full);flex-shrink:0}
+.badge-critical{background:var(--color-error-highlight);color:var(--color-error)}
+.badge-importante{background:var(--color-warning-highlight);color:var(--color-warning)}
+.badge-standard{background:var(--color-surface-dynamic);color:var(--color-text-muted)}
+.progress-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-3)}
+.progress-bar-wrap{flex:1;height:6px;background:var(--color-surface-dynamic);border-radius:var(--radius-full);overflow:hidden}
+.progress-bar{height:100%;border-radius:var(--radius-full);transition:width .4s ease,background .4s ease}
+
+/* ALERTS */
+.alert{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);line-height:1.5}
+.alert strong{font-weight:600}
+.alert-warning{background:var(--color-warning-highlight);color:var(--color-warning);border:1px solid oklch(from var(--color-warning) l c h/.3)}
+.alert-critical{background:var(--color-error-highlight);color:var(--color-error);border:1px solid oklch(from var(--color-error) l c h/.3)}
+.alert-info{background:var(--color-primary-highlight);color:var(--color-primary);border:1px solid oklch(from var(--color-primary) l c h/.3)}
+.alert-success{background:var(--color-success-highlight);color:var(--color-success);border:1px solid oklch(from var(--color-success) l c h/.3)}
+
+/* INFO BOXES */
+.info-box{padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);line-height:1.5;background:var(--color-surface-offset);border:1px solid var(--color-divider)}
+.info-box strong{font-weight:600}
+.info-box.info-primary{background:var(--color-primary-highlight);border-color:oklch(from var(--color-primary) l c h/.2);color:var(--color-primary-active)}
+.info-box.info-warning{background:var(--color-warning-highlight);border-color:oklch(from var(--color-warning) l c h/.25);color:var(--color-warning)}
+.info-box.info-critical{background:var(--color-error-highlight);border-color:oklch(from var(--color-error) l c h/.3);color:var(--color-error)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:600}
+.badge-teal{background:var(--color-primary-highlight);color:var(--color-primary)}
+.badge-green{background:var(--color-success-highlight);color:var(--color-success)}
+.badge-orange{background:var(--color-warning-highlight);color:var(--color-warning)}
+.badge-blue{background:var(--color-navy-highlight);color:var(--color-navy)}
+.badge-gold{background:var(--color-gold-highlight);color:var(--color-gold)}
+.badge-gray{background:var(--color-surface-dynamic);color:var(--color-text-muted)}
+.badge-purple{background:var(--color-purple-highlight);color:var(--color-purple)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
+.kpi-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-sm)}
+.kpi-value{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-primary);line-height:1}
+.kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1);text-transform:uppercase;letter-spacing:.05em}
+
+/* DATA TABLES */
+.data-table th{background:var(--color-surface-offset);padding:var(--space-3) var(--space-4);text-align:left;font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);border-bottom:1px solid var(--color-border)}
+.data-table td{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);font-size:var(--text-sm);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.code{font-family:monospace;font-size:var(--text-xs);background:var(--color-surface-offset);padding:2px 6px;border-radius:var(--radius-sm);color:var(--color-text)}
+
+/* SIGNATURE PANEL */
+.signature-panel{padding:var(--space-5);background:var(--color-surface-offset);border:2px dashed var(--color-border);border-radius:var(--radius-lg)}
+.signature-panel.signed{background:var(--color-success-highlight);border-color:var(--color-success);border-style:solid}
+.operator-signed-info{display:flex;align-items:center;gap:var(--space-3);color:var(--color-success)}
+
+/* STEPS */
+.step-content{display:none}
+.step-content.active{display:block}
+
+/* LOGBOOK ROWS */
+.acetone-row,.pressure-row{display:grid;grid-template-columns:80px 100px 160px 150px 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);margin-bottom:var(--space-2)}
+.pressure-row{grid-template-columns:90px 100px 160px 1fr}
+.purity-ok{color:var(--color-success);font-weight:600}
+.purity-warn{color:var(--color-gold);font-weight:600}
+.purity-crit{color:var(--color-error);font-weight:600}
+
+/* CALC BOX */
+.calc-result-box{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);padding:var(--space-4);background:var(--color-primary-highlight);border-radius:var(--radius-md);margin-top:var(--space-4)}
+.calc-item{text-align:center}
+.calc-value{font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-primary)}
+.calc-label{font-size:var(--text-xs);color:var(--color-primary-hover);margin-top:var(--space-1)}
+
+/* CQ */
+.cq-param-row{padding:var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);margin-bottom:var(--space-3)}
+.cq-param-label{display:flex;flex-direction:column;gap:var(--space-1);margin-bottom:var(--space-3)}
+.cq-param-eval{display:flex;gap:var(--space-6);flex-wrap:wrap}
+.cq-param-eval label{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);cursor:pointer}
+.cq-class-card{padding:var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color var(--transition-interactive),box-shadow var(--transition-interactive)}
+.cq-class-card:hover{box-shadow:var(--shadow-md)}
+.cq-class-card.selected{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-highlight)}
+.cq-class-badge{display:inline-block;padding:2px 8px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;margin-bottom:var(--space-2)}
+.fast-cure-row{display:grid;grid-template-columns:60px 100px 160px 160px 60px 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);margin-bottom:var(--space-2)}
+.mov-row{display:grid;grid-template-columns:140px 90px 120px 1fr 1fr 90px auto;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);margin-bottom:var(--space-2)}
+.empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-12) var(--space-8);color:var(--color-text-muted)}
+.empty-state h3{color:var(--color-text);margin:var(--space-4) 0 var(--space-2)}
+.text-muted{color:var(--color-text-muted)}.text-sm{font-size:var(--text-sm)}.text-xs{font-size:var(--text-xs)}.mt-2{margin-top:var(--space-2)}
+@media(max-width:768px){.acetone-row,.pressure-row,.fast-cure-row,.mov-row{grid-template-columns:1fr 1fr}.sidebar{width:220px}.topbar{flex-wrap:wrap}}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:oklch(0 0 0/.5);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-overlay.open{display:flex}
+.modal{background:var(--color-surface);border-radius:var(--radius-xl);padding:var(--space-6);width:min(480px,90vw);box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)}
+.modal-title{font-family:var(--font-display);font-size:var(--text-lg)}
+.modal-close{color:var(--color-text-muted);font-size:1.2rem;padding:4px 8px;border-radius:var(--radius-sm)}
+.modal-close:hover{background:var(--color-surface-offset)}
+
+/* LOGIN */
+#loginOverlay{position:fixed;inset:0;background:var(--color-bg);display:flex;align-items:center;justify-content:center;z-index:200}
+.login-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-8);width:min(440px,90vw);box-shadow:var(--shadow-lg)}
+.login-logo{text-align:center;margin-bottom:var(--space-6)}
+.login-logo-mark{width:56px;height:56px;background:var(--color-primary);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;margin:0 auto var(--space-3)}
+.login-title{font-family:var(--font-display);font-size:var(--text-xl)}
+.login-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN OVERLAY
+============================================================ -->
+<div id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">P</div>
+      <div class="login-title">PlastinaLab</div>
+      <div class="login-subtitle">Sistema di gestione laboratorio di plastinazione</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+      <div class="form-group">
+        <label class="form-label">Nominativo operatore</label>
+        <input type="text" class="form-input" id="loginName" placeholder="Es. Mario Rossi" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Codice di accesso laboratorio</label>
+        <input type="password" class="form-input" id="loginCode" placeholder="Codice condiviso">
+      </div>
+      <div id="loginError" class="alert alert-critical" style="display:none"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:var(--space-3)" onclick="handleLogin()">Accedi al laboratorio</button>
+    </div>
+    <p style="text-align:center;font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-5)">Solo operatori registrati dal Responsabile possono accedere.</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+============================================================ -->
+<div id="mainApp" class="app-layout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">P</div>
+        <div>
+          <div class="logo-text">PlastinaLab</div>
+          <div class="logo-version">v3.0 — S10 completo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-name" id="sidebarName">Operatore</div>
+      <span class="user-logout" onclick="handleLogout()" title="Disconnetti">⏻</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Panoramica</div>
+      <div class="nav-item active" data-view="dashboard" onclick="switchView('dashboard',this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-view="campioni" onclick="switchView('campioni',this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        Registro Campioni
+        <span class="nav-badge" id="badgeCampioni">0</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:var(--space-4)">Protocollo S10</div>
+      <div class="nav-item" data-view="fase01" onclick="switchView('fase01',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">01</span>
+        Ricezione Campione
+      </div>
+      <div class="nav-item" data-view="fase02" onclick="switchView('fase02',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-error-highlight);color:var(--color-error);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">02</span>
+        Fissazione
+      </div>
+      <div class="nav-item" data-view="fase03" onclick="switchView('fase03',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-warning-highlight);color:var(--color-warning);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">03</span>
+        Disidratazione / Defatting
+      </div>
+      <div class="nav-item" data-view="fase04" onclick="switchView('fase04',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-gold-highlight);color:var(--color-gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">04</span>
+        Impregnazione S10
+      </div>
+      <div class="nav-item" data-view="fase05" onclick="switchView('fase05',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-purple-highlight);color:var(--color-purple);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">05</span>
+        Curing S6
+      </div>
+      <div class="nav-item" data-view="fase06" onclick="switchView('fase06',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-success-highlight);color:var(--color-success);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">06</span>
+        Controllo Qualità
+      </div>
+      <div class="nav-item" data-view="fase07" onclick="switchView('fase07',this)">
+        <span style="width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">07</span>
+        Archivio Preparati
+      </div>
+
+      <div class="nav-section-label" style="margin-top:var(--space-4)">Amministrazione</div>
+      <div class="nav-item" data-view="operatori" onclick="switchView('operatori',this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Gestione Operatori
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-toggle" data-theme-toggle onclick="toggleTheme()">
+        <span style="font-size:var(--text-xs)">Modalità schermo</span>
+        <span id="themeIcon">☀️</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <div id="view-dashboard">
+      <div class="topbar">
+        <div><div class="topbar-title">Dashboard</div><div class="topbar-subtitle">Riepilogo attività laboratorio PlastinaLab</div></div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta Logbook</button>
+          <button class="btn btn-primary btn-sm" onclick="switchView('fase01',document.querySelector('[data-view=fase01]'))">+ Nuovo campione</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div id="kpiGrid" class="kpi-grid"></div>
+        <div class="card">
+          <div class="card-header">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18"/></svg>
+            <span style="font-family:var(--font-display);font-size:var(--text-lg)">Campioni in lavorazione</span>
+          </div>
+          <div class="card-body" style="padding:0;overflow-x:auto"><div id="dashboardTableWrap"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== REGISTRO CAMPIONI ===================== -->
+    <div id="view-campioni" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title">Registro Campioni</div><div class="topbar-subtitle">Tutti i campioni registrati nel sistema</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta Logbook</button></div>
+      </div>
+      <div class="page-content">
+        <div class="card">
+          <div class="card-body" style="padding:0;overflow-x:auto"><div id="campioniTableWrap"></div></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===================== FASE 01 — RICEZIONE ===================== -->
+    <div id="view-fase01" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">01</span>Ricezione Campione Anatomico</div><div class="topbar-subtitle">Doc. Operativo N. 1 — Accettazione, codifica e pre-fissazione</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f01s1pill" onclick="switchStep('f01','1',this)">1 · DPI & Sicurezza</div>
+        <div class="phase-pill" id="f01s2pill" onclick="switchStep('f01','2',this)">2 · Scheda campione</div>
+        <div class="phase-pill" id="f01s3pill" onclick="switchStep('f01','3',this)">3 · Pre-fissazione</div>
+        <div class="phase-pill" id="f01s4pill" onclick="switchStep('f01','4',this)">4 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f01-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Checklist DPI pre-sessione</span></div>
+            <div class="card-body">
+              <div id="dpi01Alert" class="alert alert-critical mb-4" style="display:none"><strong>⚠ DPI critici non completati.</strong> Non procedere senza aver indossato tutti i DPI obbligatori.</div>
+              <div class="progress-header"><span id="dpi01Label" class="text-sm text-muted">0 / 7 completati</span><div class="progress-bar-wrap"><div id="dpi01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Guanti in nitrile monouso indossati</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Occhiali a mascherina o visiera indossati</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Camice da laboratorio chiuso indossato</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ventilazione del laboratorio attiva o cappa funzionante</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Schede SDS dei prodotti chimici consultate e disponibili</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Piano di lavoro pulito e disinfettato</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="checklist-item" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Contenitori per rifiuti biologici disponibili e etichettati</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">Avanti → Scheda campione ›</button></div>
+        </div>
+
+        <div id="f01-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Scheda di accettazione campione</span></div>
+            <div class="card-body">
+              <div class="form-grid mb-4">
+                <div class="form-group"><label class="form-label">Codice campione (auto)</label><div style="display:flex;gap:var(--space-2)"><input type="text" class="form-input" id="f01_codice" placeholder="PL-S10-…" readonly style="flex:1"><button class="btn btn-ghost btn-sm" onclick="generateCode01()">⟳</button></div></div>
+                <div class="form-group"><label class="form-label">Data/ora ricezione</label><input type="datetime-local" class="form-input" id="f01_data"></div>
+                <div class="form-group"><label class="form-label">Specie</label><select class="form-input" id="f01_specie" onchange="generateCode01()"><option value="">—</option><option value="Homo sapiens">Homo sapiens</option><option value="Canis lupus familiaris">Cane</option><option value="Felis catus">Gatto</option><option value="Equus caballus">Cavallo</option><option value="Sus scrofa">Maiale</option><option value="Ovis aries">Pecora</option><option value="Bos taurus">Bovino</option><option value="Altra specie">Altra specie</option></select></div>
+                <div class="form-group"><label class="form-label">Distretto anatomico</label><select class="form-input" id="f01_distretto" onchange="generateCode01()"><option value="">—</option><option value="Arto superiore">Arto superiore</option><option value="Arto inferiore">Arto inferiore</option><option value="Testa">Testa</option><option value="Collo">Collo</option><option value="Torace">Torace</option><option value="Addome">Addome</option><option value="Pelvi">Pelvi</option><option value="Encefalo">Encefalo</option><option value="Cuore">Cuore</option><option value="Polmone">Polmone</option><option value="Fegato">Fegato</option><option value="Rene">Rene</option><option value="Altro organo">Altro organo</option></select></div>
+                <div class="form-group"><label class="form-label">Lato</label><select class="form-input" id="f01_lato"><option value="ND">Non determinato</option><option value="DX">Destro</option><option value="SX">Sinistro</option><option value="Bilaterale">Bilaterale</option></select></div>
+                <div class="form-group"><label class="form-label">Sesso</label><select class="form-input" id="f01_sesso"><option value="ND">Non determinato</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
+                <div class="form-group"><label class="form-label">Età approssimativa</label><input type="text" class="form-input" id="f01_eta" placeholder="es. adulto, ~45 anni"></div>
+                <div class="form-group"><label class="form-label">Peso stimato (kg)</label><input type="number" class="form-input" id="f01_peso" placeholder="kg" step="0.1"></div>
+                <div class="form-group"><label class="form-label">Destinazione finale</label><select class="form-input" id="f01_destinazione" onchange="checkDestinazione()"><option value="S10">Plastinazione S10</option><option value="didattica">Uso didattico senza plastinazione</option><option value="ricerca">Ricerca</option></select></div>
+                <div class="form-group"><label class="form-label">Provenienza</label><input type="text" class="form-input" id="f01_provenienza" placeholder="es. Dip. Anatomia, Clinica Veterinaria X"></div>
+                <div class="form-group"><label class="form-label">Operatore ricezione</label><input type="text" class="form-input" id="f01_operatore_rice" placeholder="Nome operatore"></div>
+              </div>
+              <div id="s10Alert" class="alert alert-warning mb-4" style="display:none"><strong>🧊 ATTENZIONE S10 — NON CONGELARE</strong> Per campioni destinati alla plastinazione S10: conservare a 0–4°C. La congelazione causa danni tissutali irreversibili che comprometteranno la qualità del preparato finale. (Ottone, 2023)</div>
+              <div class="form-group"><label class="form-label">Note anamnestiche / patologie note</label><textarea class="form-input" id="f01_note" rows="2" placeholder="Patologie note, trattamenti pregressi, annotazioni rilevanti…"></textarea></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','1',document.getElementById('f01s1pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','3',document.getElementById('f01s3pill'))">Avanti → Pre-fissazione ›</button></div>
+        </div>
+
+        <div id="f01-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Checklist pre-fissazione</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="pref01Label" class="text-sm text-muted">0 / 6 completati</span><div class="progress-bar-wrap"><div id="pref01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotodocumentazione del campione eseguita (pre-fissazione)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione etichettato con codice univoco</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Compatibilità fissativo con protocollo S10 verificata (evitare glicerina/glicoli/fenolo senza rimozione)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Encefalo/midollo estratto separatamente se richiesto (protocollo SNC)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Organi cavi dilatati con gas/soluzione fisiologica per prevenire collasso durante fissazione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Registro di laboratorio aggiornato con dati di accettazione</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','4',document.getElementById('f01s4pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f01-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 01</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign01Panel">
+                <div id="sign01Form">
+                  <p class="text-sm text-muted mb-3">Selezionare l'operatore che ha eseguito la ricezione:</p>
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign01Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('01')">✓ Chiudi Fase 01</button>
+                  </div>
+                  <div id="sign01Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign01Done" style="display:none">
+                  <div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign01DoneText"></strong><p class="text-sm text-muted" id="sign01DoneDate"></p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== FASE 02 — FISSAZIONE ===================== -->
+    <div id="view-fase02" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-error-highlight);color:var(--color-error);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">02</span>Fissazione</div><div class="topbar-subtitle">Doc. Operativo N. 1 — Protocollo vascolare e conservazione chimica</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f02s1pill" onclick="switchStep('f02','1',this)">1 · Preparazione</div>
+        <div class="phase-pill" id="f02s2pill" onclick="switchStep('f02','2',this)">2 · Scelta fissativo</div>
+        <div class="phase-pill" id="f02s3pill" onclick="switchStep('f02','3',this)">3 · Canulazione</div>
+        <div class="phase-pill" id="f02s4pill" onclick="switchStep('f02','4',this)">4 · Infusione</div>
+        <div class="phase-pill" id="f02s5pill" onclick="switchStep('f02','5',this)">5 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f02-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Preparazione e pulizia campione</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f02prep01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f02prep01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f02prep01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione estratto dalla conservazione (0–4°C) e portato a temperatura ambiente controllata</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f02prep01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Pulizia iniziale: rimozione sangue coagulato e detriti con soluzione fisiologica</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f02prep01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Identificazione e isolamento dei vasi principali per canulazione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f02prep01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Verifica integrità anatomica: no lacerazioni o fratture che impediscano la perfusione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f02prep01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotodocumentazione stato iniziale campione (pre-fissazione)</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="form-grid mt-4">
+                <div class="form-group"><label class="form-label">Codice campione</label><input type="text" class="form-input" id="f02_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data inizio fissazione</label><input type="datetime-local" class="form-input" id="f02_data_inizio"></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f02','2',document.getElementById('f02s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f02-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Scelta del fissativo</span></div>
+            <div class="card-body">
+              <div class="form-grid mb-4">
+                <div class="form-group"><label class="form-label">Tipo di fissativo</label>
+                  <select class="form-input" id="f02_fissativo" onchange="updateFissativoInfo()">
+                    <option value="">— Selezionare —</option>
+                    <option value="formalina5">Formalina 5%</option>
+                    <option value="formalina10">Formalina 10%</option>
+                    <option value="formalina20">Formalina 20%</option>
+                    <option value="thiel">Soluzione di Thiel</option>
+                    <option value="sss">SSS (Salt-Saturated Solution)</option>
+                    <option value="ccfs">CCFS (Soluzione Cilena)</option>
+                    <option value="masuko">Soluzione di Masuko (2022)</option>
+                    <option value="fresco">Campione fresco (nessuna fissazione)</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Peso campione (kg) — per calcolo volume</label><input type="number" class="form-input" id="f02_peso_calc" step="0.1" placeholder="es. 2.5" oninput="calcVolumeF02()"></div>
+                <div class="form-group"><label class="form-label">% ematica stimata</label><input type="number" class="form-input" id="f02_perc_em" value="7.5" step="0.5" oninput="calcVolumeF02()"></div>
+              </div>
+              <div id="fissativoInfoBox" class="info-box mb-4" style="display:none"></div>
+              <div id="f02CalcResult" class="calc-result-box" style="display:none">
+                <div class="calc-item"><div class="calc-value" id="calcVemResult">—</div><div class="calc-label">Volume ematico stimato</div></div>
+                <div class="calc-item"><div class="calc-value" id="calcVfixMin">—</div><div class="calc-label">Volume fissativo min (2×)</div></div>
+                <div class="calc-item"><div class="calc-value" id="calcVfixRac">—</div><div class="calc-label">Volume fissativo rac (3×)</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f02','1',document.getElementById('f02s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f02','3',document.getElementById('f02s3pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f02-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22V12m0 0L8 8m4 4l4-4M20 12v4a8 8 0 01-16 0v-4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Canulazione vascolare</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f02can01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f02can01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f02can01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Canula arteriosa inserita e fissata (arco aortico / arteria principale del distretto)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f02can01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Canula venosa inserita per drenaggio (vena cava / vena principale del distretto)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f02can01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Tenuta idraulica verificata (no perdite alle legature)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f02can01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Risciacquo preliminare con soluzione F1 (se applicabile): rimozione coaguli con SSF + eparina</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f02can01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Risciacquo F2 (se necessario): detersione con SSF + tensioattivo non ionico</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f02','2',document.getElementById('f02s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f02','4',document.getElementById('f02s4pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f02-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Infusione del fissativo</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f02inf01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f02inf01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Infusione vascolare avviata (pressione di infusione 80–120 cmH₂O per specimen umano)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Volume fissativo infuso ≥ volume minimo calcolato (2× volume ematico)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Bulbi oculari e orecchio interno iniettati separatamente se inclusi nel campione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Rigidità articolari e resistenza tissutale valutate durante infusione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fissazione complementare SNC eseguita se encefalo/midollo inclusi (iniezione intratecale)</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="info-box info-critical mt-4"><strong>⚠ ALERT CRITICO — Risciacquo pre-disidratazione</strong><br>Prima di procedere alla Fase 03 (acetone): eseguire risciacquo in acqua corrente per 2–4 giorni per eliminare la formaldeide residua. La formaldeide precipita come paraformaldeide a contatto con l'acetone freddo, otturando la serpentina del freezer. (Ottone, 2023)</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f02','3',document.getElementById('f02s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f02','5',document.getElementById('f02s5pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f02-step5" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 02</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign02Panel">
+                <div id="sign02Form">
+                  <p class="text-sm text-muted mb-3">Selezionare l'operatore che ha eseguito la fissazione:</p>
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign02Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('02')">✓ Chiudi Fase 02</button>
+                  </div>
+                  <div id="sign02Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign02Done" style="display:none">
+                  <div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign02DoneText"></strong><p class="text-sm text-muted" id="sign02DoneDate"></p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== FASE 03 — DISIDRATAZIONE ===================== -->
+    <div id="view-fase03" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-warning-highlight);color:var(--color-warning);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">03</span>Disidratazione e Defatting</div><div class="topbar-subtitle">Doc. Operativo N. 2 — Freeze substitution e sgrassaggio</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f03s1pill" onclick="switchStep('f03','1',this)">1 · Prerequisiti</div>
+        <div class="phase-pill" id="f03s2pill" onclick="switchStep('f03','2',this)">2 · Setup acetone</div>
+        <div class="phase-pill" id="f03s3pill" onclick="switchStep('f03','3',this)">3 · Logbook acetone</div>
+        <div class="phase-pill" id="f03s4pill" onclick="switchStep('f03','4',this)">4 · Defatting</div>
+        <div class="phase-pill" id="f03s5pill" onclick="switchStep('f03','5',this)">5 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f03-step1" class="step-content active">
+          <div class="alert alert-warning mb-6"><strong>⚠ PREREQUISITO CRITICO — Risciacquo post-fissazione</strong> Prima di immergere il campione nell'acetone freddo, verificare che il risciacquo in acqua corrente sia stato completato (2–4 giorni). La formaldeide residua precipita come paraformaldeide a –25°C, otturando la serpentina del freezer. (Ottone, 2023)</div>
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Verifica prerequisiti</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f03pre01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f03pre01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f03pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Risciacquo post-fissazione completato (2–4 gg in acqua corrente)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f03pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Protocollo rimozione agenti incompatibili eseguito (se usati SSS/CCFS/Thiel con glicoli)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f03pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Freezer modificato disponibile (–25°C, compressore esterno, assenza fiamme libere)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f03pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Acetone 100% disponibile in quantità sufficiente (min 10× volume campione)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f03pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Acetonometro/idrometro calibrato disponibile per misura purezza</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="form-grid mt-4">
+                <div class="form-group"><label class="form-label">Codice campione</label><input type="text" class="form-input" id="f03_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data inizio disidratazione</label><input type="date" class="form-input" id="f03_data_inizio"></div>
+                <div class="form-group"><label class="form-label">Tecnica disidratazione</label>
+                  <select class="form-input" id="f03_tecnica" onchange="updateF03TecnicaInfo()">
+                    <option value="freddo">Acetone a freddo –25°C (freeze substitution — standard S10)</option>
+                    <option value="ambiente">Acetone a temperatura ambiente</option>
+                    <option value="etanolo">Etanolo (non standard)</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Volume stimato campione (L)</label><input type="number" class="form-input" id="f03_vol_camp" step="0.1" placeholder="es. 1.5" oninput="calcF03Volume()"></div>
+              </div>
+              <div id="f03TecnicaInfo" class="info-box info-primary mt-4"></div>
+              <div id="f03VolCalcBox" class="calc-result-box mt-4" style="display:none">
+                <div class="calc-item"><div class="calc-value" id="f03CalcAcMinimo">—</div><div class="calc-label">Acetone minimo</div></div>
+                <div class="calc-item"><div class="calc-value" id="f03CalcAcRac">—</div><div class="calc-label">Acetone raccomandato</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f03','2',document.getElementById('f03s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f03-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Setup primo bagno di acetone</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f03setup01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f03setup01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f03setup01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Contenitore resistente all'acetone (polipropilene, HDPE) preparato e pulito</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f03setup01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Acetone 100% versato in quantità sufficiente a coprire completamente il campione</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f03setup01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione immerso, griglia posizionata per mantenerlo sommerso (tende a galleggiare)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f03setup01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Contenitore chiuso e posizionato nel freezer a –25°C</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f03setup01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Etichetta con data inizio, numero bagno e codice campione applicata al contenitore</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f03','1',document.getElementById('f03s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f03','3',document.getElementById('f03s3pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f03-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Logbook acetone — controlli purezza</span></div>
+            <div class="card-body">
+              <div class="info-box info-warning mb-4"><strong>Regola operativa purezza acetone</strong> — ≥99.5%: mantenere. 99–99.4%: pianificare cambio a breve. &lt;99%: cambiare immediatamente. Cambi tipici: ogni 7–14 giorni per campioni grandi. (de Jong &amp; Henry, 2007; Dezső et al., 2020)</div>
+              <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:var(--space-4)">
+                <div class="form-group"><label class="form-label">Data controllo</label><input type="date" class="form-input" id="f03_ac_data"></div>
+                <div class="form-group"><label class="form-label">N° bagno</label><input type="number" class="form-input" id="f03_ac_num" value="1" min="1"></div>
+                <div class="form-group"><label class="form-label">Purezza (%)</label><input type="number" class="form-input" id="f03_ac_purezza" step="0.1" placeholder="es. 99.7"></div>
+                <div class="form-group"><label class="form-label">Temperatura (°C)</label><input type="number" class="form-input" id="f03_ac_temp_let" value="-25"></div>
+                <div class="form-group"><label class="form-label">Azione</label>
+                  <select class="form-input" id="f03_ac_azione">
+                    <option value="mantenuto">Mantenuto</option>
+                    <option value="agitato">Agitato</option>
+                    <option value="cambiato">Cambiato (nuovo bagno)</option>
+                    <option value="completato">Completato ✅</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Note</label><input type="text" class="form-input" id="f03_ac_note" placeholder="Colore acetone, aspetto campione, anomalie…"></div>
+              <button class="btn btn-primary btn-sm" onclick="addAcetoneEntry()">+ Registra controllo</button>
+              <div id="f03AcetoneRows" style="margin-top:var(--space-4)"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f03','2',document.getElementById('f03s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f03','4',document.getElementById('f03s4pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f03-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Defatting — sgrassaggio</span></div>
+            <div class="card-body">
+              <div class="form-group mb-4"><label class="form-label">Metodo di sgrassaggio</label>
+                <select class="form-input" id="f03_defatting_metodo" onchange="updateDefattingInfo()">
+                  <option value="acetone_ta">Acetone a temperatura ambiente</option>
+                  <option value="mecl">Diclorometano (MeCl) — sotto cappa obbligatorio</option>
+                  <option value="nessuno">Nessun sgrassaggio aggiuntivo (campioni SNC/magri)</option>
+                </select>
+              </div>
+              <div id="defattingInfoBox" class="info-box mb-4"></div>
+              <div id="defattingCambi">
+                <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
+                  <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="f03_def_data"></div>
+                  <div class="form-group"><label class="form-label">N° cambio</label><input type="number" class="form-input" id="f03_def_num" value="1" min="1"></div>
+                  <div class="form-group"><label class="form-label">Colore solvente</label>
+                    <select class="form-input" id="f03_def_colore">
+                      <option value="Trasparente ✅">Trasparente ✅</option>
+                      <option value="Giallo chiaro ⚠">Giallo chiaro ⚠</option>
+                      <option value="Giallo intenso ❌">Giallo intenso ❌ (sostituire)</option>
+                      <option value="Arancione ❌">Arancione ❌ (sostituire subito)</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Note grasso estratto</label><input type="text" class="form-input" id="f03_def_grasso" placeholder="es. abbondante, scarso"></div>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="addDefattingEntry()">+ Registra cambio</button>
+                <div id="f03DefattingRows" style="margin-top:var(--space-4)"></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f03','3',document.getElementById('f03s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f03','5',document.getElementById('f03s5pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f03-step5" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 03</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign03Panel">
+                <div id="sign03Form">
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign03Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('03')">✓ Chiudi Fase 03</button>
+                  </div>
+                  <div id="sign03Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign03Done" style="display:none"><div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign03DoneText"></strong><p class="text-sm text-muted" id="sign03DoneDate"></p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== FASE 04 — IMPREGNAZIONE ===================== -->
+    <div id="view-fase04" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-gold-highlight);color:var(--color-gold);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">04</span>Impregnazione Forzata S10</div><div class="topbar-subtitle">Doc. Operativo N. 3 — Camera a vuoto e curva di pressione</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f04s1pill" onclick="switchStep('f04','1',this)">1 · Prerequisiti</div>
+        <div class="phase-pill" id="f04s2pill" onclick="switchStep('f04','2',this)">2 · Setup Giorno 1</div>
+        <div class="phase-pill" id="f04s3pill" onclick="switchStep('f04','3',this)">3 · Curva di pressione</div>
+        <div class="phase-pill" id="f04s4pill" onclick="switchStep('f04','4',this)">4 · Fine impregnazione</div>
+        <div class="phase-pill" id="f04s5pill" onclick="switchStep('f04','5',this)">5 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f04-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Prerequisiti impregnazione</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f04pre01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f04pre01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f04pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Disidratazione completata (ultima purezza acetone confermata, campione pronto)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f04pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Miscela S10/S3 (100:1 v/v) preparata o disponibile, viscosità verificata</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f04pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Camera a vuoto pulita e funzionante, olio pompa verificato</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f04pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Miscela deaerata (5–10 min di vuoto in contenitore separato prima dell'uso)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f04pre01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Tecnica impregnazione selezionata (freddo –15°C / T.A. / S10+S6)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="form-grid mt-4">
+                <div class="form-group"><label class="form-label">Codice campione</label><input type="text" class="form-input" id="f04_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data inizio</label><input type="date" class="form-input" id="f04_data_inizio"></div>
+                <div class="form-group"><label class="form-label">Tecnica S10</label>
+                  <select class="form-input" id="f04_tecnica" onchange="updateF04TecnicaInfo()">
+                    <option value="freddo">S10 Cold (–15°C) — standard</option>
+                    <option value="ambiente">S10 T.A. (20–22°C) — tempi ridotti</option>
+                    <option value="s6">S10/S6 T.A. — rapida penetrazione</option>
+                  </select>
+                </div>
+              </div>
+              <div id="f04TecnicaInfo" class="info-box info-primary mt-4"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f04','2',document.getElementById('f04s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f04-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Setup Giorno 1 — avvio impregnazione</span></div>
+            <div class="card-body">
+              <div class="info-box info-primary mb-4"><strong>Schema riduzione graduale pressione (de Jong &amp; Henry, 2007; Ottone, 2023)</strong><br>G1: immersione a pressione atm → riposo 24h a –15°C. G2: avvio pompa → ridurre lentamente a 22 cmHg. G3: 14 cmHg. G4: 9 cmHg. G5: 6 cmHg. G6: 4 cmHg (se no bolle attive). Durata totale: 3–5 settimane.</div>
+              <div class="progress-header"><span id="f04g1Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f04g1Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione immerso nella miscela S10/S3, griglia di mantenimento posizionata</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Camera chiusa, campione lasciato a riposo 24h a –15°C per equilibrio iniziale</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Giorno 2: pompa accesa per 10 min a camera chiusa per portare l'olio in temperatura</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Valvole a spillo chiuse, vuoto applicato, pressione ridotta lentamente fino a 22 cmHg</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Bolle di aria intrappolata visibili nei primi giorni (normale, NON sono bolle di acetone)</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div class="info-box info-critical mb-6"><strong>⚠ REGOLA OPERATIVA BOLLE — Critica per prevenire collasso tissutale</strong><br>Se le bolle &gt;1 cm salgono continuamente e scoppiano → NON ridurre ulteriormente la pressione.<br>Se le bolle sono sporadiche o assenti → ridurre molto lentamente (piccole chiusure della valvola) finché ricompaiono.<br><strong>La velocità di abbassamento della pressione è più critica della pressione finale assoluta.</strong> (de Jong &amp; Henry, 2007)</div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','1',document.getElementById('f04s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','3',document.getElementById('f04s3pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f04-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Registro giornaliero curva di pressione</span></div>
+            <div class="card-body">
+              <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
+                <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="f04_p_data"></div>
+                <div class="form-group"><label class="form-label">Giorno</label><input type="number" class="form-input" id="f04_p_giorno" value="2" min="1"></div>
+                <div class="form-group"><label class="form-label">Pressione (cmHg)</label><input type="number" class="form-input" id="f04_p_pressione" step="0.5" placeholder="es. 22"></div>
+                <div class="form-group"><label class="form-label">Bolle</label>
+                  <select class="form-input" id="f04_p_bolle">
+                    <option value="none">🟢 Nessuna</option>
+                    <option value="rare">🟡 Sporadiche</option>
+                    <option value="moderate">🟠 Moderate</option>
+                    <option value="intense">🔴 Continue (non ridurre!)</option>
+                    <option value="aria">⚪ Solo aria (normali G1-G2)</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Azione pressione</label>
+                  <select class="form-input" id="f04_p_azione">
+                    <option value="ridotto">↓ Ridotta</option>
+                    <option value="mantenuto">= Mantenuta</option>
+                    <option value="avvio">▶ Avvio pompa</option>
+                    <option value="fine">✅ Completata</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Note</label><input type="text" class="form-input" id="f04_p_note" placeholder="Anomalie, interventi, aspetto miscela…"></div>
+              <button class="btn btn-primary btn-sm" onclick="addPressureEntry()">+ Registra rilevazione</button>
+              <div id="f04PressureRows" style="margin-top:var(--space-4)"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','2',document.getElementById('f04s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','4',document.getElementById('f04s4pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f04-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.39 0 4.56.93 6.17 2.44"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Fine impregnazione e drenaggio</span></div>
+            <div class="card-body">
+              <div class="info-box info-primary mb-4"><strong>Impregnazione completa quando:</strong> con valvole chiuse, non compaiono più bolle per diverse ore; stato mantenuto prossimo a 0 mmHg per 1–2 giorni. (de Jong &amp; Henry, 2007)</div>
+              <div class="progress-header"><span id="f04fine01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f04fine01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Pompa spenta, valvole aperte lentamente (evitare colpo di ritorno al manometro)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione lasciato in miscela per 24h a pressione atmosferica per equilibrio finale</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Drenaggio: cestello sollevato, campione ruotato periodicamente per drenare cavità</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Posizionamento anatomico definitivo verificato e corretto (sarà bloccato dal curing)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione pronto per il curing (Fase 05) — posizionamento anatomico confermato</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','3',document.getElementById('f04s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','5',document.getElementById('f04s5pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f04-step5" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 04</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign04Panel">
+                <div id="sign04Form">
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign04Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('04')">✓ Chiudi Fase 04</button>
+                  </div>
+                  <div id="sign04Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign04Done" style="display:none"><div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign04DoneText"></strong><p class="text-sm text-muted" id="sign04DoneDate"></p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== FASE 05 — CURING ===================== -->
+    <div id="view-fase05" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-purple-highlight);color:var(--color-purple);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">05</span>Curing S6</div><div class="topbar-subtitle">Doc. Operativo N. 4 — Polimerizzazione e indurimento del preparato</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f05s1pill" onclick="switchStep('f05','1',this)">1 · Metodo</div>
+        <div class="phase-pill" id="f05s2pill" onclick="switchStep('f05','2',this)">2 · Fast cure</div>
+        <div class="phase-pill" id="f05s3pill" onclick="switchStep('f05','3',this)">3 · Slow cure</div>
+        <div class="phase-pill" id="f05s4pill" onclick="switchStep('f05','4',this)">4 · Rifinitura</div>
+        <div class="phase-pill" id="f05s5pill" onclick="switchStep('f05','5',this)">5 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f05-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Selezione metodo di curing</span></div>
+            <div class="card-body">
+              <div class="form-grid mb-4">
+                <div class="form-group"><label class="form-label">Codice campione</label><input type="text" class="form-input" id="f05_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data inizio curing</label><input type="date" class="form-input" id="f05_data_inizio"></div>
+                <div class="form-group" style="grid-column:span 2"><label class="form-label">Metodo di curing</label>
+                  <select class="form-input" id="f05_metodo" onchange="updateF05MetodoInfo()">
+                    <option value="fast">Fast cure (gas S6 in camera chiusa)</option>
+                    <option value="slow">Slow cure (esposizione progressiva)</option>
+                    <option value="uv">UV cure (resine fotopolimerizzabili)</option>
+                  </select>
+                </div>
+              </div>
+              <div id="f05MetodoInfo" class="info-box info-primary mb-4"></div>
+              <div class="card mb-4" style="background:var(--color-surface-offset)">
+                <div class="card-body">
+                  <p class="text-sm text-muted mb-3"><strong>Posizionamento anatomico definitivo</strong> — Il posizionamento va fissato PRIMA del curing:</p>
+                  <div class="progress-header"><span id="f05pos01Label" class="text-sm text-muted">0 / 4 completati</span><div class="progress-bar-wrap"><div id="f05pos01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+                  <div class="checklist-item critical" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Posizione anatomica definitiva stabilita e approvata dal Responsabile di laboratorio</span><span class="check-badge badge-critical">CRITICO</span></div>
+                  <div class="checklist-item critical" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione fissato su supporto (perno, filo metallico, blocco) nella posizione selezionata</span><span class="check-badge badge-critical">CRITICO</span></div>
+                  <div class="checklist-item warning-item" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotodocumentazione del posizionamento pre-curing eseguita</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+                  <div class="checklist-item" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Etichetta definitiva applicata al supporto (codice campione leggibile)</span><span class="check-badge badge-standard">STANDARD</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f05','2',document.getElementById('f05s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f05-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Fast Cure — cicli S6 in camera chiusa</span></div>
+            <div class="card-body">
+              <div class="info-box info-warning mb-4"><strong>⚠ Sicurezza S6</strong> — Il gas S6 (cianoacrilato/catalizzatore volatilizzato) è irritante per vie respiratorie e occhi. Operare SEMPRE sotto cappa aspirante o in camera dedicata ventilata. DPI: guanti, occhiali, mascherina FP3. Non aprire la camera durante il ciclo attivo.</div>
+              <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
+                <div class="form-group"><label class="form-label">Data ciclo</label><input type="date" class="form-input" id="f05_fc_data"></div>
+                <div class="form-group"><label class="form-label">N° ciclo</label><input type="number" class="form-input" id="f05_fc_ciclo" value="1" min="1"></div>
+                <div class="form-group"><label class="form-label">Durata (ore)</label><input type="number" class="form-input" id="f05_fc_durata" step="0.5" value="24"></div>
+                <div class="form-group"><label class="form-label">Temp camera (°C)</label><input type="number" class="form-input" id="f05_fc_temp" value="25"></div>
+                <div class="form-group"><label class="form-label">Volume S6 usato (mL)</label><input type="number" class="form-input" id="f05_fc_vol" step="0.5"></div>
+                <div class="form-group"><label class="form-label">Risultato</label>
+                  <select class="form-input" id="f05_fc_risultato">
+                    <option value="parziale">⏳ Curing parziale</option>
+                    <option value="completo">✅ Curing completo</option>
+                    <option value="insufficiente">❌ Insufficiente</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Note (aree critiche, distribuzione curing)</label><input type="text" class="form-input" id="f05_fc_note" placeholder="es. superficie dorsale ancora morbida…"></div>
+              <button class="btn btn-primary btn-sm" onclick="addFastCureEntry()">+ Registra ciclo</button>
+              <div id="f05FastCureRows" style="margin-top:var(--space-4)"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f05','1',document.getElementById('f05s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f05','3',document.getElementById('f05s3pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f05-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73l.71.71M1 12h2m18 0h2M4.22 19.78l.71-.71M18.36 5.64l.71-.71"/><circle cx="12" cy="12" r="4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Slow Cure — esposizione progressiva</span></div>
+            <div class="card-body">
+              <div class="info-box info-primary mb-4"><strong>Slow cure:</strong> esposizione del campione impregnato all'aria a temperatura controllata (18–22°C), con cicli settimanali di ricopertura con strato sottile di S6 pennellato sulla superficie. Tempo tipico: 4–8 settimane. Riduce lo stress meccanico e produce superfici più omogenee rispetto al fast cure. Ottimale per campioni grandi.</div>
+              <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
+                <div class="form-group"><label class="form-label">Settimana</label><input type="number" class="form-input" id="f05_sc_sett" value="1" min="1"></div>
+                <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="f05_sc_data"></div>
+                <div class="form-group"><label class="form-label">Temp ambiente (°C)</label><input type="number" class="form-input" id="f05_sc_temp" value="20"></div>
+                <div class="form-group"><label class="form-label">Strato S6 applicato</label><select class="form-input" id="f05_sc_strato"><option value="si">Sì</option><option value="no">No</option></select></div>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Note (consistenza superficiale, aree ancora morbide)</label><input type="text" class="form-input" id="f05_sc_note" placeholder="es. dorso completo, superficie plantare ancora flessibile"></div>
+              <button class="btn btn-primary btn-sm" onclick="addSlowCureEntry()">+ Registra settimana</button>
+              <div id="f05SlowCureRows" style="margin-top:var(--space-4)"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f05','2',document.getElementById('f05s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f05','4',document.getElementById('f05s4pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f05-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Rifinitura estetica e conservativa</span></div>
+            <div class="card-body">
+              <div class="progress-header"><span id="f05rif01Label" class="text-sm text-muted">0 / 6 completati</span><div class="progress-bar-wrap"><div id="f05rif01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Curing completato verificato (test palpazione: superficie dura, nessuna zona cedente, no tacky)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Eccessi di resina rimossi (bisturi, pinzette, carta abrasiva fine) preservando le strutture anatomiche</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Strutture fili/perni rimossi e fori sigillati con resina epossidica o S6</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Colorazione integrativa applicata se prevista dal protocollo (olio minerale, pigmenti oleosi)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotodocumentazione post-curing (tutti gli angoli, almeno 4 foto)</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="checklist-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Dati di curing registrati nel logbook con date inizio/fine e metodo usato</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f05','3',document.getElementById('f05s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f05','5',document.getElementById('f05s5pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f05-step5" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 05</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign05Panel">
+                <div id="sign05Form">
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign05Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('05')">✓ Chiudi Fase 05</button>
+                  </div>
+                  <div id="sign05Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign05Done" style="display:none"><div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign05DoneText"></strong><p class="text-sm text-muted" id="sign05DoneDate"></p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FASE 06 — CONTROLLO QUALITÀ ===================== -->
+    <div id="view-fase06" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-success-highlight);color:var(--color-success);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">06</span>Controllo Qualità</div><div class="topbar-subtitle">Doc. Operativo N. 5 — Scheda CQ e classificazione ABC</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f06s1pill" onclick="switchStep('f06','1',this)">1 · Valutazione</div>
+        <div class="phase-pill" id="f06s2pill" onclick="switchStep('f06','2',this)">2 · Scheda CQ</div>
+        <div class="phase-pill" id="f06s3pill" onclick="switchStep('f06','3',this)">3 · Classificazione</div>
+        <div class="phase-pill" id="f06s4pill" onclick="switchStep('f06','4',this)">4 · Chiusura</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f06-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Checklist visiva pre-valutazione</span></div>
+            <div class="card-body">
+              <div class="form-grid mb-4">
+                <div class="form-group"><label class="form-label">Codice campione</label><input type="text" class="form-input" id="f06_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data valutazione</label><input type="date" class="form-input" id="f06_data"></div>
+                <div class="form-group"><label class="form-label">Valutatore CQ</label><select class="form-input" id="f06_valutatore"></select></div>
+              </div>
+              <div class="progress-header"><span id="f06vis01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f06vis01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f06vis01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Curing confermato completo (nessuna area morbida, no tacky, superficie secca e rigida)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f06vis01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ispezione visiva completa: tutti i versanti esaminati sotto luce adeguata</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f06vis01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotografato su sfondo neutro (min 4 angolazioni: anteriore, posteriore, laterale DX/SX)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f06vis01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Odori anomali testati (no odore acuto di acetone residuo / S6 non polimerizzato)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f06vis01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Peso finale registrato per confronto con peso iniziale</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="form-group mt-4"><label class="form-label">Peso finale preparato (g)</label><input type="number" class="form-input" id="f06_peso_finale" placeholder="grammi"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f06','2',document.getElementById('f06s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f06-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M12 12h.01M8 12h.01M16 12h.01"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Scheda parametri CQ</span></div>
+            <div class="card-body">
+              <p class="text-sm text-muted mb-4">Valutare ogni parametro scegliendo il punteggio 1–4 (1=ottimo, 4=non accettabile):</p>
+              <div id="cqParamsContainer"></div>
+              <div class="form-group mt-4"><label class="form-label">Commenti generali</label><textarea class="form-input" id="f06_commenti" rows="3" placeholder="Descrizione qualitativa del preparato, anomalie rilevate, aree di eccellenza…"></textarea></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f06','1',document.getElementById('f06s1pill'))">‹</button><button class="btn btn-primary" onclick="calcCQClassification();switchStep('f06','3',document.getElementById('f06s3pill'))">Calcola classificazione ›</button></div>
+        </div>
+
+        <div id="f06-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Classificazione qualità preparato</span></div>
+            <div class="card-body">
+              <div id="cqResultBox" style="text-align:center;padding:var(--space-6)">
+                <p class="text-muted">Completare prima la scheda CQ</p>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-top:var(--space-4)">
+                <div class="cq-class-card" id="cqCardA">
+                  <span class="cq-class-badge" style="background:var(--color-success-highlight);color:var(--color-success)">CLASSE A</span>
+                  <p class="text-sm"><strong>Eccellente</strong></p>
+                  <p class="text-xs text-muted">Preparato ottimale, uso didattico e pubblicazione. Punteggio medio ≤1.5</p>
+                </div>
+                <div class="cq-class-card" id="cqCardB">
+                  <span class="cq-class-badge" style="background:var(--color-gold-highlight);color:var(--color-gold)">CLASSE B</span>
+                  <p class="text-sm"><strong>Buono</strong></p>
+                  <p class="text-xs text-muted">Uso didattico con limitazioni. Punteggio medio 1.6–2.5</p>
+                </div>
+                <div class="cq-class-card" id="cqCardC">
+                  <span class="cq-class-badge" style="background:var(--color-error-highlight);color:var(--color-error)">CLASSE C</span>
+                  <p class="text-sm"><strong>Non ottimale</strong></p>
+                  <p class="text-xs text-muted">Solo ricerca interna. Punteggio medio &gt;2.5</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f06','2',document.getElementById('f06s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f06','4',document.getElementById('f06s4pill'))">Avanti → Chiusura ›</button></div>
+        </div>
+
+        <div id="f06-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Chiusura Fase 06</span></div>
+            <div class="card-body">
+              <div class="signature-panel" id="sign06Panel">
+                <div id="sign06Form">
+                  <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
+                    <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign06Operator"></select></div>
+                    <button class="btn btn-primary" onclick="closePhase('06')">✓ Chiudi Fase 06</button>
+                  </div>
+                  <div id="sign06Error" class="alert alert-critical mt-3" style="display:none"></div>
+                </div>
+                <div id="sign06Done" style="display:none"><div class="operator-signed-info"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><strong id="sign06DoneText"></strong><p class="text-sm text-muted" id="sign06DoneDate"></p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FASE 07 — ARCHIVIO ===================== -->
+    <div id="view-fase07" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">07</span>Archivio Preparati</div><div class="topbar-subtitle">Doc. Operativo N. 6 — Archiviazione, movimentazione e gestione inventario</div></div>
+        <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
+      </div>
+      <div class="phase-nav">
+        <div class="phase-pill active" id="f07s1pill" onclick="switchStep('f07','1',this)">1 · Archiviazione</div>
+        <div class="phase-pill" id="f07s2pill" onclick="switchStep('f07','2',this)">2 · Conservazione</div>
+        <div class="phase-pill" id="f07s3pill" onclick="switchStep('f07','3',this)">3 · Movimentazione</div>
+        <div class="phase-pill" id="f07s4pill" onclick="switchStep('f07','4',this)">4 · Inventario</div>
+      </div>
+      <div class="page-content">
+
+        <div id="f07-step1" class="step-content active">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Archiviazione preparato completato</span></div>
+            <div class="card-body">
+              <div class="form-grid mb-4">
+                <div class="form-group"><label class="form-label">Codice preparato</label><input type="text" class="form-input" id="f07_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data archiviazione</label><input type="date" class="form-input" id="f07_data_arch"></div>
+                <div class="form-group"><label class="form-label">Classificazione CQ</label><select class="form-input" id="f07_classe_cq"><option value="A">Classe A — Eccellente</option><option value="B">Classe B — Buono</option><option value="C">Classe C — Non ottimale</option></select></div>
+                <div class="form-group"><label class="form-label">Ubicazione deposito</label><input type="text" class="form-input" id="f07_ubicazione" placeholder="es. Scaffale A3, Box 12, Locale deposito"></div>
+                <div class="form-group"><label class="form-label">Supporto fisico</label><input type="text" class="form-input" id="f07_supporto" placeholder="es. perno acciaio 6mm, basetta acrilica"></div>
+                <div class="form-group"><label class="form-label">Destinazione uso</label>
+                  <select class="form-input" id="f07_dest_uso">
+                    <option value="didattica_interna">Didattica interna</option>
+                    <option value="mostra">Mostra/Esposizione</option>
+                    <option value="prestito">Prestito esterno</option>
+                    <option value="ricerca">Ricerca interna</option>
+                    <option value="deposito">Deposito</option>
+                  </select>
+                </div>
+              </div>
+              <div class="progress-header"><span id="f07arch01Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f07arch01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f07arch01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Etichetta definitiva leggibile applicata al preparato (codice, specie, distretto, anno)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f07arch01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Scheda CQ completata e archiviata nel fascicolo del preparato</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f07arch01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fascicolo cartaceo / digitale completo: dal ricevimento a oggi</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f07arch01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fotodocumentazione finale archiviata (nominare file: CODICE_data_angolazione)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f07arch01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Inventario di laboratorio aggiornato (presenza/ubicazione del preparato confermata)</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <button class="btn btn-primary mt-4" onclick="archiviaPreparato()">+ Aggiungi all'inventario</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f07','2',document.getElementById('f07s2pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f07-step2" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Condizioni e manutenzione conservazione</span></div>
+            <div class="card-body">
+              <div class="info-box info-primary mb-4"><strong>Condizioni standard di conservazione preparati S10</strong> (Ottone, 2023; von Hagens, 1979)<br>Temperatura: 15–22°C. Umidità relativa: 40–60%. Evitare luce UV diretta. Riporre su supporti stabili. Ispezionare ogni 6–12 mesi.</div>
+              <div class="progress-header"><span id="f07cons01Label" class="text-sm text-muted">0 / 6 completati</span><div class="progress-bar-wrap"><div id="f07cons01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
+              <div class="checklist-item critical" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Locale deposito a temperatura controllata (15–22°C, mai sotto 10°C)</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item critical" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Assenza di esposizione a luce UV diretta o solare prolungata</span><span class="check-badge badge-critical">CRITICO</span></div>
+              <div class="checklist-item warning-item" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Umidità relativa monitorata (40–60%): no ambienti umidi o polverosi</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item warning-item" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Scaffali o contenitori con supporti stabili per evitare deformazioni meccaniche</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
+              <div class="checklist-item" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Preparati non a contatto tra loro (evitare pressione / deformazione reciproca)</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="checklist-item" data-list="f07cons01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Programma ispezione periodica impostato (6–12 mesi)</span><span class="check-badge badge-standard">STANDARD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f07','1',document.getElementById('f07s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f07','3',document.getElementById('f07s3pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f07-step3" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Registro movimentazione preparati</span></div>
+            <div class="card-body">
+              <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:var(--space-4)">
+                <div class="form-group"><label class="form-label">Codice preparato</label><input type="text" class="form-input" id="f07_mov_codice" placeholder="PL-S10-…"></div>
+                <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="f07_mov_data"></div>
+                <div class="form-group"><label class="form-label">Tipo movimento</label>
+                  <select class="form-input" id="f07_mov_tipo">
+                    <option value="uscita_interna">Uscita interna (es. aula)</option>
+                    <option value="uscita_prestito">Prestito esterno</option>
+                    <option value="rientro">Rientro in deposito</option>
+                    <option value="spostamento">Spostamento interno</option>
+                    <option value="ispezione">Ispezione periodica</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Destinazione / provenienza</label><input type="text" class="form-input" id="f07_mov_dest" placeholder="es. Aula Anatomia, Univ. Palermo"></div>
+                <div class="form-group"><label class="form-label">Responsabile</label><select class="form-input" id="f07_mov_resp"></select></div>
+                <div class="form-group"><label class="form-label">Data rientro previsto</label><input type="date" class="form-input" id="f07_mov_rientro"></div>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Stato preparato al momento della movimentazione</label>
+                <select class="form-input" id="f07_mov_stato">
+                  <option value="Ottimo">Ottimo — nessun danno</option>
+                  <option value="Buono">Buono — piccole imperfezioni</option>
+                  <option value="Danneggiato">Danneggiato — da verificare</option>
+                </select>
+              </div>
+              <div class="form-group mb-4"><label class="form-label">Note</label><input type="text" class="form-input" id="f07_mov_note" placeholder="Motivazione, contatto esterno, condizioni di trasporto…"></div>
+              <button class="btn btn-primary btn-sm" onclick="addMovimento()">+ Registra movimento</button>
+              <div id="f07MovRows" style="margin-top:var(--space-4)"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f07','2',document.getElementById('f07s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f07','4',document.getElementById('f07s4pill'))">Avanti ›</button></div>
+        </div>
+
+        <div id="f07-step4" class="step-content">
+          <div class="card mb-6">
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Inventario preparati plastinati</span></div>
+            <div class="card-body" style="padding:0;overflow-x:auto">
+              <div id="f07InventarioWrap">
+                <div class="empty-state" style="padding:var(--space-10)">
+                  <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="1"/></svg>
+                  <h3>Nessun preparato archiviato</h3>
+                  <p>Completare la plastinazione e archiviare nella Fase 07 Step 1</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== OPERATORI ===================== -->
+    <div id="view-operatori" style="display:none">
+      <div class="topbar">
+        <div><div class="topbar-title">Gestione Operatori</div><div class="topbar-subtitle">Registro personale autorizzato al laboratorio</div></div>
+        <div class="topbar-actions"><button class="btn btn-primary btn-sm" onclick="document.getElementById('addOperatorModal').classList.add('open')">+ Aggiungi operatore</button></div>
+      </div>
+      <div class="page-content">
+        <div class="card"><div class="card-body" style="padding:0;overflow-x:auto"><div id="operatoriTableWrap"></div></div></div>
+      </div>
+    </div>
+
+  </div><!-- / main-content -->
+</div><!-- / app-layout -->
+
+<!-- ===================== MODALS ===================== -->
+<div class="modal-overlay" id="addOperatorModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Aggiungi Operatore</div><button class="modal-close" onclick="document.getElementById('addOperatorModal').classList.remove('open')">✕</button></div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+      <div class="form-group"><label class="form-label">Nominativo completo</label><input type="text" class="form-input" id="opName" placeholder="Es. Mario Rossi"></div>
+      <div class="form-group"><label class="form-label">Ruolo</label>
+        <select class="form-input" id="opRole">
+          <option value="Responsabile">Responsabile</option>
+          <option value="Tecnico di laboratorio">Tecnico di laboratorio</option>
+          <option value="Dottorando">Dottorando / Specializzando</option>
+          <option value="Studente tirocinante">Studente tirocinante</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:var(--space-3);justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="document.getElementById('addOperatorModal').classList.remove('open')">Annulla</button>
+        <button class="btn btn-primary" onclick="addOperator()">Aggiungi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CORE STATE
+// ============================================================
+let currentUser = null;
+let operators = [
+  {id:'OP001', name:'Admin Laboratorio', role:'Responsabile', added:'2026-01-01'}
+];
+let samples = [];
+let acetoneLog = [];
+let pressureLog = [];
+let fastCureLog = [];
+let slowCureLog = [];
+let movLog = [];
+let inventory = [];
+let phaseLocks = {};
+let cqScores = {};
+
+const LAB_CODE = 'PL-LAB-800A';
+const LAB_PASSWORD = 'lab800a';
+
+// ============================================================
+// AUTH
+// ============================================================
+function handleLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const code = document.getElementById('loginCode').value.trim();
+  if (!name) { showLoginError('Inserire il nominativo operatore.'); return; }
+  if (code.toLowerCase() !== LAB_PASSWORD) { showLoginError('Codice laboratorio non corretto.'); return; }
+  currentUser = name;
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+  document.getElementById('sidebarAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('sidebarName').textContent = name;
+  populateOperatorSelects();
+  refreshDashboard();
+  refreshCampioniTable();
+  initCQParams();
+  updateF05MetodoInfo();
+  updateF04TecnicaInfo();
+  updateF03TecnicaInfo();
+  updateDefattingInfo();
+  initOperatoriTable();
+  generateCode01();
+  setNow();
+}
+
+function handleLogout() {
+  currentUser = null;
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginName').value = '';
+  document.getElementById('loginCode').value = '';
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.innerHTML = msg; el.style.display = 'flex';
+}
+
+document.querySelectorAll('.form-input').forEach(i => i.addEventListener('keydown', e => { if(e.key==='Enter') handleLogin(); }));
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchView(view, el) {
+  document.querySelectorAll('.app-layout > .main-content > div[id^="view-"]').forEach(v => v.style.display='none');
+  document.getElementById('view-' + view).style.display = '';
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  if (view==='operatori') initOperatoriTable();
+  if (view==='campioni') refreshCampioniTable();
+}
+
+function switchStep(fase, step, pill) {
+  document.querySelectorAll(`#f${fase.substring(1)}-step1,#f${fase.substring(1)}-step2,#f${fase.substring(1)}-step3,#f${fase.substring(1)}-step4,#f${fase.substring(1)}-step5`).forEach(s => { if(s) s.classList.remove('active'); });
+  const allSteps = document.querySelectorAll(`[id^="f${fase.substring(1)}-step"]`);
+  allSteps.forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(`f${fase.substring(1)}-step${step}`);
+  if (target) target.classList.add('active');
+  document.querySelectorAll(`#view-fase0${fase.substring(1)} .phase-pill`).forEach(p => p.classList.remove('active'));
+  if (pill) pill.classList.add('active');
+}
+
+// Intercept: for view switching, use the fase name directly
+function switchStep(faseName, step, pill) {
+  const fasen = faseName.replace('f0','').replace('f','');
+  document.querySelectorAll(`#view-fase0${fasen} .step-content`).forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(`${faseName}-step${step}`);
+  if (target) target.classList.add('active');
+  document.querySelectorAll(`#view-fase0${fasen} .phase-pill`).forEach(p => p.classList.remove('active'));
+  if (pill) pill.classList.add('active');
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme') || 'light';
+  const next = current==='light'?'dark':'light';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeIcon').textContent = next==='dark'?'🌙':'☀️';
+}
+
+// ============================================================
+// CHECKLIST
+// ============================================================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const listId = el.dataset.list;
+  updateProgress(listId);
+}
+
+function updateProgress(listId) {
+  const items = document.querySelectorAll(`[data-list="${listId}"]`);
+  const checked = document.querySelectorAll(`[data-list="${listId}"].checked`);
+  const pct = items.length ? (checked.length/items.length*100) : 0;
+  const bar = document.getElementById(listId+'Bar');
+  const label = document.getElementById(listId+'Label');
+  if (bar) {
+    bar.style.width = pct+'%';
+    bar.style.background = pct===100 ? 'var(--color-success)' : pct>=60 ? 'var(--color-gold)' : 'var(--color-error)';
+  }
+  if (label) label.textContent = `${checked.length} / ${items.length} completati`;
+}
+
+// ============================================================
+// OPERATORS
+// ============================================================
+function populateOperatorSelects() {
+  const selects = document.querySelectorAll('select[id^="sign"],select[id^="f06_valutatore"],select[id^="f07_mov_resp"]');
+  selects.forEach(sel => {
+    sel.innerHTML = '<option value="">— Seleziona operatore —</option>' +
+      operators.map(op => `<option value="${op.name}">${op.name} (${op.role})</option>`).join('');
+  });
+}
+
+function addOperator() {
+  const name = document.getElementById('opName').value.trim();
+  const role = document.getElementById('opRole').value;
+  if (!name) return;
+  const id = 'OP' + String(operators.length+1).padStart(3,'0');
+  operators.push({id, name, role, added: new Date().toISOString().slice(0,10)});
+  document.getElementById('opName').value = '';
+  document.getElementById('addOperatorModal').classList.remove('open');
+  initOperatoriTable();
+  populateOperatorSelects();
+}
+
+function initOperatoriTable() {
+  const wrap = document.getElementById('operatoriTableWrap');
+  if (!wrap) return;
+  if (!operators.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun operatore registrato</h3><p>Aggiungere gli operatori autorizzati al laboratorio</p></div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Nominativo</th><th>Ruolo</th><th>Registrato</th></tr></thead><tbody>` +
+    operators.map(op => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+// ============================================================
+// CODE GENERATION
+// ============================================================
+let codeCounter = 1;
+function generateCode01() {
+  const specie = document.getElementById('f01_specie')?.value;
+  const distretto = document.getElementById('f01_distretto')?.value;
+  const sAbbr = specie ? specie.substring(0,3).toUpperCase() : 'XXX';
+  const dAbbr = distretto ? distretto.substring(0,3).toUpperCase() : 'XXX';
+  const num = String(codeCounter).padStart(3,'0');
+  const code = `${LAB_CODE}-${dAbbr}-${sAbbr}-${num}`;
+  const el = document.getElementById('f01_codice');
+  if (el) el.value = code;
+}
+
+function setNow() {
+  const els = document.querySelectorAll('input[type="datetime-local"]');
+  const now = new Date();
+  const iso = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'T'+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  els.forEach(el => { if (!el.value) el.value = iso; });
+  const dateEls = document.querySelectorAll('input[type="date"]');
+  const d = now.toISOString().slice(0,10);
+  dateEls.forEach(el => { if (!el.value) el.value = d; });
+}
+
+// ============================================================
+// FASE 01 — DESTINAZIONE ALERT
+// ============================================================
+function checkDestinazione() {
+  const val = document.getElementById('f01_destinazione')?.value;
+  const alert = document.getElementById('s10Alert');
+  if (alert) alert.style.display = val==='S10' ? 'flex' : 'none';
+}
+setTimeout(() => checkDestinazione(), 500);
+
+// ============================================================
+// FASE 02 — FISSATIVO CALC
+// ============================================================
+const fissativoData = {
+  formalina5: {label:'Formalina 5%', tipo:'info-primary', testo:'<strong>Formalina 5%</strong> — Fissazione lenta e delicata. Ottimale per campioni piccoli o fragili. Compatibile con S10 dopo risciacquo adeguato (2-4 gg acqua corrente). Evitare eccesso di tempo per non indurire eccessivamente.'},
+  formalina10: {label:'Formalina 10%', tipo:'info-primary', testo:'<strong>Formalina 10% tampone fosfato (NBF)</strong> — Protocollo standard per plastinazione S10. Penetrazione media, compatibile con tutti i tessuti. Risciacquo obbligatorio 2–4 gg.'},
+  formalina20: {label:'Formalina 20%', tipo:'info-warning', testo:'<strong>⚠ Formalina 20%</strong> — Concentrazione elevata: fissazione rapida ma rischio di indurimento superficiale prematuro. Usare solo per campioni molto grandi o urgenti. Risciacquo prolungato (4–6 gg).'},
+  thiel: {label:'Soluzione di Thiel', tipo:'info-warning', testo:'<strong>⚠ Soluzione di Thiel</strong> — Mantiene flessibilità tissutale. ATTENZIONE: contiene glicoli etilenico/propilenico e acido borico che interferiscono con S10. Protocollo rimozione agenti incompatibili OBBLIGATORIO prima della disidratazione. (Thiel 1992)'},
+  sss: {label:'SSS', tipo:'info-primary', testo:'<strong>SSS (Salt-Saturated Solution)</strong> — Fissazione con NaCl saturo + formaldeide. Ottimale per lunga conservazione pre-plastinazione. Compatibile con S10 dopo risciacquo 3–5 gg.'},
+  ccfs: {label:'CCFS', tipo:'info-warning', testo:'<strong>⚠ CCFS — Soluzione Cilena</strong> — Contiene fenolo e polietilene glicole. Conferisce flessibilità ma la presenza di PEG richiede protocollo di rimozione specifico prima di procedere con S10.'},
+  masuko: {label:'Soluzione di Masuko', tipo:'info-primary', testo:'<strong>Soluzione di Masuko (2022)</strong> — Soluzione innovativa a base di zuccheri osmotici. Eccellente per conservazione a lungo termine. Compatibilità con S10 riportata in letteratura; verificare specifico protocollo di rimozione residui.'},
+  fresco: {label:'Campione fresco', tipo:'info-warning', testo:'<strong>⚠ Campione fresco</strong> — Nessuna fissazione chimica. Procedere subito a disidratazione. Rischio autolisi elevato: il tempo dalla morte alla disidratazione deve essere minimizzato (max 48h a 0–4°C).'}
+};
+
+function updateFissativoInfo() {
+  const val = document.getElementById('f02_fissativo')?.value;
+  const box = document.getElementById('fissativoInfoBox');
+  if (!box) return;
+  if (!val || !fissativoData[val]) { box.style.display='none'; return; }
+  const d = fissativoData[val];
+  box.className = `info-box ${d.tipo} mb-4`;
+  box.innerHTML = d.testo;
+  box.style.display = 'block';
+  calcVolumeF02();
+}
+
+function calcVolumeF02() {
+  const peso = parseFloat(document.getElementById('f02_peso_calc')?.value);
+  const perc = parseFloat(document.getElementById('f02_perc_em')?.value) || 7.5;
+  const box = document.getElementById('f02CalcResult');
+  if (isNaN(peso) || peso <= 0 || !box) { if(box) box.style.display='none'; return; }
+  const vem = (peso * perc/100).toFixed(2);
+  const vmin = (parseFloat(vem)*2).toFixed(1);
+  const vrac = (parseFloat(vem)*3).toFixed(1);
+  document.getElementById('calcVemResult').textContent = vem+' L';
+  document.getElementById('calcVfixMin').textContent = vmin+' L';
+  document.getElementById('calcVfixRac').textContent = vrac+' L';
+  box.style.display = 'grid';
+}
+
+// ============================================================
+// FASE 03 — TECNICA / DEFATTING / ACETONE LOG
+// ============================================================
+function updateF03TecnicaInfo() {
+  const val = document.getElementById('f03_tecnica')?.value;
+  const box = document.getElementById('f03TecnicaInfo');
+  if (!box) return;
+  const info = {
+    freddo: 'info-primary',
+    ambiente: 'info-warning',
+    etanolo: 'info-warning'
+  };
+  const testi = {
+    freddo: '<strong>Acetone a –25°C (freeze substitution)</strong> — Tecnica standard per S10. La bassa temperatura rallenta l\'autolisi e garantisce disidratazione graduale senza collasso tissutale. Tipicamente 3–6 cambi in 3–8 settimane per campioni grandi.',
+    ambiente: '<strong>⚠ Acetone a T.A.</strong> — Valido per campioni di piccole dimensioni. Tempi ridotti (1–3 settimane) ma rischio di restringimento tissutale maggiore. Monitorare quotidianamente.',
+    etanolo: '<strong>⚠ Etanolo (non standard per S10)</strong> — Non raccomandato per protocollo S10 standard. L\'etanolo forma esteri con i siliconi, riducendo la qualità dell\'impregnazione. Usare solo con protocolli specifici validati.'
+  };
+  box.className = `info-box ${info[val]||'info-primary'} mt-4`;
+  box.innerHTML = testi[val]||'';
+  calcF03Volume();
+}
+
+function calcF03Volume() {
+  const vol = parseFloat(document.getElementById('f03_vol_camp')?.value);
+  const box = document.getElementById('f03VolCalcBox');
+  if (isNaN(vol)||vol<=0||!box) { if(box) box.style.display='none'; return; }
+  document.getElementById('f03CalcAcMinimo').textContent = (vol*10).toFixed(1)+' L';
+  document.getElementById('f03CalcAcRac').textContent = (vol*15).toFixed(1)+' L';
+  box.style.display = 'grid';
+}
+
+function addAcetoneEntry() {
+  const data = document.getElementById('f03_ac_data')?.value;
+  const num = document.getElementById('f03_ac_num')?.value;
+  const pur = parseFloat(document.getElementById('f03_ac_purezza')?.value);
+  const temp = document.getElementById('f03_ac_temp_let')?.value;
+  const azione = document.getElementById('f03_ac_azione')?.value;
+  const note = document.getElementById('f03_ac_note')?.value;
+  if (!data||isNaN(pur)) { alert('Inserire data e purezza.'); return; }
+  let purClass = 'purity-ok'; let purLabel = '✅ Ottima';
+  if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa — cambiare!'; }
+  else if (pur < 99.5) { purClass='purity-warn'; purLabel='⚠ Pianificare cambio'; }
+  acetoneLog.push({data,num,pur,temp,azione,note});
+  const container = document.getElementById('f03AcetoneRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'acetone-row';
+  row.innerHTML = `<strong style="font-family:monospace">Bagno #${num}</strong><span>${data}</span><span class="${purClass}">${pur}%<br><small>${purLabel}</small></span><span>${temp}°C</span><span style="grid-column:span 1">${note||'—'}</span><span class="badge badge-teal" style="font-size:10px">${azione}</span>`;
+  container.prepend(row);
+  document.getElementById('f03_ac_num').value = parseInt(num)+1;
+}
+
+function updateDefattingInfo() {
+  const val = document.getElementById('f03_defatting_metodo')?.value;
+  const box = document.getElementById('defattingInfoBox');
+  if (!box) return;
+  const t = {
+    acetone_ta: {c:'info-primary', t:'<strong>Acetone a T.A.</strong> — Metodo più sicuro. Agitare quotidianamente. Il colore del solvente (giallo intenso = ricco di grassi) indica la necessità di cambio. Tipicamente 2–5 cambi.'},
+    mecl: {c:'info-critical', t:'<strong>⚠⚠ Diclorometano (DCM/MeCl) — SOLO SOTTO CAPPA ASPIRANTE</strong> — Potente sgrassante. Cancerogeno sospetto. DPI completi: mascherina FP3, guanti spessi, camice impermeabile. Non usare senza cappa chimica funzionante. Smaltimento come rifiuto speciale.'},
+    nessuno: {c:'info-primary', t:'<strong>Nessun sgrassaggio aggiuntivo</strong> — Adatto per SNC, organi poco adiposi, campioni pediatrici. La fase 03 acetone è sufficiente.'}
+  };
+  const d = t[val]; if (!d) return;
+  box.className = `info-box ${d.c} mb-4`;
+  box.innerHTML = d.t;
+  box.style.display = 'block';
+}
+
+function addDefattingEntry() {
+  const data = document.getElementById('f03_def_data')?.value;
+  const num = document.getElementById('f03_def_num')?.value;
+  const colore = document.getElementById('f03_def_colore')?.value;
+  const grasso = document.getElementById('f03_def_grasso')?.value;
+  if (!data) return;
+  const container = document.getElementById('f03DefattingRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'acetone-row';
+  row.style.gridTemplateColumns = '80px 100px 200px 1fr';
+  row.innerHTML = `<strong style="font-family:monospace">Cambio #${num}</strong><span>${data}</span><span>${colore}</span><span>Grasso: ${grasso||'n.d.'}</span>`;
+  container.prepend(row);
+  document.getElementById('f03_def_num').value = parseInt(num)+1;
+}
+
+// ============================================================
+// FASE 04 — TECNICA S10 / PRESSURE LOG
+// ============================================================
+function updateF04TecnicaInfo() {
+  const val = document.getElementById('f04_tecnica')?.value;
+  const box = document.getElementById('f04TecnicaInfo');
+  if (!box) return;
+  const t = {
+    freddo: {c:'info-primary', t:'<strong>S10 Cold (–15°C)</strong> — Standard de Jong & Henry. Penetrazione lenta e uniforme. Durata 3–5 settimane per campioni grandi. Viscosità ottimale a bassa temperatura.'},
+    ambiente: {c:'info-warning', t:'<strong>⚠ S10 T.A. (20–22°C)</strong> — Tempi ridotti (7–14 giorni). Rischio di penetrazione non uniforme in campioni grandi. Indicato per campioni piccoli o tessuti molli.'},
+    s6: {c:'info-primary', t:'<strong>S10/S6 T.A.</strong> — Aggiunta di catalizzatore S6 alla miscela S10. Accelera notevolmente il curing. Riduce i tempi complessivi. Richiede esperienza operativa.'}
+  };
+  const d = t[val]; if (!d) return;
+  box.className = `info-box ${d.c} mt-4`;
+  box.innerHTML = d.t;
+}
+
+function addPressureEntry() {
+  const data = document.getElementById('f04_p_data')?.value;
+  const giorno = document.getElementById('f04_p_giorno')?.value;
+  const pres = document.getElementById('f04_p_pressione')?.value;
+  const bolle = document.getElementById('f04_p_bolle')?.value;
+  const azione = document.getElementById('f04_p_azione')?.value;
+  const note = document.getElementById('f04_p_note')?.value;
+  if (!data||!pres) { alert('Inserire data e pressione.'); return; }
+  pressureLog.push({data,giorno,pres,bolle,azione,note});
+  const container = document.getElementById('f04PressureRows');
+  if (!container) return;
+  const bolleLabel = {none:'🟢 Nessuna',rare:'🟡 Sporadiche',moderate:'🟠 Moderate',intense:'🔴 Continue',aria:'⚪ Solo aria'};
+  const row = document.createElement('div');
+  row.className = 'pressure-row';
+  row.innerHTML = `<strong>Giorno ${giorno}</strong><span>${data}</span><span><strong>${pres} cmHg</strong></span><span>${bolleLabel[bolle]||bolle} — ${note||'—'}</span>`;
+  container.prepend(row);
+  document.getElementById('f04_p_giorno').value = parseInt(giorno)+1;
+}
+
+// ============================================================
+// FASE 05 — CURING
+// ============================================================
+function updateF05MetodoInfo() {
+  const val = document.getElementById('f05_metodo')?.value;
+  const box = document.getElementById('f05MetodoInfo');
+  if (!box) return;
+  const t = {
+    fast: {c:'info-primary', t:'<strong>Fast Cure (gas S6)</strong> — Esposizione a vapori di S6 in camera chiusa. Cicli tipici: 24–48h per ciclo, fino a 3–5 cicli. Risultato uniforme su piccoli e medi campioni. ⚠ Sicurezza: solo sotto cappa o in camera ventilata.'},
+    slow: {c:'info-primary', t:'<strong>Slow Cure</strong> — Polimerizzazione progressiva per esposizione all\'aria con strati settimanali di S6 pennellato. 4–8 settimane. Ottimale per campioni grandi. Riduce stress meccanico superficiale.'},
+    uv: {c:'info-warning', t:'<strong>⚠ UV Cure</strong> — Utilizzato con resine fotopolimerizzabili (variante non standard S10). Richede lampada UV specifica. Tempi brevi (ore) ma applicazione limitata a strati superficiali.'}
+  };
+  const d = t[val]; if (!d) return;
+  box.className = `info-box ${d.c} mb-4`;
+  box.innerHTML = d.t;
+  box.style.display = 'block';
+}
+
+function addFastCureEntry() {
+  const data = document.getElementById('f05_fc_data')?.value;
+  const ciclo = document.getElementById('f05_fc_ciclo')?.value;
+  const durata = document.getElementById('f05_fc_durata')?.value;
+  const temp = document.getElementById('f05_fc_temp')?.value;
+  const vol = document.getElementById('f05_fc_vol')?.value;
+  const ris = document.getElementById('f05_fc_risultato')?.value;
+  const note = document.getElementById('f05_fc_note')?.value;
+  if (!data) return;
+  fastCureLog.push({data,ciclo,durata,temp,vol,ris,note});
+  const container = document.getElementById('f05FastCureRows');
+  if (!container) return;
+  const risLabel = {parziale:'⏳ Parziale', completo:'✅ Completo', insufficiente:'❌ Insuff.'};
+  const row = document.createElement('div');
+  row.className = 'fast-cure-row';
+  row.innerHTML = `<strong>#${ciclo}</strong><span>${data}</span><span>${durata}h</span><span>${temp}°C</span><span>${vol||'—'} mL</span><span>${note||'—'}</span><span class="badge ${ris==='completo'?'badge-green':ris==='insufficiente'?'badge-orange':'badge-gray'}">${risLabel[ris]||ris}</span>`;
+  container.prepend(row);
+  document.getElementById('f05_fc_ciclo').value = parseInt(ciclo)+1;
+}
+
+function addSlowCureEntry() {
+  const sett = document.getElementById('f05_sc_sett')?.value;
+  const data = document.getElementById('f05_sc_data')?.value;
+  const temp = document.getElementById('f05_sc_temp')?.value;
+  const strato = document.getElementById('f05_sc_strato')?.value;
+  const note = document.getElementById('f05_sc_note')?.value;
+  if (!data) return;
+  slowCureLog.push({sett,data,temp,strato,note});
+  const container = document.getElementById('f05SlowCureRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'pressure-row';
+  row.style.gridTemplateColumns = '80px 100px 160px 1fr';
+  row.innerHTML = `<strong>Sett. ${sett}</strong><span>${data}</span><span>${temp}°C / S6: ${strato==='si'?'✅':'—'}</span><span>${note||'—'}</span>`;
+  container.prepend(row);
+  document.getElementById('f05_sc_sett').value = parseInt(sett)+1;
+}
+
+// ============================================================
+// FASE 06 — CQ PARAMS
+// ============================================================
+const cqParams = [
+  {id:'integrità', label:'Integrità strutturale', desc:'Assenza di lacerazioni, fratture, distacchi tissutali'},
+  {id:'curing', label:'Qualità del curing', desc:'Durezza uniforme, assenza di zone molli o tacky'},
+  {id:'colore', label:'Colore e aspetto', desc:'Colorazione naturale o uniforme, assenza di macchie'},
+  {id:'odore', label:'Assenza di odori anomali', desc:'No acetone residuo, no S6 non polimerizzato'},
+  {id:'dettaglio', label:'Dettaglio anatomico', desc:'Strutture anatomiche di interesse visibili e riconoscibili'},
+  {id:'estetica', label:'Qualità estetica', desc:'Superficie liscia, assenza di bolle o difetti superficiali'},
+  {id:'posizione', label:'Posizionamento anatomico', desc:'Il campione mantiene la posizione anatomica prevista'},
+];
+
+function initCQParams() {
+  const container = document.getElementById('cqParamsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  cqParams.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'cq-param-row';
+    div.innerHTML = `<div class="cq-param-label"><strong class="text-sm">${p.label}</strong><span class="text-xs text-muted">${p.desc}</span></div>
+      <div class="cq-param-eval">
+        ${[1,2,3,4].map(v => `<label><input type="radio" name="cq_${p.id}" value="${v}" onchange="cqScores['${p.id}']=${v}"> ${v} — ${['Ottimo','Buono','Accettabile','Non accettabile'][v-1]}</label>`).join('')}
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function calcCQClassification() {
+  const scored = Object.values(cqScores);
+  if (!scored.length) return;
+  const avg = scored.reduce((a,b)=>a+b,0)/scored.length;
+  const resultBox = document.getElementById('cqResultBox');
+  let cls, color, label;
+  if (avg <= 1.5) { cls='A'; color='var(--color-success)'; label='ECCELLENTE — Classe A'; }
+  else if (avg <= 2.5) { cls='B'; color='var(--color-gold)'; label='BUONO — Classe B'; }
+  else { cls='C'; color='var(--color-error)'; label='NON OTTIMALE — Classe C'; }
+  resultBox.innerHTML = `<div><p class="text-sm text-muted">Punteggio medio CQ</p><div style="font-family:var(--font-display);font-size:var(--text-xl);color:${color}">${avg.toFixed(2)}</div><div style="font-weight:600;color:${color};margin-top:var(--space-2)">${label}</div><p class="text-xs text-muted mt-2">${scored.length} / ${cqParams.length} parametri valutati</p></div>`;
+  ['A','B','C'].forEach(c => { document.getElementById(`cqCard${c}`)?.classList.remove('selected'); });
+  document.getElementById(`cqCard${cls}`)?.classList.add('selected');
+  document.getElementById('f07_classe_cq').value = cls;
+}
+
+// ============================================================
+// FASE 07 — INVENTARIO / MOVIMENTAZIONE
+// ============================================================
+function archiviaPreparato() {
+  const codice = document.getElementById('f07_codice')?.value;
+  const data = document.getElementById('f07_data_arch')?.value;
+  const classe = document.getElementById('f07_classe_cq')?.value;
+  const ubic = document.getElementById('f07_ubicazione')?.value;
+  const supporto = document.getElementById('f07_supporto')?.value;
+  const uso = document.getElementById('f07_dest_uso')?.value;
+  if (!codice||!data) { alert('Inserire codice e data.'); return; }
+  inventory.push({codice, data, classe, ubic, supporto, uso, stato:'Archiviato'});
+  refreshInventario();
+  alert(`Preparato ${codice} aggiunto all\'inventario.`);
+}
+
+function refreshInventario() {
+  const wrap = document.getElementById('f07InventarioWrap');
+  if (!wrap) return;
+  if (!inventory.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun preparato archiviato</h3></div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Data arch.</th><th>Classe CQ</th><th>Ubicazione</th><th>Supporto</th><th>Uso</th></tr></thead><tbody>` +
+    inventory.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'—'}</td><td>${p.supporto||'—'}</td><td>${p.uso||'—'}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function addMovimento() {
+  const codice = document.getElementById('f07_mov_codice')?.value;
+  const data = document.getElementById('f07_mov_data')?.value;
+  const tipo = document.getElementById('f07_mov_tipo')?.value;
+  const dest = document.getElementById('f07_mov_dest')?.value;
+  const resp = document.getElementById('f07_mov_resp')?.value;
+  const rientro = document.getElementById('f07_mov_rientro')?.value;
+  const stato = document.getElementById('f07_mov_stato')?.value;
+  const note = document.getElementById('f07_mov_note')?.value;
+  if (!codice||!data) { alert('Inserire codice e data.'); return; }
+  movLog.push({codice,data,tipo,dest,resp,rientro,stato,note});
+  const container = document.getElementById('f07MovRows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'mov-row';
+  row.innerHTML = `<span class="code">${codice}</span><span>${data}</span><span>${tipo}</span><span>${dest||'—'}</span><span>${resp||'—'}</span><span>${rientro||'—'}</span><span class="badge ${stato==='Ottimo'?'badge-green':stato==='Danneggiato'?'badge-orange':'badge-teal'}">${stato}</span>`;
+  container.prepend(row);
+}
+
+// ============================================================
+// PHASE CLOSURE
+// ============================================================
+function closePhase(num) {
+  const opSel = document.getElementById(`sign${num}Operator`);
+  const errEl = document.getElementById(`sign${num}Error`);
+  if (!opSel.value) { errEl.innerHTML='Selezionare un operatore.'; errEl.style.display='flex'; return; }
+  errEl.style.display='none';
+  const form = document.getElementById(`sign${num}Form`);
+  const done = document.getElementById(`sign${num}Done`);
+  const doneText = document.getElementById(`sign${num}DoneText`);
+  const doneDate = document.getElementById(`sign${num}DoneDate`);
+  const panel = document.getElementById(`sign${num}Panel`);
+  const now = new Date();
+  if (form) form.style.display='none';
+  if (done) done.style.display='block';
+  if (doneText) doneText.textContent = `Fase 0${num} chiusa da: ${opSel.value}`;
+  if (doneDate) doneDate.textContent = `${now.toLocaleDateString('it-IT')} ore ${now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`;
+  if (panel) panel.classList.add('signed');
+  phaseLocks[num] = {operator: opSel.value, date: now.toISOString()};
+  if (num==='01') {
+    const codice = document.getElementById('f01_codice')?.value;
+    const specie = document.getElementById('f01_specie')?.value;
+    const distretto = document.getElementById('f01_distretto')?.value;
+    const peso = document.getElementById('f01_peso')?.value;
+    const dest = document.getElementById('f01_destinazione')?.value;
+    samples.push({codice:codice||'N/D', specie:specie||'N/D', distretto:distretto||'N/D', peso:peso||'—', dest:dest||'—', fase:'02 – Fissazione', operator:opSel.value, date:now.toISOString().slice(0,10)});
+    codeCounter++;
+    refreshDashboard();
+    refreshCampioniTable();
+  }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function refreshDashboard() {
+  const kpiGrid = document.getElementById('kpiGrid');
+  const phases = ['01','02','03','04','05','06','07'];
+  const locked = phases.filter(p => phaseLocks[p]);
+  kpiGrid.innerHTML = `
+    <div class="kpi-card"><div class="kpi-value">${samples.length}</div><div class="kpi-label">Campioni totali</div></div>
+    <div class="kpi-card"><div class="kpi-value">${samples.filter(s=>!phaseLocks['06']).length}</div><div class="kpi-label">In lavorazione</div></div>
+    <div class="kpi-card"><div class="kpi-value">${inventory.length}</div><div class="kpi-label">Archiviati</div></div>
+    <div class="kpi-card"><div class="kpi-value">${operators.length}</div><div class="kpi-label">Operatori</div></div>
+    <div class="kpi-card"><div class="kpi-value">${acetoneLog.length}</div><div class="kpi-label">Rilevaz. acetone</div></div>
+    <div class="kpi-card"><div class="kpi-value">${pressureLog.length}</div><div class="kpi-label">Rilevaz. pressione</div></div>`;
+  document.getElementById('badgeCampioni').textContent = samples.length;
+  const tableWrap = document.getElementById('dashboardTableWrap');
+  if (!samples.length) {
+    tableWrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18"/></svg><h3>Nessun campione in lavorazione</h3><p class="text-muted">Registrare il primo campione dalla Fase 01</p><button class="btn btn-primary mt-4" onclick="switchView(\'fase01\',document.querySelector(\'[data-view=fase01]\'))">+ Nuovo campione</button></div>';
+    return;
+  }
+  tableWrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Fase attuale</th><th>Responsabile</th><th>Data</th></tr></thead><tbody>` +
+    samples.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie}</td><td>${s.distretto}</td><td><span class="badge badge-teal">${s.fase}</span></td><td>${s.operator}</td><td>${s.date}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function refreshCampioniTable() {
+  const wrap = document.getElementById('campioniTableWrap');
+  if (!wrap) return;
+  if (!samples.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun campione registrato</h3></div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Peso</th><th>Destinazione</th><th>Fase</th><th>Data ricezione</th></tr></thead><tbody>` +
+    samples.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie}</td><td>${s.distretto}</td><td>${s.peso} kg</td><td>${s.dest}</td><td><span class="badge badge-teal">${s.fase}</span></td><td>${s.date}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+// ============================================================
+// EXPORT LOGBOOK
+// ============================================================
+function exportLogbook() {
+  const lines = [
+    `===================================================`,
+    `  PlastinaLab — Logbook di Laboratorio`,
+    `  Esportato il: ${new Date().toLocaleString('it-IT')}`,
+    `  Codice laboratorio: ${LAB_CODE}`,
+    `===================================================\n`,
+    `OPERATORI REGISTRATI (${operators.length}):`,
+    ...operators.map(op => `  - ${op.id} | ${op.name} | ${op.role}`),
+    `\nCAMPIONI REGISTRATI (${samples.length}):`,
+    ...samples.map(s => `  - ${s.codice} | ${s.specie} | ${s.distretto} | ${s.fase} | ${s.date}`),
+    `\nFASI CHIUSE:`,
+    ...Object.entries(phaseLocks).map(([fase,data]) => `  - Fase ${fase}: ${data.operator} — ${new Date(data.date).toLocaleString('it-IT')}`),
+    `\nCONTROLLI ACETONE (${acetoneLog.length}):`,
+    ...acetoneLog.map(r => `  - Bagno ${r.num} | ${r.data} | Purezza: ${r.pur}% | T: ${r.temp}°C | ${r.azione}`),
+    `\nCURVA DI PRESSIONE (${pressureLog.length}):`,
+    ...pressureLog.map(r => `  - Giorno ${r.giorno} | ${r.data} | ${r.pres} cmHg | Bolle: ${r.bolle}`),
+    `\nINVENTARIO PREPARATI (${inventory.length}):`,
+    ...inventory.map(p => `  - ${p.codice} | Classe ${p.classe} | ${p.ubic} | ${p.data}`),
+    `\nMOVIMENTAZIONI (${movLog.length}):`,
+    ...movLog.map(m => `  - ${m.codice} | ${m.data} | ${m.tipo} | ${m.dest} | ${m.resp}`),
+  ];
+  const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `PlastinaLab_Logbook_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('f01_specie').addEventListener('change', generateCode01);
+  document.getElementById('f01_distretto').addEventListener('change', generateCode01);
+  updateF05MetodoInfo();
+  updateF04TecnicaInfo();
+  updateF03TecnicaInfo();
+  updateDefattingInfo();
+});
+</script>
+</body>
+</html>
