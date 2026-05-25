@@ -1498,7 +1498,7 @@ function toggleTheme() {
   const current = html.getAttribute('data-theme') || 'light';
   const next = current==='light'?'dark':'light';
   html.setAttribute('data-theme', next);
-  document.getElementById('themeIcon').textContent = next==='dark'?'🌙':'☀️';
+  document.getElementById('themeIcon').textContent = next==='dark'?'[MOON]':'[SUN]';
 }
 
 // ============================================================
@@ -1540,7 +1540,7 @@ async function addOperator() {
   if (!name) return;
   // Prevent duplicate names
   if (operators.some(op => op.name.toLowerCase() === name.toLowerCase())) {
-    document.getElementById('addOpError').innerHTML = 'Un operatore con questo nominativo esiste già.';
+    document.getElementById('addOpError').innerHTML = 'Un operatore con questo nominativo esiste gia.';
     document.getElementById('addOpError').style.display = 'flex';
     return;
   }
@@ -1619,13 +1619,13 @@ setTimeout(() => checkDestinazione(), 500);
 // ============================================================
 const fissativoData = {
   formalina5: {label:'Formalina 5%', tipo:'info-primary', testo:'<strong>Formalina 5%</strong> -- Fissazione lenta e delicata. Ottimale per campioni piccoli o fragili. Compatibile con S10 dopo risciacquo adeguato (2-4 gg acqua corrente). Evitare eccesso di tempo per non indurire eccessivamente.'},
-  formalina10: {label:'Formalina 10%', tipo:'info-primary', testo:'<strong>Formalina 10% tampone fosfato (NBF)</strong> -- Protocollo standard per plastinazione S10. Penetrazione media, compatibile con tutti i tessuti. Risciacquo obbligatorio 2–4 gg.'},
-  formalina20: {label:'Formalina 20%', tipo:'info-warning', testo:'<strong>[!] Formalina 20%</strong> -- Concentrazione elevata: fissazione rapida ma rischio di indurimento superficiale prematuro. Usare solo per campioni molto grandi o urgenti. Risciacquo prolungato (4–6 gg).'},
-  thiel: {label:'Soluzione di Thiel', tipo:'info-warning', testo:'<strong>[!] Soluzione di Thiel</strong> -- Mantiene flessibilità tissutale. ATTENZIONE: contiene glicoli etilenico/propilenico e acido borico che interferiscono con S10. Protocollo rimozione agenti incompatibili OBBLIGATORIO prima della disidratazione. (Thiel 1992)'},
-  sss: {label:'SSS', tipo:'info-primary', testo:'<strong>SSS (Salt-Saturated Solution)</strong> -- Fissazione con NaCl saturo + formaldeide. Ottimale per lunga conservazione pre-plastinazione. Compatibile con S10 dopo risciacquo 3–5 gg.'},
-  ccfs: {label:'CCFS', tipo:'info-warning', testo:'<strong>[!] CCFS -- Soluzione Cilena</strong> -- Contiene fenolo e polietilene glicole. Conferisce flessibilità ma la presenza di PEG richiede protocollo di rimozione specifico prima di procedere con S10.'},
-  masuko: {label:'Soluzione di Masuko', tipo:'info-primary', testo:'<strong>Soluzione di Masuko (2022)</strong> -- Soluzione innovativa a base di zuccheri osmotici. Eccellente per conservazione a lungo termine. Compatibilità con S10 riportata in letteratura; verificare specifico protocollo di rimozione residui.'},
-  fresco: {label:'Campione fresco', tipo:'info-warning', testo:'<strong>[!] Campione fresco</strong> -- Nessuna fissazione chimica. Procedere subito a disidratazione. Rischio autolisi elevato: il tempo dalla morte alla disidratazione deve essere minimizzato (max 48h a 0–4°C).'}
+  formalina10: {label:'Formalina 10%', tipo:'info-primary', testo:'<strong>Formalina 10% tampone fosfato (NBF)</strong> -- Protocollo standard per plastinazione S10. Penetrazione media, compatibile con tutti i tessuti. Risciacquo obbligatorio 2-4 gg.'},
+  formalina20: {label:'Formalina 20%', tipo:'info-warning', testo:'<strong>[!] Formalina 20%</strong> -- Concentrazione elevata: fissazione rapida ma rischio di indurimento superficiale prematuro. Usare solo per campioni molto grandi o urgenti. Risciacquo prolungato (4-6 gg).'},
+  thiel: {label:'Soluzione di Thiel', tipo:'info-warning', testo:'<strong>[!] Soluzione di Thiel</strong> -- Mantiene flessibilita tissutale. ATTENZIONE: contiene glicoli etilenico/propilenico e acido borico che interferiscono con S10. Protocollo rimozione agenti incompatibili OBBLIGATORIO prima della disidratazione. (Thiel 1992)'},
+  sss: {label:'SSS', tipo:'info-primary', testo:'<strong>SSS (Salt-Saturated Solution)</strong> -- Fissazione con NaCl saturo + formaldeide. Ottimale per lunga conservazione pre-plastinazione. Compatibile con S10 dopo risciacquo 3-5 gg.'},
+  ccfs: {label:'CCFS', tipo:'info-warning', testo:'<strong>[!] CCFS -- Soluzione Cilena</strong> -- Contiene fenolo e polietilene glicole. Conferisce flessibilita ma la presenza di PEG richiede protocollo di rimozione specifico prima di procedere con S10.'},
+  masuko: {label:'Soluzione di Masuko', tipo:'info-primary', testo:'<strong>Soluzione di Masuko (2022)</strong> -- Soluzione innovativa a base di zuccheri osmotici. Eccellente per conservazione a lungo termine. Compatibilita con S10 riportata in letteratura; verificare specifico protocollo di rimozione residui.'},
+  fresco: {label:'Campione fresco', tipo:'info-warning', testo:'<strong>[!] Campione fresco</strong> -- Nessuna fissazione chimica. Procedere subito a disidratazione. Rischio autolisi elevato: il tempo dalla morte alla disidratazione deve essere minimizzato (max 48h a 0-4degC).'}
 };
 
 function updateFissativoInfo() {
@@ -1667,9 +1667,9 @@ function updateF03TecnicaInfo() {
     etanolo: 'info-warning'
   };
   const testi = {
-    freddo: '<strong>Acetone a –25°C (freeze substitution)</strong> -- Tecnica standard per S10. La bassa temperatura rallenta l\'autolisi e garantisce disidratazione graduale senza collasso tissutale. Tipicamente 3–6 cambi in 3–8 settimane per campioni grandi.',
-    ambiente: '<strong>[!] Acetone a T.A.</strong> -- Valido per campioni di piccole dimensioni. Tempi ridotti (1–3 settimane) ma rischio di restringimento tissutale maggiore. Monitorare quotidianamente.',
-    etanolo: '<strong>[!] Etanolo (non standard per S10)</strong> -- Non raccomandato per protocollo S10 standard. L\'etanolo forma esteri con i siliconi, riducendo la qualità dell\'impregnazione. Usare solo con protocolli specifici validati.'
+    freddo: '<strong>Acetone a -25degC (freeze substitution)</strong> -- Tecnica standard per S10. La bassa temperatura rallenta l\'autolisi e garantisce disidratazione graduale senza collasso tissutale. Tipicamente 3-6 cambi in 3-8 settimane per campioni grandi.',
+    ambiente: '<strong>[!] Acetone a T.A.</strong> -- Valido per campioni di piccole dimensioni. Tempi ridotti (1-3 settimane) ma rischio di restringimento tissutale maggiore. Monitorare quotidianamente.',
+    etanolo: '<strong>[!] Etanolo (non standard per S10)</strong> -- Non raccomandato per protocollo S10 standard. L\'etanolo forma esteri con i siliconi, riducendo la qualita dell\'impregnazione. Usare solo con protocolli specifici validati.'
   };
   box.className = `info-box ${info[val]||'info-primary'} mt-4`;
   box.innerHTML = testi[val]||'';
@@ -1694,7 +1694,7 @@ async function addAcetoneEntry() {
   const note = document.getElementById('f03_ac_note')?.value;
   if (!data||isNaN(pur)) { alert('Inserire data e purezza.'); return; }
   let purClass = 'purity-ok'; let purLabel = '[OK] Ottima';
-  if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa -- cambiare!'; }
+  if (pur < 99) { purClass='purity-crit'; purLabel='[NO] Bassa -- cambiare!'; }
   else if (pur < 99.5) { purClass='purity-warn'; purLabel='[!] Pianificare cambio'; }
   const acItem = {data,num,pur,temp,azione,note,_ts:Date.now()};
   const acRef = await db.collection('acetoneLog').add(acItem);
@@ -1709,9 +1709,9 @@ function updateDefattingInfo() {
   const box = document.getElementById('defattingInfoBox');
   if (!box) return;
   const t = {
-    acetone_ta: {c:'info-primary', t:'<strong>Acetone a T.A.</strong> -- Metodo più sicuro. Agitare quotidianamente. Il colore del solvente (giallo intenso = ricco di grassi) indica la necessità di cambio. Tipicamente 2–5 cambi.'},
+    acetone_ta: {c:'info-primary', t:'<strong>Acetone a T.A.</strong> -- Metodo piu sicuro. Agitare quotidianamente. Il colore del solvente (giallo intenso = ricco di grassi) indica la necessita di cambio. Tipicamente 2-5 cambi.'},
     mecl: {c:'info-critical', t:'<strong>[!][!] Diclorometano (DCM/MeCl) -- SOLO SOTTO CAPPA ASPIRANTE</strong> -- Potente sgrassante. Cancerogeno sospetto. DPI completi: mascherina FP3, guanti spessi, camice impermeabile. Non usare senza cappa chimica funzionante. Smaltimento come rifiuto speciale.'},
-    nessuno: {c:'info-primary', t:'<strong>Nessun sgrassaggio aggiuntivo</strong> -- Adatto per SNC, organi poco adiposi, campioni pediatrici. La fase 03 acetone è sufficiente.'}
+    nessuno: {c:'info-primary', t:'<strong>Nessun sgrassaggio aggiuntivo</strong> -- Adatto per SNC, organi poco adiposi, campioni pediatrici. La fase 03 acetone e sufficiente.'}
   };
   const d = t[val]; if (!d) return;
   box.className = `info-box ${d.c} mb-4`;
@@ -1743,8 +1743,8 @@ function updateF04TecnicaInfo() {
   const box = document.getElementById('f04TecnicaInfo');
   if (!box) return;
   const t = {
-    freddo: {c:'info-primary', t:'<strong>S10 Cold (–15°C)</strong> -- Standard de Jong & Henry. Penetrazione lenta e uniforme. Durata 3–5 settimane per campioni grandi. Viscosità ottimale a bassa temperatura.'},
-    ambiente: {c:'info-warning', t:'<strong>[!] S10 T.A. (20–22°C)</strong> -- Tempi ridotti (7–14 giorni). Rischio di penetrazione non uniforme in campioni grandi. Indicato per campioni piccoli o tessuti molli.'},
+    freddo: {c:'info-primary', t:'<strong>S10 Cold (-15degC)</strong> -- Standard de Jong & Henry. Penetrazione lenta e uniforme. Durata 3-5 settimane per campioni grandi. Viscosita ottimale a bassa temperatura.'},
+    ambiente: {c:'info-warning', t:'<strong>[!] S10 T.A. (20-22degC)</strong> -- Tempi ridotti (7-14 giorni). Rischio di penetrazione non uniforme in campioni grandi. Indicato per campioni piccoli o tessuti molli.'},
     s6: {c:'info-primary', t:'<strong>S10/S6 T.A.</strong> -- Aggiunta di catalizzatore S6 alla miscela S10. Accelera notevolmente il curing. Riduce i tempi complessivi. Richiede esperienza operativa.'}
   };
   const d = t[val]; if (!d) return;
@@ -1776,8 +1776,8 @@ function updateF05MetodoInfo() {
   const box = document.getElementById('f05MetodoInfo');
   if (!box) return;
   const t = {
-    fast: {c:'info-primary', t:'<strong>Fast Cure (gas S6)</strong> -- Esposizione a vapori di S6 in camera chiusa. Cicli tipici: 24–48h per ciclo, fino a 3–5 cicli. Risultato uniforme su piccoli e medi campioni. [!] Sicurezza: solo sotto cappa o in camera ventilata.'},
-    slow: {c:'info-primary', t:'<strong>Slow Cure</strong> -- Polimerizzazione progressiva per esposizione all\'aria con strati settimanali di S6 pennellato. 4–8 settimane. Ottimale per campioni grandi. Riduce stress meccanico superficiale.'},
+    fast: {c:'info-primary', t:'<strong>Fast Cure (gas S6)</strong> -- Esposizione a vapori di S6 in camera chiusa. Cicli tipici: 24-48h per ciclo, fino a 3-5 cicli. Risultato uniforme su piccoli e medi campioni. [!] Sicurezza: solo sotto cappa o in camera ventilata.'},
+    slow: {c:'info-primary', t:'<strong>Slow Cure</strong> -- Polimerizzazione progressiva per esposizione all\'aria con strati settimanali di S6 pennellato. 4-8 settimane. Ottimale per campioni grandi. Riduce stress meccanico superficiale.'},
     uv: {c:'info-warning', t:'<strong>[!] UV Cure</strong> -- Utilizzato con resine fotopolimerizzabili (variante non standard S10). Richede lampada UV specifica. Tempi brevi (ore) ma applicazione limitata a strati superficiali.'}
   };
   const d = t[val]; if (!d) return;
@@ -1822,12 +1822,12 @@ async function addSlowCureEntry() {
 // FASE 06 -- CQ PARAMS
 // ============================================================
 const cqParams = [
-  {id:'integrità', label:'Integrità strutturale', desc:'Assenza di lacerazioni, fratture, distacchi tissutali'},
-  {id:'curing', label:'Qualità del curing', desc:'Durezza uniforme, assenza di zone molli o tacky'},
+  {id:'integrita', label:'Integrita strutturale', desc:'Assenza di lacerazioni, fratture, distacchi tissutali'},
+  {id:'curing', label:'Qualita del curing', desc:'Durezza uniforme, assenza di zone molli o tacky'},
   {id:'colore', label:'Colore e aspetto', desc:'Colorazione naturale o uniforme, assenza di macchie'},
   {id:'odore', label:'Assenza di odori anomali', desc:'No acetone residuo, no S6 non polimerizzato'},
   {id:'dettaglio', label:'Dettaglio anatomico', desc:'Strutture anatomiche di interesse visibili e riconoscibili'},
-  {id:'estetica', label:'Qualità estetica', desc:'Superficie liscia, assenza di bolle o difetti superficiali'},
+  {id:'estetica', label:'Qualita estetica', desc:'Superficie liscia, assenza di bolle o difetti superficiali'},
   {id:'posizione', label:'Posizionamento anatomico', desc:'Il campione mantiene la posizione anatomica prevista'},
 ];
 
@@ -1928,9 +1928,9 @@ async function closePhase(num) {
   phaseLocks[num] = {operator: opSel.value, date: now.toISOString()};
 
   const faseMap = {
-    '01':'02 – Fissazione','02':'03 – Disidratazione/Defatting',
-    '03':'04 – Impregnazione S10','04':'05 – Curing',
-    '05':'06 – Controllo Qualità','06':'07 – Archiviato','07':'[OK] Completato'
+    '01':'02 - Fissazione','02':'03 - Disidratazione/Defatting',
+    '03':'04 - Impregnazione S10','04':'05 - Curing',
+    '05':'06 - Controllo Qualita','06':'07 - Archiviato','07':'[OK] Completato'
   };
 
   if (num === '01') {
@@ -1942,7 +1942,7 @@ async function closePhase(num) {
     const dest = document.getElementById('f01_destinazione')?.value;
     const newSample = {
       codice:codice||'N/D', specie:specie||'N/D', distretto:distretto||'N/D',
-      peso:peso||'--', dest:dest||'--', fase:'02 – Fissazione',
+      peso:peso||'--', dest:dest||'--', fase:'02 - Fissazione',
       operator:opSel.value, date:now.toISOString().slice(0,10),
       phaseLocks:{}, phaseData:{}, _ts:Date.now()
     };
@@ -1980,9 +1980,9 @@ async function closePhase(num) {
 function refreshDashboard() {
   const kpiGrid = document.getElementById('kpiGrid');
   const inLav = samples.filter(s => !phaseLocks['07'] || !inventory.find(i => i.codice === s.codice));
-  const inFiss = samples.filter(s => s.fase === 'Fase 02 – Fissazione' || s.fase === '02');
-  const inDisid = samples.filter(s => s.fase === 'Fase 03 – Disidratazione' || s.fase === '03');
-  const inImpregn = samples.filter(s => s.fase === 'Fase 04 – Impregnazione' || s.fase === '04');
+  const inFiss = samples.filter(s => s.fase === 'Fase 02 - Fissazione' || s.fase === '02');
+  const inDisid = samples.filter(s => s.fase === 'Fase 03 - Disidratazione' || s.fase === '03');
+  const inImpregn = samples.filter(s => s.fase === 'Fase 04 - Impregnazione' || s.fase === '04');
   const archiviati = inventory.length;
 
   kpiGrid.innerHTML = `
@@ -2164,7 +2164,7 @@ function exportLogbook() {
     `\nFASI CHIUSE:`,
     ...Object.entries(phaseLocks).map(([fase,data]) => `  - Fase ${fase}: ${data.operator} -- ${new Date(data.date).toLocaleString('it-IT')}`),
     `\nCONTROLLI ACETONE (${acetoneLog.length}):`,
-    ...acetoneLog.map(r => `  - Bagno ${r.num} | ${r.data} | Purezza: ${r.pur}% | T: ${r.temp}°C | ${r.azione}`),
+    ...acetoneLog.map(r => `  - Bagno ${r.num} | ${r.data} | Purezza: ${r.pur}% | T: ${r.temp}degC | ${r.azione}`),
     `\nCURVA DI PRESSIONE (${pressureLog.length}):`,
     ...pressureLog.map(r => `  - Giorno ${r.giorno} | ${r.data} | ${r.pres} cmHg | Bolle: ${r.bolle}`),
     `\nINVENTARIO PREPARATI (${inventory.length}):`,
@@ -2236,12 +2236,12 @@ function openKpiModal(type) {
       if (!keys.length) { html = '<p class="text-muted">Nessuna rilevazione registrata.</p>'; break; }
       const tabs = keys.map((k,i) => `<button class="kpi-tab ${i===0?'active':''}" onclick="kpiSwitchTab(this,'aclog-${i}')">${k} (${bySample[k].length})</button>`).join('');
       const panels = keys.map((k,i) => `<div id="aclog-${i}" class="kpi-tab-panel ${i===0?'active':''}">`+
-        `<div class="kpi-log-row r-acetone" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Bagno N°</span><span>Purezza</span><span>Temp.</span><span>Operatore</span><span>Azione</span></div>`+
+        `<div class="kpi-log-row r-acetone" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Bagno Ndeg</span><span>Purezza</span><span>Temp.</span><span>Operatore</span><span>Azione</span></div>`+
         bySample[k].map(r => `<div class="kpi-log-row r-acetone">
           <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'--'} ${r.ora||''}</div></div>
-          <div><div class="kpi-lbl">Bagno N°</div><div class="kpi-val">${r.num||'--'}</div></div>
+          <div><div class="kpi-lbl">Bagno Ndeg</div><div class="kpi-val">${r.num||'--'}</div></div>
           <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'--'}%</div></div>
-          <div><div class="kpi-lbl">Temperatura</div><div class="kpi-val">${r.temp||'--'}°C</div></div>
+          <div><div class="kpi-lbl">Temperatura</div><div class="kpi-val">${r.temp||'--'}degC</div></div>
           <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'--'}</div></div>
           <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'--'}</div></div>
         </div>`).join('') +
@@ -2317,7 +2317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loadDiv = document.createElement('div');
   loadDiv.id = 'fbLoadOverlay';
   loadDiv.style.cssText = 'position:fixed;inset:0;background:var(--color-bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
-  loadDiv.innerHTML = '<div style="font-size:2rem">[LAB]</div><div style="font-size:1.1rem;font-weight:600;color:var(--color-text)">PlastinaLab</div><div style="font-size:.9rem;color:var(--color-text-muted)">Connessione al database in corso…</div><div class="skeleton" style="width:200px;height:6px;border-radius:99px;margin-top:8px"></div>';
+  loadDiv.innerHTML = '<div style="font-size:2rem">[LAB]</div><div style="font-size:1.1rem;font-weight:600;color:var(--color-text)">PlastinaLab</div><div style="font-size:.9rem;color:var(--color-text-muted)">Connessione al database in corso...</div><div class="skeleton" style="width:200px;height:6px;border-radius:99px;margin-top:8px"></div>';
   document.body.appendChild(loadDiv);
 
   try {
@@ -2435,13 +2435,13 @@ function openActionModal(type, dataset, index, editFields) {
 
   if (type === 'delete') {
     titleEl.textContent = '[DEL] Eliminazione record';
-    descEl.textContent = 'Stai per eliminare definitivamente questo record dal logbook. L\'operazione verrà tracciata nell\'audit log.';
+    descEl.textContent = 'Stai per eliminare definitivamente questo record dal logbook. L\'operazione verra tracciata nell\'audit log.';
     editForm.style.display = 'none';
     confirmBtn.style.background = 'var(--color-error)';
     confirmBtn.textContent = 'Elimina definitivamente';
   } else {
-    titleEl.textContent = '✏️ Modifica record';
-    descEl.textContent = 'Modifica i campi desiderati. La versione originale verrà conservata nell\'audit log.';
+    titleEl.textContent = '[EDIT] Modifica record';
+    descEl.textContent = 'Modifica i campi desiderati. La versione originale verra conservata nell\'audit log.';
     confirmBtn.style.background = '';
     confirmBtn.textContent = 'Salva modifica';
     // Build edit form
@@ -2549,7 +2549,7 @@ function openAuditLog() {
         <td><span class="code">${e.id}</span></td>
         <td style="font-size:var(--text-xs)">${new Date(e.timestamp).toLocaleString('it-IT')}</td>
         <td>${e.operator}</td>
-        <td><span class="badge ${e.type==='delete'?'badge-orange':'badge-teal'}">${e.type==='delete'?'[DEL] Eliminazione':'✏️ Modifica'}</span></td>
+        <td><span class="badge ${e.type==='delete'?'badge-orange':'badge-teal'}">${e.type==='delete'?'[DEL] Eliminazione':'[EDIT] Modifica'}</span></td>
         <td>${e.dataset}</td>
         <td>${e.motiv}</td>
       </tr>`).join('') +
@@ -2576,17 +2576,17 @@ function renderAcetoneRows() {
   if (!acetoneLog.length) { container.innerHTML = ''; return; }
   container.innerHTML = acetoneLog.map((r,i) => {
     let purClass='purity-ok',purLabel='[OK] Ottima';
-    if(r.pur<99){purClass='purity-crit';purLabel='❌ Bassa';}
+    if(r.pur<99){purClass='purity-crit';purLabel='[NO] Bassa';}
     else if(r.pur<99.5){purClass='purity-warn';purLabel='[!] Pianificare';}
     return `<div class="acetone-row" style="grid-template-columns:80px 100px 160px 120px 1fr 90px 80px">
       <strong style="font-family:monospace">Bagno #${r.num}</strong>
       <span>${r.data}</span>
       <span class="${purClass}">${r.pur}%<br><small>${purLabel}</small></span>
-      <span>${r.temp}°C</span>
+      <span>${r.temp}degC</span>
       <span>${r.note||'--'}</span>
       <span class="badge badge-teal" style="font-size:10px">${r.azione}</span>
       <span style="display:flex;gap:4px">
-        <button class="btn btn-sm btn-ghost" title="Modifica" onclick="editAcetone(${i})">✏️</button>
+        <button class="btn btn-sm btn-ghost" title="Modifica" onclick="editAcetone(${i})">[EDIT]</button>
         <button class="btn btn-sm btn-ghost" title="Elimina" style="color:var(--color-error)" onclick="deleteAcetone(${i})">[DEL]</button>
       </span>
     </div>`;
@@ -2597,9 +2597,9 @@ function editAcetone(i) {
   const r = acetoneLog[i];
   openActionModal('edit','acetone',i,[
     {key:'data',label:'Data',type:'date',value:r.data},
-    {key:'num',label:'N° bagno',type:'number',value:r.num},
+    {key:'num',label:'Ndeg bagno',type:'number',value:r.num},
     {key:'pur',label:'Purezza (%)',type:'number',value:r.pur},
-    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'temp',label:'Temperatura (degC)',type:'number',value:r.temp},
     {key:'azione',label:'Azione',type:'select',value:r.azione,options:['mantenuto','agitato','cambiato','completato']},
     {key:'note',label:'Note',type:'text',value:r.note}
   ]);
@@ -2609,13 +2609,13 @@ function deleteAcetone(i) { openActionModal('delete','acetone',i,[]); }
 function renderPressureRows() {
   const container = document.getElementById('f04PressureRows');
   if (!container) return;
-  const bolleLabel = {none:'[GREEN] Nessuna',rare:'[YELLOW] Sporadiche',moderate:'[ORANGE] Moderate',intense:'[RED] Continue',aria:'⚪ Solo aria'};
+  const bolleLabel = {none:'[GREEN] Nessuna',rare:'[YELLOW] Sporadiche',moderate:'[ORANGE] Moderate',intense:'[RED] Continue',aria:'[CIRCLE] Solo aria'};
   container.innerHTML = pressureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 120px 1fr 80px">
     <strong>Giorno ${r.giorno}</strong><span>${r.data}</span>
     <span><strong>${r.pres} cmHg</strong></span>
     <span>${bolleLabel[r.bolle]||r.bolle} -- ${r.note||'--'}</span>
     <span style="display:flex;gap:4px">
-      <button class="btn btn-sm btn-ghost" onclick="editPressure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" onclick="editPressure(${i})">[EDIT]</button>
       <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deletePressure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
@@ -2635,13 +2635,13 @@ function deletePressure(i) { openActionModal('delete','pressure',i,[]); }
 function renderFastCureRows() {
   const container = document.getElementById('f05FastCureRows');
   if (!container) return;
-  const risLabel = {parziale:'⏳ Parziale', completo:'[OK] Completo', insufficiente:'❌ Insuff.'};
+  const risLabel = {parziale:'[WAIT] Parziale', completo:'[OK] Completo', insufficiente:'[NO] Insuff.'};
   container.innerHTML = fastCureLog.map((r,i) => `<div class="fast-cure-row" style="grid-template-columns:60px 100px 60px 60px 60px 1fr 80px 80px">
     <strong>#${r.ciclo}</strong><span>${r.data}</span><span>${r.durata}h</span>
-    <span>${r.temp}°C</span><span>${r.vol||'--'} mL</span><span>${r.note||'--'}</span>
+    <span>${r.temp}degC</span><span>${r.vol||'--'} mL</span><span>${r.note||'--'}</span>
     <span class="badge ${r.ris==='completo'?'badge-green':r.ris==='insufficiente'?'badge-orange':'badge-gray'}">${risLabel[r.ris]||r.ris}</span>
     <span style="display:flex;gap:4px">
-      <button class="btn btn-sm btn-ghost" onclick="editFastCure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" onclick="editFastCure(${i})">[EDIT]</button>
       <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteFastCure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
@@ -2650,9 +2650,9 @@ function editFastCure(i) {
   const r = fastCureLog[i];
   openActionModal('edit','fastcure',i,[
     {key:'data',label:'Data',type:'date',value:r.data},
-    {key:'ciclo',label:'N° ciclo',type:'number',value:r.ciclo},
+    {key:'ciclo',label:'Ndeg ciclo',type:'number',value:r.ciclo},
     {key:'durata',label:'Durata (ore)',type:'number',value:r.durata},
-    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'temp',label:'Temperatura (degC)',type:'number',value:r.temp},
     {key:'vol',label:'Volume S6 (mL)',type:'number',value:r.vol},
     {key:'ris',label:'Risultato',type:'select',value:r.ris,options:['parziale','completo','insufficiente']},
     {key:'note',label:'Note',type:'text',value:r.note}
@@ -2665,10 +2665,10 @@ function renderSlowCureRows() {
   if (!container) return;
   container.innerHTML = slowCureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 160px 1fr 80px">
     <strong>Sett. ${r.sett}</strong><span>${r.data}</span>
-    <span>${r.temp}°C / S6: ${r.strato==='si'?'[OK]':'--'}</span>
+    <span>${r.temp}degC / S6: ${r.strato==='si'?'[OK]':'--'}</span>
     <span>${r.note||'--'}</span>
     <span style="display:flex;gap:4px">
-      <button class="btn btn-sm btn-ghost" onclick="editSlowCure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" onclick="editSlowCure(${i})">[EDIT]</button>
       <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteSlowCure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
@@ -2678,7 +2678,7 @@ function editSlowCure(i) {
   openActionModal('edit','slowcure',i,[
     {key:'sett',label:'Settimana',type:'number',value:r.sett},
     {key:'data',label:'Data',type:'date',value:r.data},
-    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'temp',label:'Temperatura (degC)',type:'number',value:r.temp},
     {key:'strato',label:'Strato S6',type:'select',value:r.strato,options:['si','no']},
     {key:'note',label:'Note',type:'text',value:r.note}
   ]);
@@ -2693,7 +2693,7 @@ function renderMovRows() {
     <span>${r.dest||'--'}</span><span>${r.resp||'--'}</span>
     <span class="badge ${r.stato==='Ottimo'?'badge-green':r.stato==='Danneggiato'?'badge-orange':'badge-teal'}">${r.stato}</span>
     <span style="display:flex;gap:4px">
-      <button class="btn btn-sm btn-ghost" onclick="editMovimento(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" onclick="editMovimento(${i})">[EDIT]</button>
       <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteMovimento(${i})">[DEL]</button>
     </span>
   </div>`).join('');
@@ -2719,20 +2719,20 @@ function deleteMovimento(i) { openActionModal('delete','movimenti',i,[]); }
 
 function buildSampleSelectorBar(targetFase) {
   const faseLabels = {
-    '02':'02 – Fissazione','03':'03 – Disidratazione','04':'04 – Impregnazione',
-    '05':'05 – Curing','06':'06 – Controllo Qualità','07':'07 – Archivio'
+    '02':'02 - Fissazione','03':'03 - Disidratazione','04':'04 - Impregnazione',
+    '05':'05 - Curing','06':'06 - Controllo Qualita','07':'07 - Archivio'
   };
   const eligibleFases = {
-    '02':['01 – Ricezione','02 – Fissazione'],
-    '03':['02 – Fissazione','03 – Disidratazione'],
-    '04':['03 – Disidratazione','04 – Impregnazione'],
-    '05':['04 – Impregnazione','05 – Curing'],
-    '06':['05 – Curing','06 – Controllo Qualità'],
-    '07':['06 – Controllo Qualità','07 – Archivio']
+    '02':['01 - Ricezione','02 - Fissazione'],
+    '03':['02 - Fissazione','03 - Disidratazione'],
+    '04':['03 - Disidratazione','04 - Impregnazione'],
+    '05':['04 - Impregnazione','05 - Curing'],
+    '06':['05 - Curing','06 - Controllo Qualita'],
+    '07':['06 - Controllo Qualita','07 - Archivio']
   };
   const eligible = samples.filter(s => {
     const allowed = eligibleFases[targetFase] || [];
-    return allowed.some(f => s.fase && s.fase.startsWith(f.split('–')[0].trim()));
+    return allowed.some(f => s.fase && s.fase.startsWith(f.split('-')[0].trim()));
   });
   const wrap = document.getElementById(`sampleSelector_${targetFase}`);
   if (!wrap) return;
@@ -2748,7 +2748,7 @@ function buildSampleSelectorBar(targetFase) {
       <span style="font-size:var(--text-sm);font-weight:600;color:var(--color-primary);white-space:nowrap">[LAB] Campione attivo:</span>
       <select id="activeSampleSel_${targetFase}" class="form-input" style="max-width:320px;flex:1" onchange="setActiveSample(this.value,'${targetFase}')">
         <option value="">-- Seleziona campione --</option>
-        ${samples.map((s,i) => `<option value="${i}" ${activeS && samples.indexOf(activeS)===i?'selected':''}>[${s.fase}] ${s.codice} · ${s.specie} ${s.distretto} (${s.date})</option>`).join('')}
+        ${samples.map((s,i) => `<option value="${i}" ${activeS && samples.indexOf(activeS)===i?'selected':''}>[${s.fase}] ${s.codice} . ${s.specie} ${s.distretto} (${s.date})</option>`).join('')}
       </select>
       ${activeS ? `<span style="font-size:var(--text-xs);color:var(--color-text-muted)">Operatore: ${activeS.operator}</span>` : ''}
     </div>`;
@@ -2864,7 +2864,7 @@ function refreshCompletatiTable() {
           <th>Operatore</th>
           <th>Fase attuale</th>
           <th>Collocazione</th>
-          <th>Qualità CQ</th>
+          <th>Qualita CQ</th>
           <th>Note</th>
         </tr>
       </thead>
@@ -2877,7 +2877,7 @@ function refreshCompletatiTable() {
           const qualBadge = qualita === 'A' ? 'badge-green' : qualita === 'B' ? 'badge-teal' : qualita === 'C' ? 'badge-orange' : 'badge-gray';
           return `<tr>
             <td><span class="code">${s.codice}</span></td>
-            <td>${s.specie} · ${s.distretto}${s.lato ? ' ('+s.lato+')' : ''}</td>
+            <td>${s.specie} . ${s.distretto}${s.lato ? ' ('+s.lato+')' : ''}</td>
             <td>${s.date}</td>
             <td>${s.operator}</td>
             <td><span class="badge badge-green" style="font-size:10px">${s.fase}</span></td>
@@ -2893,7 +2893,7 @@ function refreshCompletatiTable() {
 function exportCompletati() {
   const completati = getCompletatiSamples();
   if (!completati.length) { showToast('Nessun preparato completato da esportare.'); return; }
-  const headers = ['Codice','Specie','Distretto','Data ricezione','Operatore','Fase','Collocazione','Qualità CQ','Note'];
+  const headers = ['Codice','Specie','Distretto','Data ricezione','Operatore','Fase','Collocazione','Qualita CQ','Note'];
   const rows = completati.map(s => {
     const inv = inventory.find(i => i.codice === s.codice);
     return [s.codice, s.specie, s.distretto, s.date, s.operator, s.fase,
