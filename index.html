@@ -220,12 +220,12 @@ textarea.form-input{resize:vertical;min-height:80px}
 .login-title{font-family:var(--font-display);font-size:var(--text-xl)}
 .login-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
 
-/* ── KPI CARDS CLICCABILI ── */
+/* -- KPI CARDS CLICCABILI -- */
 .kpi-card{cursor:pointer;transition:box-shadow var(--transition-interactive),border-color var(--transition-interactive),transform var(--transition-interactive)}
 .kpi-card:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary);transform:translateY(-1px)}
 .kpi-hint{font-size:10px;color:var(--color-primary);margin-top:var(--space-1);opacity:.8;letter-spacing:.03em}
 
-/* ── KPI DETAIL MODAL ── */
+/* -- KPI DETAIL MODAL -- */
 .kpi-modal .modal{min-width:min(720px,95vw);max-height:85vh;overflow-y:auto}
 .kpi-modal-tabs{display:flex;gap:0;border-bottom:1px solid var(--color-border);margin-bottom:var(--space-4);overflow-x:auto}
 .kpi-tab{padding:var(--space-2) var(--space-4);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all var(--transition-interactive)}
@@ -240,7 +240,7 @@ textarea.form-input{resize:vertical;min-height:80px}
 .kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-faint);margin-bottom:1px}
 .kpi-val{color:var(--color-text);font-weight:500}
 
-/* ── DASHBOARD MINI LOG TABLES ── */
+/* -- DASHBOARD MINI LOG TABLES -- */
 .dash-log-section{margin-top:var(--space-6)}
 .dash-log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);gap:var(--space-4)}
 .dash-log-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text)}
@@ -265,7 +265,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ── Firestore helpers ──────────────────────────────────────────
+// -- Firestore helpers ------------------------------------------
 async function fsSet(col, docId, data) {
   await db.collection(col).doc(docId).set(data, {merge:true});
 }
@@ -281,7 +281,7 @@ async function fsGetAll(col) {
   return snap.docs.map(d=>({_fsId:d.id,...d.data()}));
 }
 
-// ── Persist full in-memory array to Firestore ──────────────────
+// -- Persist full in-memory array to Firestore ------------------
 // We store each array element as a separate document using a stable docId
 async function syncArrayToFS(col, arr) {
   // Get existing docs
@@ -295,7 +295,7 @@ async function syncArrayToFS(col, arr) {
   await batch.commit();
 }
 
-// ── Save single append ─────────────────────────────────────────
+// -- Save single append -----------------------------------------
 async function appendToFS(col, data, arr) {
   const ts = Date.now();
   const ref = await db.collection(col).add({...data, _ts: ts});
@@ -303,14 +303,14 @@ async function appendToFS(col, data, arr) {
   arr.push(data);
 }
 
-// ── Delete by index (uses _fsId) ───────────────────────────────
+// -- Delete by index (uses _fsId) -------------------------------
 async function deleteFromFS(col, arr, index) {
   const item = arr[index];
   if (item && item._fsId) await db.collection(col).doc(item._fsId).delete();
   arr.splice(index, 1);
 }
 
-// ── Update by index ────────────────────────────────────────────
+// -- Update by index --------------------------------------------
 async function updateInFS(col, arr, index, changes) {
   Object.assign(arr[index], changes);
   const item = arr[index];
@@ -358,7 +358,7 @@ async function updateInFS(col, arr, index, changes) {
         <div class="logo-icon">P</div>
         <div>
           <div class="logo-text">PlastinaLab</div>
-          <div class="logo-version">v4.0 — S10 completo</div>
+          <div class="logo-version">v4.0 -- S10 completo</div>
         </div>
       </div>
     </div>
@@ -426,7 +426,7 @@ async function updateInFS(col, arr, index, changes) {
 
     <div class="sidebar-footer">
       <div class="theme-toggle" style="cursor:pointer;padding:var(--space-2);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2)" onclick="openAuditLog()">
-        <span>📋</span><span>Registro Modifiche</span>
+        <span>[LIST]</span><span>Registro Modifiche</span>
       </div>
       <div class="theme-toggle" data-theme-toggle onclick="toggleTheme()">
         <span style="font-size:var(--text-xs)">Modalità schermo</span>
@@ -474,10 +474,10 @@ async function updateInFS(col, arr, index, changes) {
     </div>
 
 
-    <!-- ===================== FASE 01 — RICEZIONE ===================== -->
+    <!-- ===================== FASE 01 -- RICEZIONE ===================== -->
     <div id="view-fase01" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">01</span>Ricezione Campione Anatomico</div><div class="topbar-subtitle">Doc. Operativo N. 1 — Accettazione, codifica e pre-fissazione</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">01</span>Ricezione Campione Anatomico</div><div class="topbar-subtitle">Doc. Operativo N. 1 -- Accettazione, codifica e pre-fissazione</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -492,7 +492,7 @@ async function updateInFS(col, arr, index, changes) {
           <div class="card mb-6">
             <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Checklist DPI pre-sessione</span></div>
             <div class="card-body">
-              <div id="dpi01Alert" class="alert alert-critical mb-4" style="display:none"><strong>⚠ DPI critici non completati.</strong> Non procedere senza aver indossato tutti i DPI obbligatori.</div>
+              <div id="dpi01Alert" class="alert alert-critical mb-4" style="display:none"><strong>[!] DPI critici non completati.</strong> Non procedere senza aver indossato tutti i DPI obbligatori.</div>
               <div class="progress-header"><span id="dpi01Label" class="text-sm text-muted">0 / 7 completati</span><div class="progress-bar-wrap"><div id="dpi01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
               <div class="checklist-item critical" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Guanti in nitrile monouso indossati</span><span class="check-badge badge-critical">CRITICO</span></div>
               <div class="checklist-item critical" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Occhiali a mascherina o visiera indossati</span><span class="check-badge badge-critical">CRITICO</span></div>
@@ -503,7 +503,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item" data-list="dpi01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Contenitori per rifiuti biologici disponibili e etichettati</span><span class="check-badge badge-standard">STANDARD</span></div>
             </div>
           </div>
-          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">Avanti → Scheda campione ›</button></div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">Avanti -> Scheda campione ›</button></div>
         </div>
 
         <div id="f01-step2" class="step-content">
@@ -513,8 +513,8 @@ async function updateInFS(col, arr, index, changes) {
               <div class="form-grid mb-4">
                 <div class="form-group"><label class="form-label">Codice campione (auto)</label><div style="display:flex;gap:var(--space-2)"><input type="text" class="form-input" id="f01_codice" placeholder="PL-S10-…" readonly style="flex:1"><button class="btn btn-ghost btn-sm" onclick="generateCode01()">⟳</button></div></div>
                 <div class="form-group"><label class="form-label">Data/ora ricezione</label><input type="datetime-local" class="form-input" id="f01_data"></div>
-                <div class="form-group"><label class="form-label">Specie</label><select class="form-input" id="f01_specie" onchange="generateCode01()"><option value="">—</option><option value="Homo sapiens">Homo sapiens</option><option value="Canis lupus familiaris">Cane</option><option value="Felis catus">Gatto</option><option value="Equus caballus">Cavallo</option><option value="Sus scrofa">Maiale</option><option value="Ovis aries">Pecora</option><option value="Bos taurus">Bovino</option><option value="Altra specie">Altra specie</option></select></div>
-                <div class="form-group"><label class="form-label">Distretto anatomico</label><select class="form-input" id="f01_distretto" onchange="generateCode01()"><option value="">—</option><option value="Arto superiore">Arto superiore</option><option value="Arto inferiore">Arto inferiore</option><option value="Testa">Testa</option><option value="Collo">Collo</option><option value="Torace">Torace</option><option value="Addome">Addome</option><option value="Pelvi">Pelvi</option><option value="Encefalo">Encefalo</option><option value="Cuore">Cuore</option><option value="Polmone">Polmone</option><option value="Fegato">Fegato</option><option value="Rene">Rene</option><option value="Altro organo">Altro organo</option></select></div>
+                <div class="form-group"><label class="form-label">Specie</label><select class="form-input" id="f01_specie" onchange="generateCode01()"><option value="">--</option><option value="Homo sapiens">Homo sapiens</option><option value="Canis lupus familiaris">Cane</option><option value="Felis catus">Gatto</option><option value="Equus caballus">Cavallo</option><option value="Sus scrofa">Maiale</option><option value="Ovis aries">Pecora</option><option value="Bos taurus">Bovino</option><option value="Altra specie">Altra specie</option></select></div>
+                <div class="form-group"><label class="form-label">Distretto anatomico</label><select class="form-input" id="f01_distretto" onchange="generateCode01()"><option value="">--</option><option value="Arto superiore">Arto superiore</option><option value="Arto inferiore">Arto inferiore</option><option value="Testa">Testa</option><option value="Collo">Collo</option><option value="Torace">Torace</option><option value="Addome">Addome</option><option value="Pelvi">Pelvi</option><option value="Encefalo">Encefalo</option><option value="Cuore">Cuore</option><option value="Polmone">Polmone</option><option value="Fegato">Fegato</option><option value="Rene">Rene</option><option value="Altro organo">Altro organo</option></select></div>
                 <div class="form-group"><label class="form-label">Lato</label><select class="form-input" id="f01_lato"><option value="ND">Non determinato</option><option value="DX">Destro</option><option value="SX">Sinistro</option><option value="Bilaterale">Bilaterale</option></select></div>
                 <div class="form-group"><label class="form-label">Sesso</label><select class="form-input" id="f01_sesso"><option value="ND">Non determinato</option><option value="M">Maschio</option><option value="F">Femmina</option></select></div>
                 <div class="form-group"><label class="form-label">Età approssimativa</label><input type="text" class="form-input" id="f01_eta" placeholder="es. adulto, ~45 anni"></div>
@@ -523,11 +523,11 @@ async function updateInFS(col, arr, index, changes) {
                 <div class="form-group"><label class="form-label">Provenienza</label><input type="text" class="form-input" id="f01_provenienza" placeholder="es. Dip. Anatomia, Clinica Veterinaria X"></div>
                 <div class="form-group"><label class="form-label">Operatore ricezione</label><input type="text" class="form-input" id="f01_operatore_rice" placeholder="Nome operatore"></div>
               </div>
-              <div id="s10Alert" class="alert alert-warning mb-4" style="display:none"><strong>🧊 ATTENZIONE S10 — NON CONGELARE</strong> Per campioni destinati alla plastinazione S10: conservare a 0–4°C. La congelazione causa danni tissutali irreversibili che comprometteranno la qualità del preparato finale. (Ottone, 2023)</div>
+              <div id="s10Alert" class="alert alert-warning mb-4" style="display:none"><strong>🧊 ATTENZIONE S10 -- NON CONGELARE</strong> Per campioni destinati alla plastinazione S10: conservare a 0–4°C. La congelazione causa danni tissutali irreversibili che comprometteranno la qualità del preparato finale. (Ottone, 2023)</div>
               <div class="form-group"><label class="form-label">Note anamnestiche / patologie note</label><textarea class="form-input" id="f01_note" rows="2" placeholder="Patologie note, trattamenti pregressi, annotazioni rilevanti…"></textarea></div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','1',document.getElementById('f01s1pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','3',document.getElementById('f01s3pill'))">Avanti → Pre-fissazione ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','1',document.getElementById('f01s1pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','3',document.getElementById('f01s3pill'))">Avanti -> Pre-fissazione ›</button></div>
         </div>
 
         <div id="f01-step3" class="step-content">
@@ -543,7 +543,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item" data-list="pref01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Registro di laboratorio aggiornato con dati di accettazione</span><span class="check-badge badge-standard">STANDARD</span></div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','4',document.getElementById('f01s4pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f01','2',document.getElementById('f01s2pill'))">‹ Indietro</button><button class="btn btn-primary" onclick="switchStep('f01','4',document.getElementById('f01s4pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f01-step4" class="step-content">
@@ -555,7 +555,7 @@ async function updateInFS(col, arr, index, changes) {
                   <p class="text-sm text-muted mb-3">Selezionare l'operatore che ha eseguito la ricezione:</p>
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign01Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('01')">✓ Chiudi Fase 01</button>
+                    <button class="btn btn-primary" onclick="closePhase('01')">OK Chiudi Fase 01</button>
                   </div>
                   <div id="sign01Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -570,10 +570,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 02 — FISSAZIONE ===================== -->
+    <!-- ===================== FASE 02 -- FISSAZIONE ===================== -->
     <div id="view-fase02" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-error-highlight);color:var(--color-error);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">02</span>Fissazione</div><div class="topbar-subtitle">Doc. Operativo N. 1 — Protocollo vascolare e conservazione chimica</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-error-highlight);color:var(--color-error);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">02</span>Fissazione</div><div class="topbar-subtitle">Doc. Operativo N. 1 -- Protocollo vascolare e conservazione chimica</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -613,7 +613,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="form-grid mb-4">
                 <div class="form-group"><label class="form-label">Tipo di fissativo</label>
                   <select class="form-input" id="f02_fissativo" onchange="updateFissativoInfo()">
-                    <option value="">— Selezionare —</option>
+                    <option value="">-- Selezionare --</option>
                     <option value="formalina5">Formalina 5%</option>
                     <option value="formalina10">Formalina 10%</option>
                     <option value="formalina20">Formalina 20%</option>
@@ -624,14 +624,14 @@ async function updateInFS(col, arr, index, changes) {
                     <option value="fresco">Campione fresco (nessuna fissazione)</option>
                   </select>
                 </div>
-                <div class="form-group"><label class="form-label">Peso campione (kg) — per calcolo volume</label><input type="number" class="form-input" id="f02_peso_calc" step="0.1" placeholder="es. 2.5" oninput="calcVolumeF02()"></div>
+                <div class="form-group"><label class="form-label">Peso campione (kg) -- per calcolo volume</label><input type="number" class="form-input" id="f02_peso_calc" step="0.1" placeholder="es. 2.5" oninput="calcVolumeF02()"></div>
                 <div class="form-group"><label class="form-label">% ematica stimata</label><input type="number" class="form-input" id="f02_perc_em" value="7.5" step="0.5" oninput="calcVolumeF02()"></div>
               </div>
               <div id="fissativoInfoBox" class="info-box mb-4" style="display:none"></div>
               <div id="f02CalcResult" class="calc-result-box" style="display:none">
-                <div class="calc-item"><div class="calc-value" id="calcVemResult">—</div><div class="calc-label">Volume ematico stimato</div></div>
-                <div class="calc-item"><div class="calc-value" id="calcVfixMin">—</div><div class="calc-label">Volume fissativo min (2×)</div></div>
-                <div class="calc-item"><div class="calc-value" id="calcVfixRac">—</div><div class="calc-label">Volume fissativo rac (3×)</div></div>
+                <div class="calc-item"><div class="calc-value" id="calcVemResult">--</div><div class="calc-label">Volume ematico stimato</div></div>
+                <div class="calc-item"><div class="calc-value" id="calcVfixMin">--</div><div class="calc-label">Volume fissativo min (2×)</div></div>
+                <div class="calc-item"><div class="calc-value" id="calcVfixRac">--</div><div class="calc-label">Volume fissativo rac (3×)</div></div>
               </div>
             </div>
           </div>
@@ -663,10 +663,10 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item warning-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Bulbi oculari e orecchio interno iniettati separatamente se inclusi nel campione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
               <div class="checklist-item warning-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Rigidità articolari e resistenza tissutale valutate durante infusione</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
               <div class="checklist-item" data-list="f02inf01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Fissazione complementare SNC eseguita se encefalo/midollo inclusi (iniezione intratecale)</span><span class="check-badge badge-standard">STANDARD</span></div>
-              <div class="info-box info-critical mt-4"><strong>⚠ ALERT CRITICO — Risciacquo pre-disidratazione</strong><br>Prima di procedere alla Fase 03 (acetone): eseguire risciacquo in acqua corrente per 2–4 giorni per eliminare la formaldeide residua. La formaldeide precipita come paraformaldeide a contatto con l'acetone freddo, otturando la serpentina del freezer. (Ottone, 2023)</div>
+              <div class="info-box info-critical mt-4"><strong>[!] ALERT CRITICO -- Risciacquo pre-disidratazione</strong><br>Prima di procedere alla Fase 03 (acetone): eseguire risciacquo in acqua corrente per 2–4 giorni per eliminare la formaldeide residua. La formaldeide precipita come paraformaldeide a contatto con l'acetone freddo, otturando la serpentina del freezer. (Ottone, 2023)</div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f02','3',document.getElementById('f02s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f02','5',document.getElementById('f02s5pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f02','3',document.getElementById('f02s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f02','5',document.getElementById('f02s5pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f02-step5" class="step-content">
@@ -678,7 +678,7 @@ async function updateInFS(col, arr, index, changes) {
                   <p class="text-sm text-muted mb-3">Selezionare l'operatore che ha eseguito la fissazione:</p>
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign02Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('02')">✓ Chiudi Fase 02</button>
+                    <button class="btn btn-primary" onclick="closePhase('02')">OK Chiudi Fase 02</button>
                   </div>
                   <div id="sign02Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -693,10 +693,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 03 — DISIDRATAZIONE ===================== -->
+    <!-- ===================== FASE 03 -- DISIDRATAZIONE ===================== -->
     <div id="view-fase03" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-warning-highlight);color:var(--color-warning);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">03</span>Disidratazione e Defatting</div><div class="topbar-subtitle">Doc. Operativo N. 2 — Freeze substitution e sgrassaggio</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-warning-highlight);color:var(--color-warning);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">03</span>Disidratazione e Defatting</div><div class="topbar-subtitle">Doc. Operativo N. 2 -- Freeze substitution e sgrassaggio</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -711,7 +711,7 @@ async function updateInFS(col, arr, index, changes) {
 
 
         <div id="f03-step1" class="step-content active">
-          <div class="alert alert-warning mb-6"><strong>⚠ PREREQUISITO CRITICO — Risciacquo post-fissazione</strong> Prima di immergere il campione nell'acetone freddo, verificare che il risciacquo in acqua corrente sia stato completato (2–4 giorni). La formaldeide residua precipita come paraformaldeide a –25°C, otturando la serpentina del freezer. (Ottone, 2023)</div>
+          <div class="alert alert-warning mb-6"><strong>[!] PREREQUISITO CRITICO -- Risciacquo post-fissazione</strong> Prima di immergere il campione nell'acetone freddo, verificare che il risciacquo in acqua corrente sia stato completato (2–4 giorni). La formaldeide residua precipita come paraformaldeide a –25°C, otturando la serpentina del freezer. (Ottone, 2023)</div>
           <div class="card mb-6">
             <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Verifica prerequisiti</span></div>
             <div class="card-body">
@@ -726,7 +726,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div class="form-group"><label class="form-label">Data inizio disidratazione</label><input type="date" class="form-input" id="f03_data_inizio"></div>
                 <div class="form-group"><label class="form-label">Tecnica disidratazione</label>
                   <select class="form-input" id="f03_tecnica" onchange="updateF03TecnicaInfo()">
-                    <option value="freddo">Acetone a freddo –25°C (freeze substitution — standard S10)</option>
+                    <option value="freddo">Acetone a freddo –25°C (freeze substitution -- standard S10)</option>
                     <option value="ambiente">Acetone a temperatura ambiente</option>
                     <option value="etanolo">Etanolo (non standard)</option>
                   </select>
@@ -735,8 +735,8 @@ async function updateInFS(col, arr, index, changes) {
               </div>
               <div id="f03TecnicaInfo" class="info-box info-primary mt-4"></div>
               <div id="f03VolCalcBox" class="calc-result-box mt-4" style="display:none">
-                <div class="calc-item"><div class="calc-value" id="f03CalcAcMinimo">—</div><div class="calc-label">Acetone minimo</div></div>
-                <div class="calc-item"><div class="calc-value" id="f03CalcAcRac">—</div><div class="calc-label">Acetone raccomandato</div></div>
+                <div class="calc-item"><div class="calc-value" id="f03CalcAcMinimo">--</div><div class="calc-label">Acetone minimo</div></div>
+                <div class="calc-item"><div class="calc-value" id="f03CalcAcRac">--</div><div class="calc-label">Acetone raccomandato</div></div>
               </div>
             </div>
           </div>
@@ -760,9 +760,9 @@ async function updateInFS(col, arr, index, changes) {
 
         <div id="f03-step3" class="step-content">
           <div class="card mb-6">
-            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Logbook acetone — controlli purezza</span></div>
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Logbook acetone -- controlli purezza</span></div>
             <div class="card-body">
-              <div class="info-box info-warning mb-4"><strong>Regola operativa purezza acetone</strong> — ≥99.5%: mantenere. 99–99.4%: pianificare cambio a breve. &lt;99%: cambiare immediatamente. Cambi tipici: ogni 7–14 giorni per campioni grandi. (de Jong &amp; Henry, 2007; Dezső et al., 2020)</div>
+              <div class="info-box info-warning mb-4"><strong>Regola operativa purezza acetone</strong> -- ≥99.5%: mantenere. 99–99.4%: pianificare cambio a breve. &lt;99%: cambiare immediatamente. Cambi tipici: ogni 7–14 giorni per campioni grandi. (de Jong &amp; Henry, 2007; Dezső et al., 2020)</div>
               <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:var(--space-4)">
                 <div class="form-group"><label class="form-label">Data controllo</label><input type="date" class="form-input" id="f03_ac_data"></div>
                 <div class="form-group"><label class="form-label">N° bagno</label><input type="number" class="form-input" id="f03_ac_num" value="1" min="1"></div>
@@ -773,7 +773,7 @@ async function updateInFS(col, arr, index, changes) {
                     <option value="mantenuto">Mantenuto</option>
                     <option value="agitato">Agitato</option>
                     <option value="cambiato">Cambiato (nuovo bagno)</option>
-                    <option value="completato">Completato ✅</option>
+                    <option value="completato">Completato [OK]</option>
                   </select>
                 </div>
               </div>
@@ -787,12 +787,12 @@ async function updateInFS(col, arr, index, changes) {
 
         <div id="f03-step4" class="step-content">
           <div class="card mb-6">
-            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Defatting — sgrassaggio</span></div>
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Defatting -- sgrassaggio</span></div>
             <div class="card-body">
               <div class="form-group mb-4"><label class="form-label">Metodo di sgrassaggio</label>
                 <select class="form-input" id="f03_defatting_metodo" onchange="updateDefattingInfo()">
                   <option value="acetone_ta">Acetone a temperatura ambiente</option>
-                  <option value="mecl">Diclorometano (MeCl) — sotto cappa obbligatorio</option>
+                  <option value="mecl">Diclorometano (MeCl) -- sotto cappa obbligatorio</option>
                   <option value="nessuno">Nessun sgrassaggio aggiuntivo (campioni SNC/magri)</option>
                 </select>
               </div>
@@ -803,8 +803,8 @@ async function updateInFS(col, arr, index, changes) {
                   <div class="form-group"><label class="form-label">N° cambio</label><input type="number" class="form-input" id="f03_def_num" value="1" min="1"></div>
                   <div class="form-group"><label class="form-label">Colore solvente</label>
                     <select class="form-input" id="f03_def_colore">
-                      <option value="Trasparente ✅">Trasparente ✅</option>
-                      <option value="Giallo chiaro ⚠">Giallo chiaro ⚠</option>
+                      <option value="Trasparente [OK]">Trasparente [OK]</option>
+                      <option value="Giallo chiaro [!]">Giallo chiaro [!]</option>
                       <option value="Giallo intenso ❌">Giallo intenso ❌ (sostituire)</option>
                       <option value="Arancione ❌">Arancione ❌ (sostituire subito)</option>
                     </select>
@@ -816,7 +816,7 @@ async function updateInFS(col, arr, index, changes) {
               </div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f03','3',document.getElementById('f03s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f03','5',document.getElementById('f03s5pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f03','3',document.getElementById('f03s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f03','5',document.getElementById('f03s5pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f03-step5" class="step-content">
@@ -827,7 +827,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div id="sign03Form">
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign03Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('03')">✓ Chiudi Fase 03</button>
+                    <button class="btn btn-primary" onclick="closePhase('03')">OK Chiudi Fase 03</button>
                   </div>
                   <div id="sign03Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -840,10 +840,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 04 — IMPREGNAZIONE ===================== -->
+    <!-- ===================== FASE 04 -- IMPREGNAZIONE ===================== -->
     <div id="view-fase04" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-gold-highlight);color:var(--color-gold);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">04</span>Impregnazione Forzata S10</div><div class="topbar-subtitle">Doc. Operativo N. 3 — Camera a vuoto e curva di pressione</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-gold-highlight);color:var(--color-gold);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">04</span>Impregnazione Forzata S10</div><div class="topbar-subtitle">Doc. Operativo N. 3 -- Camera a vuoto e curva di pressione</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -872,9 +872,9 @@ async function updateInFS(col, arr, index, changes) {
                 <div class="form-group"><label class="form-label">Data inizio</label><input type="date" class="form-input" id="f04_data_inizio"></div>
                 <div class="form-group"><label class="form-label">Tecnica S10</label>
                   <select class="form-input" id="f04_tecnica" onchange="updateF04TecnicaInfo()">
-                    <option value="freddo">S10 Cold (–15°C) — standard</option>
-                    <option value="ambiente">S10 T.A. (20–22°C) — tempi ridotti</option>
-                    <option value="s6">S10/S6 T.A. — rapida penetrazione</option>
+                    <option value="freddo">S10 Cold (–15°C) -- standard</option>
+                    <option value="ambiente">S10 T.A. (20–22°C) -- tempi ridotti</option>
+                    <option value="s6">S10/S6 T.A. -- rapida penetrazione</option>
                   </select>
                 </div>
               </div>
@@ -886,9 +886,9 @@ async function updateInFS(col, arr, index, changes) {
 
         <div id="f04-step2" class="step-content">
           <div class="card mb-6">
-            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Setup Giorno 1 — avvio impregnazione</span></div>
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Setup Giorno 1 -- avvio impregnazione</span></div>
             <div class="card-body">
-              <div class="info-box info-primary mb-4"><strong>Schema riduzione graduale pressione (de Jong &amp; Henry, 2007; Ottone, 2023)</strong><br>G1: immersione a pressione atm → riposo 24h a –15°C. G2: avvio pompa → ridurre lentamente a 22 cmHg. G3: 14 cmHg. G4: 9 cmHg. G5: 6 cmHg. G6: 4 cmHg (se no bolle attive). Durata totale: 3–5 settimane.</div>
+              <div class="info-box info-primary mb-4"><strong>Schema riduzione graduale pressione (de Jong &amp; Henry, 2007; Ottone, 2023)</strong><br>G1: immersione a pressione atm -> riposo 24h a –15°C. G2: avvio pompa -> ridurre lentamente a 22 cmHg. G3: 14 cmHg. G4: 9 cmHg. G5: 6 cmHg. G6: 4 cmHg (se no bolle attive). Durata totale: 3–5 settimane.</div>
               <div class="progress-header"><span id="f04g1Label" class="text-sm text-muted">0 / 5 completati</span><div class="progress-bar-wrap"><div id="f04g1Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
               <div class="checklist-item critical" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione immerso nella miscela S10/S3, griglia di mantenimento posizionata</span><span class="check-badge badge-critical">CRITICO</span></div>
               <div class="checklist-item critical" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Camera chiusa, campione lasciato a riposo 24h a –15°C per equilibrio iniziale</span><span class="check-badge badge-critical">CRITICO</span></div>
@@ -897,7 +897,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item" data-list="f04g1" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Bolle di aria intrappolata visibili nei primi giorni (normale, NON sono bolle di acetone)</span><span class="check-badge badge-standard">STANDARD</span></div>
             </div>
           </div>
-          <div class="info-box info-critical mb-6"><strong>⚠ REGOLA OPERATIVA BOLLE — Critica per prevenire collasso tissutale</strong><br>Se le bolle &gt;1 cm salgono continuamente e scoppiano → NON ridurre ulteriormente la pressione.<br>Se le bolle sono sporadiche o assenti → ridurre molto lentamente (piccole chiusure della valvola) finché ricompaiono.<br><strong>La velocità di abbassamento della pressione è più critica della pressione finale assoluta.</strong> (de Jong &amp; Henry, 2007)</div>
+          <div class="info-box info-critical mb-6"><strong>[!] REGOLA OPERATIVA BOLLE -- Critica per prevenire collasso tissutale</strong><br>Se le bolle &gt;1 cm salgono continuamente e scoppiano -> NON ridurre ulteriormente la pressione.<br>Se le bolle sono sporadiche o assenti -> ridurre molto lentamente (piccole chiusure della valvola) finché ricompaiono.<br><strong>La velocità di abbassamento della pressione è più critica della pressione finale assoluta.</strong> (de Jong &amp; Henry, 2007)</div>
           <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','1',document.getElementById('f04s1pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','3',document.getElementById('f04s3pill'))">Avanti ›</button></div>
         </div>
 
@@ -911,10 +911,10 @@ async function updateInFS(col, arr, index, changes) {
                 <div class="form-group"><label class="form-label">Pressione (cmHg)</label><input type="number" class="form-input" id="f04_p_pressione" step="0.5" placeholder="es. 22"></div>
                 <div class="form-group"><label class="form-label">Bolle</label>
                   <select class="form-input" id="f04_p_bolle">
-                    <option value="none">🟢 Nessuna</option>
-                    <option value="rare">🟡 Sporadiche</option>
-                    <option value="moderate">🟠 Moderate</option>
-                    <option value="intense">🔴 Continue (non ridurre!)</option>
+                    <option value="none">[GREEN] Nessuna</option>
+                    <option value="rare">[YELLOW] Sporadiche</option>
+                    <option value="moderate">[ORANGE] Moderate</option>
+                    <option value="intense">[RED] Continue (non ridurre!)</option>
                     <option value="aria">⚪ Solo aria (normali G1-G2)</option>
                   </select>
                 </div>
@@ -923,7 +923,7 @@ async function updateInFS(col, arr, index, changes) {
                     <option value="ridotto">↓ Ridotta</option>
                     <option value="mantenuto">= Mantenuta</option>
                     <option value="avvio">▶ Avvio pompa</option>
-                    <option value="fine">✅ Completata</option>
+                    <option value="fine">[OK] Completata</option>
                   </select>
                 </div>
               </div>
@@ -945,10 +945,10 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item critical" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione lasciato in miscela per 24h a pressione atmosferica per equilibrio finale</span><span class="check-badge badge-critical">CRITICO</span></div>
               <div class="checklist-item warning-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Drenaggio: cestello sollevato, campione ruotato periodicamente per drenare cavità</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
               <div class="checklist-item warning-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Posizionamento anatomico definitivo verificato e corretto (sarà bloccato dal curing)</span><span class="check-badge badge-importante">IMPORTANTE</span></div>
-              <div class="checklist-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione pronto per il curing (Fase 05) — posizionamento anatomico confermato</span><span class="check-badge badge-standard">STANDARD</span></div>
+              <div class="checklist-item" data-list="f04fine01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione pronto per il curing (Fase 05) -- posizionamento anatomico confermato</span><span class="check-badge badge-standard">STANDARD</span></div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','3',document.getElementById('f04s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','5',document.getElementById('f04s5pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f04','3',document.getElementById('f04s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f04','5',document.getElementById('f04s5pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f04-step5" class="step-content">
@@ -959,7 +959,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div id="sign04Form">
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign04Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('04')">✓ Chiudi Fase 04</button>
+                    <button class="btn btn-primary" onclick="closePhase('04')">OK Chiudi Fase 04</button>
                   </div>
                   <div id="sign04Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -972,10 +972,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 05 — CURING ===================== -->
+    <!-- ===================== FASE 05 -- CURING ===================== -->
     <div id="view-fase05" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-purple-highlight);color:var(--color-purple);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">05</span>Curing S6</div><div class="topbar-subtitle">Doc. Operativo N. 4 — Polimerizzazione e indurimento del preparato</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-purple-highlight);color:var(--color-purple);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">05</span>Curing S6</div><div class="topbar-subtitle">Doc. Operativo N. 4 -- Polimerizzazione e indurimento del preparato</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -1007,7 +1007,7 @@ async function updateInFS(col, arr, index, changes) {
               <div id="f05MetodoInfo" class="info-box info-primary mb-4"></div>
               <div class="card mb-4" style="background:var(--color-surface-offset)">
                 <div class="card-body">
-                  <p class="text-sm text-muted mb-3"><strong>Posizionamento anatomico definitivo</strong> — Il posizionamento va fissato PRIMA del curing:</p>
+                  <p class="text-sm text-muted mb-3"><strong>Posizionamento anatomico definitivo</strong> -- Il posizionamento va fissato PRIMA del curing:</p>
                   <div class="progress-header"><span id="f05pos01Label" class="text-sm text-muted">0 / 4 completati</span><div class="progress-bar-wrap"><div id="f05pos01Bar" class="progress-bar" style="width:0%;background:var(--color-error)"></div></div></div>
                   <div class="checklist-item critical" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Posizione anatomica definitiva stabilita e approvata dal Responsabile di laboratorio</span><span class="check-badge badge-critical">CRITICO</span></div>
                   <div class="checklist-item critical" data-list="f05pos01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Campione fissato su supporto (perno, filo metallico, blocco) nella posizione selezionata</span><span class="check-badge badge-critical">CRITICO</span></div>
@@ -1022,9 +1022,9 @@ async function updateInFS(col, arr, index, changes) {
 
         <div id="f05-step2" class="step-content">
           <div class="card mb-6">
-            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Fast Cure — cicli S6 in camera chiusa</span></div>
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Fast Cure -- cicli S6 in camera chiusa</span></div>
             <div class="card-body">
-              <div class="info-box info-warning mb-4"><strong>⚠ Sicurezza S6</strong> — Il gas S6 (cianoacrilato/catalizzatore volatilizzato) è irritante per vie respiratorie e occhi. Operare SEMPRE sotto cappa aspirante o in camera dedicata ventilata. DPI: guanti, occhiali, mascherina FP3. Non aprire la camera durante il ciclo attivo.</div>
+              <div class="info-box info-warning mb-4"><strong>[!] Sicurezza S6</strong> -- Il gas S6 (cianoacrilato/catalizzatore volatilizzato) è irritante per vie respiratorie e occhi. Operare SEMPRE sotto cappa aspirante o in camera dedicata ventilata. DPI: guanti, occhiali, mascherina FP3. Non aprire la camera durante il ciclo attivo.</div>
               <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
                 <div class="form-group"><label class="form-label">Data ciclo</label><input type="date" class="form-input" id="f05_fc_data"></div>
                 <div class="form-group"><label class="form-label">N° ciclo</label><input type="number" class="form-input" id="f05_fc_ciclo" value="1" min="1"></div>
@@ -1034,7 +1034,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div class="form-group"><label class="form-label">Risultato</label>
                   <select class="form-input" id="f05_fc_risultato">
                     <option value="parziale">⏳ Curing parziale</option>
-                    <option value="completo">✅ Curing completo</option>
+                    <option value="completo">[OK] Curing completo</option>
                     <option value="insufficiente">❌ Insufficiente</option>
                   </select>
                 </div>
@@ -1049,7 +1049,7 @@ async function updateInFS(col, arr, index, changes) {
 
         <div id="f05-step3" class="step-content">
           <div class="card mb-6">
-            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73l.71.71M1 12h2m18 0h2M4.22 19.78l.71-.71M18.36 5.64l.71-.71"/><circle cx="12" cy="12" r="4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Slow Cure — esposizione progressiva</span></div>
+            <div class="card-header"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73l.71.71M1 12h2m18 0h2M4.22 19.78l.71-.71M18.36 5.64l.71-.71"/><circle cx="12" cy="12" r="4"/></svg><span style="font-family:var(--font-display);font-size:var(--text-lg)">Slow Cure -- esposizione progressiva</span></div>
             <div class="card-body">
               <div class="info-box info-primary mb-4"><strong>Slow cure:</strong> esposizione del campione impregnato all'aria a temperatura controllata (18–22°C), con cicli settimanali di ricopertura con strato sottile di S6 pennellato sulla superficie. Tempo tipico: 4–8 settimane. Riduce lo stress meccanico e produce superfici più omogenee rispetto al fast cure. Ottimale per campioni grandi.</div>
               <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:var(--space-4)">
@@ -1079,7 +1079,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="checklist-item" data-list="f05rif01" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Dati di curing registrati nel logbook con date inizio/fine e metodo usato</span><span class="check-badge badge-standard">STANDARD</span></div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f05','3',document.getElementById('f05s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f05','5',document.getElementById('f05s5pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f05','3',document.getElementById('f05s3pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f05','5',document.getElementById('f05s5pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f05-step5" class="step-content">
@@ -1090,7 +1090,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div id="sign05Form">
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign05Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('05')">✓ Chiudi Fase 05</button>
+                    <button class="btn btn-primary" onclick="closePhase('05')">OK Chiudi Fase 05</button>
                   </div>
                   <div id="sign05Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -1102,10 +1102,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 06 — CONTROLLO QUALITÀ ===================== -->
+    <!-- ===================== FASE 06 -- CONTROLLO QUALITÀ ===================== -->
     <div id="view-fase06" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-success-highlight);color:var(--color-success);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">06</span>Controllo Qualità</div><div class="topbar-subtitle">Doc. Operativo N. 5 — Scheda CQ e classificazione ABC</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-success-highlight);color:var(--color-success);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">06</span>Controllo Qualità</div><div class="topbar-subtitle">Doc. Operativo N. 5 -- Scheda CQ e classificazione ABC</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -1177,7 +1177,7 @@ async function updateInFS(col, arr, index, changes) {
               </div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f06','2',document.getElementById('f06s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f06','4',document.getElementById('f06s4pill'))">Avanti → Chiusura ›</button></div>
+          <div style="display:flex;justify-content:space-between"><button class="btn btn-ghost" onclick="switchStep('f06','2',document.getElementById('f06s2pill'))">‹</button><button class="btn btn-primary" onclick="switchStep('f06','4',document.getElementById('f06s4pill'))">Avanti -> Chiusura ›</button></div>
         </div>
 
         <div id="f06-step4" class="step-content">
@@ -1188,7 +1188,7 @@ async function updateInFS(col, arr, index, changes) {
                 <div id="sign06Form">
                   <div style="display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap">
                     <div class="form-group" style="flex:1;min-width:200px"><label class="form-label">Operatore</label><select class="form-input" id="sign06Operator"></select></div>
-                    <button class="btn btn-primary" onclick="closePhase('06')">✓ Chiudi Fase 06</button>
+                    <button class="btn btn-primary" onclick="closePhase('06')">OK Chiudi Fase 06</button>
                   </div>
                   <div id="sign06Error" class="alert alert-critical mt-3" style="display:none"></div>
                 </div>
@@ -1200,10 +1200,10 @@ async function updateInFS(col, arr, index, changes) {
       </div>
     </div>
 
-    <!-- ===================== FASE 07 — ARCHIVIO ===================== -->
+    <!-- ===================== FASE 07 -- ARCHIVIO ===================== -->
     <div id="view-fase07" style="display:none">
       <div class="topbar">
-        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">07</span>Archivio Preparati</div><div class="topbar-subtitle">Doc. Operativo N. 6 — Archiviazione, movimentazione e gestione inventario</div></div>
+        <div><div class="topbar-title"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--color-navy-highlight);color:var(--color-navy);font-weight:700;font-size:12px;margin-right:var(--space-2);flex-shrink:0">07</span>Archivio Preparati</div><div class="topbar-subtitle">Doc. Operativo N. 6 -- Archiviazione, movimentazione e gestione inventario</div></div>
         <div class="topbar-actions"><button class="btn btn-ghost btn-sm" onclick="exportLogbook()">↓ Esporta</button></div>
       </div>
       <div class="phase-nav">
@@ -1223,7 +1223,7 @@ async function updateInFS(col, arr, index, changes) {
               <div class="form-grid mb-4">
                 <div class="form-group"><label class="form-label">Codice preparato</label><input type="text" class="form-input" id="f07_codice" placeholder="PL-S10-…"></div>
                 <div class="form-group"><label class="form-label">Data archiviazione</label><input type="date" class="form-input" id="f07_data_arch"></div>
-                <div class="form-group"><label class="form-label">Classificazione CQ</label><select class="form-input" id="f07_classe_cq"><option value="A">Classe A — Eccellente</option><option value="B">Classe B — Buono</option><option value="C">Classe C — Non ottimale</option></select></div>
+                <div class="form-group"><label class="form-label">Classificazione CQ</label><select class="form-input" id="f07_classe_cq"><option value="A">Classe A -- Eccellente</option><option value="B">Classe B -- Buono</option><option value="C">Classe C -- Non ottimale</option></select></div>
                 <div class="form-group"><label class="form-label">Ubicazione deposito</label><input type="text" class="form-input" id="f07_ubicazione" placeholder="es. Scaffale A3, Box 12, Locale deposito"></div>
                 <div class="form-group"><label class="form-label">Supporto fisico</label><input type="text" class="form-input" id="f07_supporto" placeholder="es. perno acciaio 6mm, basetta acrilica"></div>
                 <div class="form-group"><label class="form-label">Destinazione uso</label>
@@ -1287,9 +1287,9 @@ async function updateInFS(col, arr, index, changes) {
               </div>
               <div class="form-group mb-4"><label class="form-label">Stato preparato al momento della movimentazione</label>
                 <select class="form-input" id="f07_mov_stato">
-                  <option value="Ottimo">Ottimo — nessun danno</option>
-                  <option value="Buono">Buono — piccole imperfezioni</option>
-                  <option value="Danneggiato">Danneggiato — da verificare</option>
+                  <option value="Ottimo">Ottimo -- nessun danno</option>
+                  <option value="Buono">Buono -- piccole imperfezioni</option>
+                  <option value="Danneggiato">Danneggiato -- da verificare</option>
                 </select>
               </div>
               <div class="form-group mb-4"><label class="form-label">Note</label><input type="text" class="form-input" id="f07_mov_note" placeholder="Motivazione, contatto esterno, condizioni di trasporto…"></div>
@@ -1334,7 +1334,7 @@ async function updateInFS(col, arr, index, changes) {
     <div id="view-completati" style="display:none">
       <div class="topbar">
         <div>
-          <div class="topbar-title">✅ Preparati Completati</div>
+          <div class="topbar-title">[OK] Preparati Completati</div>
           <div class="topbar-subtitle">Scheda riepilogativa di tutti i campioni che hanno completato il protocollo S10</div>
         </div>
         <div class="topbar-actions">
@@ -1355,7 +1355,7 @@ async function updateInFS(col, arr, index, changes) {
 <!-- ===================== MODALS ===================== -->
 <div class="modal-overlay" id="addOperatorModal">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">Aggiungi Operatore</div><button class="modal-close" onclick="document.getElementById('addOperatorModal').classList.remove('open')">✕</button></div>
+    <div class="modal-header"><div class="modal-title">Aggiungi Operatore</div><button class="modal-close" onclick="document.getElementById('addOperatorModal').classList.remove('open')">x</button></div>
     <div style="display:flex;flex-direction:column;gap:var(--space-4)">
       <div class="form-group"><label class="form-label">Nominativo completo</label><input type="text" class="form-input" id="opName" placeholder="Es. Mario Rossi"></div>
       <div class="form-group"><label class="form-label">Ruolo</label>
@@ -1529,7 +1529,7 @@ function updateProgress(listId) {
 function populateOperatorSelects() {
   const selects = document.querySelectorAll('select[id^="sign"],select[id^="f06_valutatore"],select[id^="f07_mov_resp"]');
   selects.forEach(sel => {
-    sel.innerHTML = '<option value="">— Seleziona operatore —</option>' +
+    sel.innerHTML = '<option value="">-- Seleziona operatore --</option>' +
       operators.map(op => `<option value="${op.name}">${op.name} (${op.role})</option>`).join('');
   });
 }
@@ -1554,7 +1554,7 @@ async function addOperator() {
   document.getElementById('addOperatorModal').classList.remove('open');
   initOperatoriTable();
   populateOperatorSelects();
-  showToast('✅ Operatore aggiunto.');
+  showToast('[OK] Operatore aggiunto.');
 }
 
 function initOperatoriTable() {
@@ -1562,7 +1562,7 @@ function initOperatoriTable() {
   if (!wrap) return;
   if (!operators.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun operatore registrato</h3><p>Aggiungere gli operatori autorizzati al laboratorio</p></div>'; return; }
   wrap.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Nominativo</th><th>Ruolo</th><th>Registrato il</th><th style="width:60px">Azioni</th></tr></thead><tbody>` +
-    operators.map((op,i) => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td><td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Rimuovi operatore" onclick="deleteOperatorPrompt(${i})">🗑</button></td></tr>`).join('') +
+    operators.map((op,i) => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td><td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Rimuovi operatore" onclick="deleteOperatorPrompt(${i})">[DEL]</button></td></tr>`).join('') +
     `</tbody></table>`;
 }
 
@@ -1576,7 +1576,7 @@ async function deleteOperatorPrompt(index) {
   operators.splice(index, 1);
   initOperatoriTable();
   populateOperatorSelects();
-  showToast('✅ Operatore rimosso dal registro.');
+  showToast('[OK] Operatore rimosso dal registro.');
 }
 
 // ============================================================
@@ -1605,7 +1605,7 @@ function setNow() {
 }
 
 // ============================================================
-// FASE 01 — DESTINAZIONE ALERT
+// FASE 01 -- DESTINAZIONE ALERT
 // ============================================================
 function checkDestinazione() {
   const val = document.getElementById('f01_destinazione')?.value;
@@ -1615,17 +1615,17 @@ function checkDestinazione() {
 setTimeout(() => checkDestinazione(), 500);
 
 // ============================================================
-// FASE 02 — FISSATIVO CALC
+// FASE 02 -- FISSATIVO CALC
 // ============================================================
 const fissativoData = {
-  formalina5: {label:'Formalina 5%', tipo:'info-primary', testo:'<strong>Formalina 5%</strong> — Fissazione lenta e delicata. Ottimale per campioni piccoli o fragili. Compatibile con S10 dopo risciacquo adeguato (2-4 gg acqua corrente). Evitare eccesso di tempo per non indurire eccessivamente.'},
-  formalina10: {label:'Formalina 10%', tipo:'info-primary', testo:'<strong>Formalina 10% tampone fosfato (NBF)</strong> — Protocollo standard per plastinazione S10. Penetrazione media, compatibile con tutti i tessuti. Risciacquo obbligatorio 2–4 gg.'},
-  formalina20: {label:'Formalina 20%', tipo:'info-warning', testo:'<strong>⚠ Formalina 20%</strong> — Concentrazione elevata: fissazione rapida ma rischio di indurimento superficiale prematuro. Usare solo per campioni molto grandi o urgenti. Risciacquo prolungato (4–6 gg).'},
-  thiel: {label:'Soluzione di Thiel', tipo:'info-warning', testo:'<strong>⚠ Soluzione di Thiel</strong> — Mantiene flessibilità tissutale. ATTENZIONE: contiene glicoli etilenico/propilenico e acido borico che interferiscono con S10. Protocollo rimozione agenti incompatibili OBBLIGATORIO prima della disidratazione. (Thiel 1992)'},
-  sss: {label:'SSS', tipo:'info-primary', testo:'<strong>SSS (Salt-Saturated Solution)</strong> — Fissazione con NaCl saturo + formaldeide. Ottimale per lunga conservazione pre-plastinazione. Compatibile con S10 dopo risciacquo 3–5 gg.'},
-  ccfs: {label:'CCFS', tipo:'info-warning', testo:'<strong>⚠ CCFS — Soluzione Cilena</strong> — Contiene fenolo e polietilene glicole. Conferisce flessibilità ma la presenza di PEG richiede protocollo di rimozione specifico prima di procedere con S10.'},
-  masuko: {label:'Soluzione di Masuko', tipo:'info-primary', testo:'<strong>Soluzione di Masuko (2022)</strong> — Soluzione innovativa a base di zuccheri osmotici. Eccellente per conservazione a lungo termine. Compatibilità con S10 riportata in letteratura; verificare specifico protocollo di rimozione residui.'},
-  fresco: {label:'Campione fresco', tipo:'info-warning', testo:'<strong>⚠ Campione fresco</strong> — Nessuna fissazione chimica. Procedere subito a disidratazione. Rischio autolisi elevato: il tempo dalla morte alla disidratazione deve essere minimizzato (max 48h a 0–4°C).'}
+  formalina5: {label:'Formalina 5%', tipo:'info-primary', testo:'<strong>Formalina 5%</strong> -- Fissazione lenta e delicata. Ottimale per campioni piccoli o fragili. Compatibile con S10 dopo risciacquo adeguato (2-4 gg acqua corrente). Evitare eccesso di tempo per non indurire eccessivamente.'},
+  formalina10: {label:'Formalina 10%', tipo:'info-primary', testo:'<strong>Formalina 10% tampone fosfato (NBF)</strong> -- Protocollo standard per plastinazione S10. Penetrazione media, compatibile con tutti i tessuti. Risciacquo obbligatorio 2–4 gg.'},
+  formalina20: {label:'Formalina 20%', tipo:'info-warning', testo:'<strong>[!] Formalina 20%</strong> -- Concentrazione elevata: fissazione rapida ma rischio di indurimento superficiale prematuro. Usare solo per campioni molto grandi o urgenti. Risciacquo prolungato (4–6 gg).'},
+  thiel: {label:'Soluzione di Thiel', tipo:'info-warning', testo:'<strong>[!] Soluzione di Thiel</strong> -- Mantiene flessibilità tissutale. ATTENZIONE: contiene glicoli etilenico/propilenico e acido borico che interferiscono con S10. Protocollo rimozione agenti incompatibili OBBLIGATORIO prima della disidratazione. (Thiel 1992)'},
+  sss: {label:'SSS', tipo:'info-primary', testo:'<strong>SSS (Salt-Saturated Solution)</strong> -- Fissazione con NaCl saturo + formaldeide. Ottimale per lunga conservazione pre-plastinazione. Compatibile con S10 dopo risciacquo 3–5 gg.'},
+  ccfs: {label:'CCFS', tipo:'info-warning', testo:'<strong>[!] CCFS -- Soluzione Cilena</strong> -- Contiene fenolo e polietilene glicole. Conferisce flessibilità ma la presenza di PEG richiede protocollo di rimozione specifico prima di procedere con S10.'},
+  masuko: {label:'Soluzione di Masuko', tipo:'info-primary', testo:'<strong>Soluzione di Masuko (2022)</strong> -- Soluzione innovativa a base di zuccheri osmotici. Eccellente per conservazione a lungo termine. Compatibilità con S10 riportata in letteratura; verificare specifico protocollo di rimozione residui.'},
+  fresco: {label:'Campione fresco', tipo:'info-warning', testo:'<strong>[!] Campione fresco</strong> -- Nessuna fissazione chimica. Procedere subito a disidratazione. Rischio autolisi elevato: il tempo dalla morte alla disidratazione deve essere minimizzato (max 48h a 0–4°C).'}
 };
 
 function updateFissativoInfo() {
@@ -1655,7 +1655,7 @@ function calcVolumeF02() {
 }
 
 // ============================================================
-// FASE 03 — TECNICA / DEFATTING / ACETONE LOG
+// FASE 03 -- TECNICA / DEFATTING / ACETONE LOG
 // ============================================================
 function updateF03TecnicaInfo() {
   const val = document.getElementById('f03_tecnica')?.value;
@@ -1667,9 +1667,9 @@ function updateF03TecnicaInfo() {
     etanolo: 'info-warning'
   };
   const testi = {
-    freddo: '<strong>Acetone a –25°C (freeze substitution)</strong> — Tecnica standard per S10. La bassa temperatura rallenta l\'autolisi e garantisce disidratazione graduale senza collasso tissutale. Tipicamente 3–6 cambi in 3–8 settimane per campioni grandi.',
-    ambiente: '<strong>⚠ Acetone a T.A.</strong> — Valido per campioni di piccole dimensioni. Tempi ridotti (1–3 settimane) ma rischio di restringimento tissutale maggiore. Monitorare quotidianamente.',
-    etanolo: '<strong>⚠ Etanolo (non standard per S10)</strong> — Non raccomandato per protocollo S10 standard. L\'etanolo forma esteri con i siliconi, riducendo la qualità dell\'impregnazione. Usare solo con protocolli specifici validati.'
+    freddo: '<strong>Acetone a –25°C (freeze substitution)</strong> -- Tecnica standard per S10. La bassa temperatura rallenta l\'autolisi e garantisce disidratazione graduale senza collasso tissutale. Tipicamente 3–6 cambi in 3–8 settimane per campioni grandi.',
+    ambiente: '<strong>[!] Acetone a T.A.</strong> -- Valido per campioni di piccole dimensioni. Tempi ridotti (1–3 settimane) ma rischio di restringimento tissutale maggiore. Monitorare quotidianamente.',
+    etanolo: '<strong>[!] Etanolo (non standard per S10)</strong> -- Non raccomandato per protocollo S10 standard. L\'etanolo forma esteri con i siliconi, riducendo la qualità dell\'impregnazione. Usare solo con protocolli specifici validati.'
   };
   box.className = `info-box ${info[val]||'info-primary'} mt-4`;
   box.innerHTML = testi[val]||'';
@@ -1693,9 +1693,9 @@ async function addAcetoneEntry() {
   const azione = document.getElementById('f03_ac_azione')?.value;
   const note = document.getElementById('f03_ac_note')?.value;
   if (!data||isNaN(pur)) { alert('Inserire data e purezza.'); return; }
-  let purClass = 'purity-ok'; let purLabel = '✅ Ottima';
-  if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa — cambiare!'; }
-  else if (pur < 99.5) { purClass='purity-warn'; purLabel='⚠ Pianificare cambio'; }
+  let purClass = 'purity-ok'; let purLabel = '[OK] Ottima';
+  if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa -- cambiare!'; }
+  else if (pur < 99.5) { purClass='purity-warn'; purLabel='[!] Pianificare cambio'; }
   const acItem = {data,num,pur,temp,azione,note,_ts:Date.now()};
   const acRef = await db.collection('acetoneLog').add(acItem);
   acItem._fsId = acRef.id;
@@ -1709,9 +1709,9 @@ function updateDefattingInfo() {
   const box = document.getElementById('defattingInfoBox');
   if (!box) return;
   const t = {
-    acetone_ta: {c:'info-primary', t:'<strong>Acetone a T.A.</strong> — Metodo più sicuro. Agitare quotidianamente. Il colore del solvente (giallo intenso = ricco di grassi) indica la necessità di cambio. Tipicamente 2–5 cambi.'},
-    mecl: {c:'info-critical', t:'<strong>⚠⚠ Diclorometano (DCM/MeCl) — SOLO SOTTO CAPPA ASPIRANTE</strong> — Potente sgrassante. Cancerogeno sospetto. DPI completi: mascherina FP3, guanti spessi, camice impermeabile. Non usare senza cappa chimica funzionante. Smaltimento come rifiuto speciale.'},
-    nessuno: {c:'info-primary', t:'<strong>Nessun sgrassaggio aggiuntivo</strong> — Adatto per SNC, organi poco adiposi, campioni pediatrici. La fase 03 acetone è sufficiente.'}
+    acetone_ta: {c:'info-primary', t:'<strong>Acetone a T.A.</strong> -- Metodo più sicuro. Agitare quotidianamente. Il colore del solvente (giallo intenso = ricco di grassi) indica la necessità di cambio. Tipicamente 2–5 cambi.'},
+    mecl: {c:'info-critical', t:'<strong>[!][!] Diclorometano (DCM/MeCl) -- SOLO SOTTO CAPPA ASPIRANTE</strong> -- Potente sgrassante. Cancerogeno sospetto. DPI completi: mascherina FP3, guanti spessi, camice impermeabile. Non usare senza cappa chimica funzionante. Smaltimento come rifiuto speciale.'},
+    nessuno: {c:'info-primary', t:'<strong>Nessun sgrassaggio aggiuntivo</strong> -- Adatto per SNC, organi poco adiposi, campioni pediatrici. La fase 03 acetone è sufficiente.'}
   };
   const d = t[val]; if (!d) return;
   box.className = `info-box ${d.c} mb-4`;
@@ -1736,16 +1736,16 @@ function addDefattingEntry() {
 }
 
 // ============================================================
-// FASE 04 — TECNICA S10 / PRESSURE LOG
+// FASE 04 -- TECNICA S10 / PRESSURE LOG
 // ============================================================
 function updateF04TecnicaInfo() {
   const val = document.getElementById('f04_tecnica')?.value;
   const box = document.getElementById('f04TecnicaInfo');
   if (!box) return;
   const t = {
-    freddo: {c:'info-primary', t:'<strong>S10 Cold (–15°C)</strong> — Standard de Jong & Henry. Penetrazione lenta e uniforme. Durata 3–5 settimane per campioni grandi. Viscosità ottimale a bassa temperatura.'},
-    ambiente: {c:'info-warning', t:'<strong>⚠ S10 T.A. (20–22°C)</strong> — Tempi ridotti (7–14 giorni). Rischio di penetrazione non uniforme in campioni grandi. Indicato per campioni piccoli o tessuti molli.'},
-    s6: {c:'info-primary', t:'<strong>S10/S6 T.A.</strong> — Aggiunta di catalizzatore S6 alla miscela S10. Accelera notevolmente il curing. Riduce i tempi complessivi. Richiede esperienza operativa.'}
+    freddo: {c:'info-primary', t:'<strong>S10 Cold (–15°C)</strong> -- Standard de Jong & Henry. Penetrazione lenta e uniforme. Durata 3–5 settimane per campioni grandi. Viscosità ottimale a bassa temperatura.'},
+    ambiente: {c:'info-warning', t:'<strong>[!] S10 T.A. (20–22°C)</strong> -- Tempi ridotti (7–14 giorni). Rischio di penetrazione non uniforme in campioni grandi. Indicato per campioni piccoli o tessuti molli.'},
+    s6: {c:'info-primary', t:'<strong>S10/S6 T.A.</strong> -- Aggiunta di catalizzatore S6 alla miscela S10. Accelera notevolmente il curing. Riduce i tempi complessivi. Richiede esperienza operativa.'}
   };
   const d = t[val]; if (!d) return;
   box.className = `info-box ${d.c} mt-4`;
@@ -1769,16 +1769,16 @@ async function addPressureEntry() {
 }
 
 // ============================================================
-// FASE 05 — CURING
+// FASE 05 -- CURING
 // ============================================================
 function updateF05MetodoInfo() {
   const val = document.getElementById('f05_metodo')?.value;
   const box = document.getElementById('f05MetodoInfo');
   if (!box) return;
   const t = {
-    fast: {c:'info-primary', t:'<strong>Fast Cure (gas S6)</strong> — Esposizione a vapori di S6 in camera chiusa. Cicli tipici: 24–48h per ciclo, fino a 3–5 cicli. Risultato uniforme su piccoli e medi campioni. ⚠ Sicurezza: solo sotto cappa o in camera ventilata.'},
-    slow: {c:'info-primary', t:'<strong>Slow Cure</strong> — Polimerizzazione progressiva per esposizione all\'aria con strati settimanali di S6 pennellato. 4–8 settimane. Ottimale per campioni grandi. Riduce stress meccanico superficiale.'},
-    uv: {c:'info-warning', t:'<strong>⚠ UV Cure</strong> — Utilizzato con resine fotopolimerizzabili (variante non standard S10). Richede lampada UV specifica. Tempi brevi (ore) ma applicazione limitata a strati superficiali.'}
+    fast: {c:'info-primary', t:'<strong>Fast Cure (gas S6)</strong> -- Esposizione a vapori di S6 in camera chiusa. Cicli tipici: 24–48h per ciclo, fino a 3–5 cicli. Risultato uniforme su piccoli e medi campioni. [!] Sicurezza: solo sotto cappa o in camera ventilata.'},
+    slow: {c:'info-primary', t:'<strong>Slow Cure</strong> -- Polimerizzazione progressiva per esposizione all\'aria con strati settimanali di S6 pennellato. 4–8 settimane. Ottimale per campioni grandi. Riduce stress meccanico superficiale.'},
+    uv: {c:'info-warning', t:'<strong>[!] UV Cure</strong> -- Utilizzato con resine fotopolimerizzabili (variante non standard S10). Richede lampada UV specifica. Tempi brevi (ore) ma applicazione limitata a strati superficiali.'}
   };
   const d = t[val]; if (!d) return;
   box.className = `info-box ${d.c} mb-4`;
@@ -1819,7 +1819,7 @@ async function addSlowCureEntry() {
 }
 
 // ============================================================
-// FASE 06 — CQ PARAMS
+// FASE 06 -- CQ PARAMS
 // ============================================================
 const cqParams = [
   {id:'integrità', label:'Integrità strutturale', desc:'Assenza di lacerazioni, fratture, distacchi tissutali'},
@@ -1840,7 +1840,7 @@ function initCQParams() {
     div.className = 'cq-param-row';
     div.innerHTML = `<div class="cq-param-label"><strong class="text-sm">${p.label}</strong><span class="text-xs text-muted">${p.desc}</span></div>
       <div class="cq-param-eval">
-        ${[1,2,3,4].map(v => `<label><input type="radio" name="cq_${p.id}" value="${v}" onchange="cqScores['${p.id}']=${v}"> ${v} — ${['Ottimo','Buono','Accettabile','Non accettabile'][v-1]}</label>`).join('')}
+        ${[1,2,3,4].map(v => `<label><input type="radio" name="cq_${p.id}" value="${v}" onchange="cqScores['${p.id}']=${v}"> ${v} -- ${['Ottimo','Buono','Accettabile','Non accettabile'][v-1]}</label>`).join('')}
       </div>`;
     container.appendChild(div);
   });
@@ -1852,9 +1852,9 @@ function calcCQClassification() {
   const avg = scored.reduce((a,b)=>a+b,0)/scored.length;
   const resultBox = document.getElementById('cqResultBox');
   let cls, color, label;
-  if (avg <= 1.5) { cls='A'; color='var(--color-success)'; label='ECCELLENTE — Classe A'; }
-  else if (avg <= 2.5) { cls='B'; color='var(--color-gold)'; label='BUONO — Classe B'; }
-  else { cls='C'; color='var(--color-error)'; label='NON OTTIMALE — Classe C'; }
+  if (avg <= 1.5) { cls='A'; color='var(--color-success)'; label='ECCELLENTE -- Classe A'; }
+  else if (avg <= 2.5) { cls='B'; color='var(--color-gold)'; label='BUONO -- Classe B'; }
+  else { cls='C'; color='var(--color-error)'; label='NON OTTIMALE -- Classe C'; }
   resultBox.innerHTML = `<div><p class="text-sm text-muted">Punteggio medio CQ</p><div style="font-family:var(--font-display);font-size:var(--text-xl);color:${color}">${avg.toFixed(2)}</div><div style="font-weight:600;color:${color};margin-top:var(--space-2)">${label}</div><p class="text-xs text-muted mt-2">${scored.length} / ${cqParams.length} parametri valutati</p></div>`;
   ['A','B','C'].forEach(c => { document.getElementById(`cqCard${c}`)?.classList.remove('selected'); });
   document.getElementById(`cqCard${cls}`)?.classList.add('selected');
@@ -1862,7 +1862,7 @@ function calcCQClassification() {
 }
 
 // ============================================================
-// FASE 07 — INVENTARIO / MOVIMENTAZIONE
+// FASE 07 -- INVENTARIO / MOVIMENTAZIONE
 // ============================================================
 async function archiviaPreparato() {
   const codice = document.getElementById('f07_codice')?.value;
@@ -1877,7 +1877,7 @@ async function archiviaPreparato() {
   invItem._fsId = invRef.id;
   inventory.push(invItem);
   refreshInventario();
-  showToast(`✅ Preparato ${codice} archiviato e salvato.`);
+  showToast(`[OK] Preparato ${codice} archiviato e salvato.`);
 }
 
 function refreshInventario() {
@@ -1885,7 +1885,7 @@ function refreshInventario() {
   if (!wrap) return;
   if (!inventory.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun preparato archiviato</h3></div>'; return; }
   wrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Data arch.</th><th>Classe CQ</th><th>Ubicazione</th><th>Supporto</th><th>Uso</th></tr></thead><tbody>` +
-    inventory.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'—'}</td><td>${p.supporto||'—'}</td><td>${p.uso||'—'}</td></tr>`).join('') +
+    inventory.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'--'}</td><td>${p.supporto||'--'}</td><td>${p.uso||'--'}</td></tr>`).join('') +
     `</tbody></table>`;
 }
 
@@ -1930,7 +1930,7 @@ async function closePhase(num) {
   const faseMap = {
     '01':'02 – Fissazione','02':'03 – Disidratazione/Defatting',
     '03':'04 – Impregnazione S10','04':'05 – Curing',
-    '05':'06 – Controllo Qualità','06':'07 – Archiviato','07':'✅ Completato'
+    '05':'06 – Controllo Qualità','06':'07 – Archiviato','07':'[OK] Completato'
   };
 
   if (num === '01') {
@@ -1942,7 +1942,7 @@ async function closePhase(num) {
     const dest = document.getElementById('f01_destinazione')?.value;
     const newSample = {
       codice:codice||'N/D', specie:specie||'N/D', distretto:distretto||'N/D',
-      peso:peso||'—', dest:dest||'—', fase:'02 – Fissazione',
+      peso:peso||'--', dest:dest||'--', fase:'02 – Fissazione',
       operator:opSel.value, date:now.toISOString().slice(0,10),
       phaseLocks:{}, phaseData:{}, _ts:Date.now()
     };
@@ -1953,7 +1953,7 @@ async function closePhase(num) {
     codeCounter++;
     refreshDashboard();
     refreshCampioniTable();
-    showToast(`✅ Campione ${codice} registrato. Modulo pronto per nuovo ingresso.`);
+    showToast(`[OK] Campione ${codice} registrato. Modulo pronto per nuovo ingresso.`);
     // Reset form for next sample after short delay
     setTimeout(() => resetFase01Form(), 1500);
   } else {
@@ -1967,9 +1967,9 @@ async function closePhase(num) {
       if (s._fsId) await db.collection('samples').doc(s._fsId).set({fase: nextFase, phaseLocks: s.phaseLocks}, {merge:true});
       refreshDashboard();
       refreshCampioniTable();
-      showToast(`✅ Fase 0${num} chiusa per ${s.codice}. Avanzato a: ${nextFase}`);
+      showToast(`[OK] Fase 0${num} chiusa per ${s.codice}. Avanzato a: ${nextFase}`);
     } else {
-      showToast('⚠ Nessun campione attivo selezionato.');
+      showToast('[!] Nessun campione attivo selezionato.');
     }
   }
 }
@@ -1989,32 +1989,32 @@ function refreshDashboard() {
     <div class="kpi-card" onclick="openKpiModal('totali')" title="Clicca per dettaglio">
       <div class="kpi-value">${samples.length}</div>
       <div class="kpi-label">Campioni totali</div>
-      <div class="kpi-hint">↗ Vedi dettaglio</div>
+      <div class="kpi-hint">-> Vedi dettaglio</div>
     </div>
     <div class="kpi-card" onclick="openKpiModal('lavorazione')" title="Clicca per dettaglio">
       <div class="kpi-value">${inLav.length}</div>
       <div class="kpi-label">In lavorazione</div>
-      <div class="kpi-hint">↗ Vedi dettaglio</div>
+      <div class="kpi-hint">-> Vedi dettaglio</div>
     </div>
     <div class="kpi-card" onclick="openKpiModal('archiviati')" title="Clicca per dettaglio">
       <div class="kpi-value">${archiviati}</div>
       <div class="kpi-label">Archiviati</div>
-      <div class="kpi-hint">↗ Vedi dettaglio</div>
+      <div class="kpi-hint">-> Vedi dettaglio</div>
     </div>
     <div class="kpi-card" onclick="openKpiModal('operatori')" title="Clicca per dettaglio">
       <div class="kpi-value">${operators.length}</div>
       <div class="kpi-label">Operatori</div>
-      <div class="kpi-hint">↗ Vedi elenco</div>
+      <div class="kpi-hint">-> Vedi elenco</div>
     </div>
     <div class="kpi-card" onclick="openKpiModal('acetone')" title="Clicca per dettaglio">
       <div class="kpi-value">${acetoneLog.length}</div>
       <div class="kpi-label">Rilevaz. acetone</div>
-      <div class="kpi-hint">↗ Vedi rilevazioni</div>
+      <div class="kpi-hint">-> Vedi rilevazioni</div>
     </div>
     <div class="kpi-card" onclick="openKpiModal('pressione')" title="Clicca per dettaglio">
       <div class="kpi-value">${pressureLog.length}</div>
       <div class="kpi-label">Rilevaz. pressione</div>
-      <div class="kpi-hint">↗ Vedi rilevazioni</div>
+      <div class="kpi-hint">-> Vedi rilevazioni</div>
     </div>`;
 
   document.getElementById('badgeCampioni').textContent = samples.length;
@@ -2046,15 +2046,15 @@ function renderDashMiniLogs() {
     const last5ac = [...acetoneLog].slice(-5).reverse();
     html += `<div class="dash-log-section">
       <div class="dash-log-header">
-        <span class="dash-log-title">🧪 Ultime rilevazioni acetone</span>
+        <span class="dash-log-title">[ACETONE] Ultime rilevazioni acetone</span>
         <button class="btn btn-ghost btn-sm" onclick="openKpiModal('acetone')">Vedi tutte (${acetoneLog.length})</button>
       </div>` +
       last5ac.map(r => `<div class="dash-mini-row ac">
-        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'—'}</span></div></div>
-        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'—'}</div></div>
-        <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'—'}%</div></div>
-        <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'—'}</div></div>
-        <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'—'}</div></div>
+        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'--'}</span></div></div>
+        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'--'}</div></div>
+        <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'--'}%</div></div>
+        <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'--'}</div></div>
+        <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'--'}</div></div>
       </div>`).join('') +
       `</div>`;
   }
@@ -2064,15 +2064,15 @@ function renderDashMiniLogs() {
     const last5pr = [...pressureLog].slice(-5).reverse();
     html += `<div class="dash-log-section">
       <div class="dash-log-header">
-        <span class="dash-log-title">⚗️ Ultime rilevazioni pressione S10</span>
+        <span class="dash-log-title">[PRESSIONE] Ultime rilevazioni pressione S10</span>
         <button class="btn btn-ghost btn-sm" onclick="openKpiModal('pressione')">Vedi tutte (${pressureLog.length})</button>
       </div>` +
       last5pr.map(r => `<div class="dash-mini-row pr">
-        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'—'}</span></div></div>
-        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'—'}</div></div>
-        <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'—'}</div></div>
-        <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'—'} cmHg</div></div>
-        <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'—'}</div></div>
+        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'--'}</span></div></div>
+        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'--'}</div></div>
+        <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'--'}</div></div>
+        <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'--'} cmHg</div></div>
+        <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'--'}</div></div>
       </div>`).join('') +
       `</div>`;
   }
@@ -2092,7 +2092,7 @@ function refreshCampioniTable() {
       <td>${s.dest}</td>
       <td><span class="badge badge-teal">${s.fase}</span></td>
       <td>${s.date}</td>
-      <td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Elimina campione" onclick="openDeleteSample(${i})">🗑</button></td>
+      <td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Elimina campione" onclick="openDeleteSample(${i})">[DEL]</button></td>
     </tr>`).join('') +
     `</tbody></table>`;
 }
@@ -2102,7 +2102,7 @@ let _pendingDeleteSampleIndex = null;
 function openDeleteSample(index) {
   _pendingDeleteSampleIndex = index;
   const s = samples[index];
-  document.getElementById('deleteSampleCodeLabel').textContent = s ? s.codice : '—';
+  document.getElementById('deleteSampleCodeLabel').textContent = s ? s.codice : '--';
   document.getElementById('deleteSamplePwd').value = '';
   document.getElementById('deleteSampleError').style.display = 'none';
   document.getElementById('deleteSampleModal').classList.add('open');
@@ -2144,7 +2144,7 @@ async function confirmDeleteSample() {
   refreshDashboard();
   refreshCampioniTable();
   refreshInventario();
-  showToast('🗑 Campione, archivio e tutte le rilevazioni eliminati definitivamente.');
+  showToast('[DEL] Campione, archivio e tutte le rilevazioni eliminati definitivamente.');
 }
 
 // ============================================================
@@ -2153,7 +2153,7 @@ async function confirmDeleteSample() {
 function exportLogbook() {
   const lines = [
     `===================================================`,
-    `  PlastinaLab — Logbook di Laboratorio`,
+    `  PlastinaLab -- Logbook di Laboratorio`,
     `  Esportato il: ${new Date().toLocaleString('it-IT')}`,
     `  Codice laboratorio: ${LAB_CODE}`,
     `===================================================\n`,
@@ -2162,7 +2162,7 @@ function exportLogbook() {
     `\nCAMPIONI REGISTRATI (${samples.length}):`,
     ...samples.map(s => `  - ${s.codice} | ${s.specie} | ${s.distretto} | ${s.fase} | ${s.date}`),
     `\nFASI CHIUSE:`,
-    ...Object.entries(phaseLocks).map(([fase,data]) => `  - Fase ${fase}: ${data.operator} — ${new Date(data.date).toLocaleString('it-IT')}`),
+    ...Object.entries(phaseLocks).map(([fase,data]) => `  - Fase ${fase}: ${data.operator} -- ${new Date(data.date).toLocaleString('it-IT')}`),
     `\nCONTROLLI ACETONE (${acetoneLog.length}):`,
     ...acetoneLog.map(r => `  - Bagno ${r.num} | ${r.data} | Purezza: ${r.pur}% | T: ${r.temp}°C | ${r.azione}`),
     `\nCURVA DI PRESSIONE (${pressureLog.length}):`,
@@ -2182,9 +2182,9 @@ function exportLogbook() {
 // ============================================================
 // INIT
 // ============================================================
-// ═══════════════════════════════════════════════════════════
+// ===========================================================
 // KPI DETAIL MODAL  (v4.0)
-// ═══════════════════════════════════════════════════════════
+// ===========================================================
 function openKpiModal(type) {
   const overlay = document.getElementById('kpiDetailModal');
   const titleEl = document.getElementById('kpiModalTitle');
@@ -2229,7 +2229,7 @@ function openKpiModal(type) {
       break;
     }
     case 'acetone': {
-      title = 'Rilevazioni acetone — Logbook completo';
+      title = 'Rilevazioni acetone -- Logbook completo';
       const bySample = {};
       acetoneLog.forEach(r => { const k = r.codice||'N/D'; if (!bySample[k]) bySample[k]=[]; bySample[k].push(r); });
       const keys = Object.keys(bySample);
@@ -2238,19 +2238,19 @@ function openKpiModal(type) {
       const panels = keys.map((k,i) => `<div id="aclog-${i}" class="kpi-tab-panel ${i===0?'active':''}">`+
         `<div class="kpi-log-row r-acetone" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Bagno N°</span><span>Purezza</span><span>Temp.</span><span>Operatore</span><span>Azione</span></div>`+
         bySample[k].map(r => `<div class="kpi-log-row r-acetone">
-          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'—'} ${r.ora||''}</div></div>
-          <div><div class="kpi-lbl">Bagno N°</div><div class="kpi-val">${r.num||'—'}</div></div>
-          <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'—'}%</div></div>
-          <div><div class="kpi-lbl">Temperatura</div><div class="kpi-val">${r.temp||'—'}°C</div></div>
-          <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'—'}</div></div>
-          <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'—'}</div></div>
+          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'--'} ${r.ora||''}</div></div>
+          <div><div class="kpi-lbl">Bagno N°</div><div class="kpi-val">${r.num||'--'}</div></div>
+          <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'--'}%</div></div>
+          <div><div class="kpi-lbl">Temperatura</div><div class="kpi-val">${r.temp||'--'}°C</div></div>
+          <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'--'}</div></div>
+          <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'--'}</div></div>
         </div>`).join('') +
         `</div>`).join('');
       html = `<div class="kpi-modal-tabs">${tabs}</div>${panels}`;
       break;
     }
     case 'pressione': {
-      title = 'Rilevazioni pressione S10 — Logbook completo';
+      title = 'Rilevazioni pressione S10 -- Logbook completo';
       const bySample = {};
       pressureLog.forEach(r => { const k = r.codice||'N/D'; if (!bySample[k]) bySample[k]=[]; bySample[k].push(r); });
       const keys = Object.keys(bySample);
@@ -2259,11 +2259,11 @@ function openKpiModal(type) {
       const panels = keys.map((k,i) => `<div id="prlog-${i}" class="kpi-tab-panel ${i===0?'active':''}">`+
         `<div class="kpi-log-row r-pressure" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Giorno</span><span>Pressione</span><span>Bolle</span><span>Operatore / Note</span></div>`+
         bySample[k].map(r => `<div class="kpi-log-row r-pressure">
-          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'—'} ${r.ora||''}</div></div>
-          <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'—'}</div></div>
-          <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'—'} cmHg</div></div>
-          <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'—'}</div></div>
-          <div><div class="kpi-lbl">Operatore / Note</div><div class="kpi-val">${r.oper||r.operatore||'—'}${r.note?' — '+r.note:''}</div></div>
+          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'--'} ${r.ora||''}</div></div>
+          <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'--'}</div></div>
+          <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'--'} cmHg</div></div>
+          <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'--'}</div></div>
+          <div><div class="kpi-lbl">Operatore / Note</div><div class="kpi-val">${r.oper||r.operatore||'--'}${r.note?' -- '+r.note:''}</div></div>
         </div>`).join('') +
         `</div>`).join('');
       html = `<div class="kpi-modal-tabs">${tabs}</div>${panels}`;
@@ -2293,14 +2293,14 @@ function kpiSwitchTab(btn, panelId) {
 function renderSampleRows(arr) {
   if (!arr.length) return '<p class="text-muted" style="padding:var(--space-4)">Nessun campione in questa categoria.</p>';
   return `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Fase</th><th>Operatore</th><th>Data</th></tr></thead><tbody>` +
-    arr.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie||'—'}</td><td>${s.distretto||'—'}</td><td><span class="badge badge-teal">${s.fase||'—'}</span></td><td>${s.operator||'—'}</td><td>${s.date||'—'}</td></tr>`).join('') +
+    arr.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie||'--'}</td><td>${s.distretto||'--'}</td><td><span class="badge badge-teal">${s.fase||'--'}</span></td><td>${s.operator||'--'}</td><td>${s.date||'--'}</td></tr>`).join('') +
     `</tbody></table>`;
 }
 
 function renderInventoryRows(arr) {
   if (!arr.length) return '<p class="text-muted" style="padding:var(--space-4)">Nessun preparato archiviato.</p>';
   return `<table class="data-table"><thead><tr><th>Codice</th><th>Data archiviazione</th><th>Classe CQ</th><th>Ubicazione</th><th>Destinazione</th></tr></thead><tbody>` +
-    arr.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'—'}</td><td>${p.uso||'—'}</td></tr>`).join('') +
+    arr.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'--'}</td><td>${p.uso||'--'}</td></tr>`).join('') +
     `</tbody></table>`;
 }
 
@@ -2313,15 +2313,15 @@ document.addEventListener('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // ── Show loading overlay ───────────────────────────────────
+  // -- Show loading overlay -----------------------------------
   const loadDiv = document.createElement('div');
   loadDiv.id = 'fbLoadOverlay';
   loadDiv.style.cssText = 'position:fixed;inset:0;background:var(--color-bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
-  loadDiv.innerHTML = '<div style="font-size:2rem">🔬</div><div style="font-size:1.1rem;font-weight:600;color:var(--color-text)">PlastinaLab</div><div style="font-size:.9rem;color:var(--color-text-muted)">Connessione al database in corso…</div><div class="skeleton" style="width:200px;height:6px;border-radius:99px;margin-top:8px"></div>';
+  loadDiv.innerHTML = '<div style="font-size:2rem">[LAB]</div><div style="font-size:1.1rem;font-weight:600;color:var(--color-text)">PlastinaLab</div><div style="font-size:.9rem;color:var(--color-text-muted)">Connessione al database in corso…</div><div class="skeleton" style="width:200px;height:6px;border-radius:99px;margin-top:8px"></div>';
   document.body.appendChild(loadDiv);
 
   try {
-    // ── Load all collections from Firestore ──────────────────
+    // -- Load all collections from Firestore ------------------
     const [fsOps, fsSamples, fsAcetone, fsPressure, fsFastCure, fsSlowCure, fsMov, fsInv, fsAudit] = await Promise.all([
       fsGetAll('operators'),
       fsGetAll('samples'),
@@ -2394,13 +2394,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   } catch(e) {
     console.error('Firebase load error:', e);
-    loadDiv.innerHTML += '<div style="color:var(--color-error);font-size:.85rem;margin-top:8px">⚠ Errore connessione database. Verificare la connessione internet.</div>';
+    loadDiv.innerHTML += '<div style="color:var(--color-error);font-size:.85rem;margin-top:8px">[!] Errore connessione database. Verificare la connessione internet.</div>';
     await new Promise(r => setTimeout(r, 3000));
   }
 
   document.body.removeChild(loadDiv);
 
-  // ── Original event listeners ──────────────────────────────
+  // -- Original event listeners ------------------------------
 
   document.getElementById('f01_specie').addEventListener('change', generateCode01);
   document.getElementById('f01_distretto').addEventListener('change', generateCode01);
@@ -2430,11 +2430,11 @@ function openActionModal(type, dataset, index, editFields) {
 
   // Populate operator select
   const opSel = document.getElementById('actionOperatorSel');
-  opSel.innerHTML = '<option value="">— Seleziona operatore —</option>' +
+  opSel.innerHTML = '<option value="">-- Seleziona operatore --</option>' +
     operators.map(op => `<option value="${op.name}">${op.name} (${op.role})</option>`).join('');
 
   if (type === 'delete') {
-    titleEl.textContent = '🗑 Eliminazione record';
+    titleEl.textContent = '[DEL] Eliminazione record';
     descEl.textContent = 'Stai per eliminare definitivamente questo record dal logbook. L\'operazione verrà tracciata nell\'audit log.';
     editForm.style.display = 'none';
     confirmBtn.style.background = 'var(--color-error)';
@@ -2489,8 +2489,8 @@ async function confirmAction() {
     type,
     dataset,
     index,
-    original: original ? JSON.stringify(original) : '—',
-    newData: '—'
+    original: original ? JSON.stringify(original) : '--',
+    newData: '--'
   };
 
   if (type === 'delete') {
@@ -2523,7 +2523,7 @@ async function confirmAction() {
   closeActionModal();
 
   // Brief toast feedback
-  showToast(type === 'delete' ? '🗑 Record eliminato e tracciato' : '✅ Modifica salvata e tracciata');
+  showToast(type === 'delete' ? '[DEL] Record eliminato e tracciato' : '[OK] Modifica salvata e tracciata');
 }
 
 function showToast(msg) {
@@ -2549,7 +2549,7 @@ function openAuditLog() {
         <td><span class="code">${e.id}</span></td>
         <td style="font-size:var(--text-xs)">${new Date(e.timestamp).toLocaleString('it-IT')}</td>
         <td>${e.operator}</td>
-        <td><span class="badge ${e.type==='delete'?'badge-orange':'badge-teal'}">${e.type==='delete'?'🗑 Eliminazione':'✏️ Modifica'}</span></td>
+        <td><span class="badge ${e.type==='delete'?'badge-orange':'badge-teal'}">${e.type==='delete'?'[DEL] Eliminazione':'✏️ Modifica'}</span></td>
         <td>${e.dataset}</td>
         <td>${e.motiv}</td>
       </tr>`).join('') +
@@ -2575,19 +2575,19 @@ function renderAcetoneRows() {
   if (!container) return;
   if (!acetoneLog.length) { container.innerHTML = ''; return; }
   container.innerHTML = acetoneLog.map((r,i) => {
-    let purClass='purity-ok',purLabel='✅ Ottima';
+    let purClass='purity-ok',purLabel='[OK] Ottima';
     if(r.pur<99){purClass='purity-crit';purLabel='❌ Bassa';}
-    else if(r.pur<99.5){purClass='purity-warn';purLabel='⚠ Pianificare';}
+    else if(r.pur<99.5){purClass='purity-warn';purLabel='[!] Pianificare';}
     return `<div class="acetone-row" style="grid-template-columns:80px 100px 160px 120px 1fr 90px 80px">
       <strong style="font-family:monospace">Bagno #${r.num}</strong>
       <span>${r.data}</span>
       <span class="${purClass}">${r.pur}%<br><small>${purLabel}</small></span>
       <span>${r.temp}°C</span>
-      <span>${r.note||'—'}</span>
+      <span>${r.note||'--'}</span>
       <span class="badge badge-teal" style="font-size:10px">${r.azione}</span>
       <span style="display:flex;gap:4px">
         <button class="btn btn-sm btn-ghost" title="Modifica" onclick="editAcetone(${i})">✏️</button>
-        <button class="btn btn-sm btn-ghost" title="Elimina" style="color:var(--color-error)" onclick="deleteAcetone(${i})">🗑</button>
+        <button class="btn btn-sm btn-ghost" title="Elimina" style="color:var(--color-error)" onclick="deleteAcetone(${i})">[DEL]</button>
       </span>
     </div>`;
   }).join('');
@@ -2609,14 +2609,14 @@ function deleteAcetone(i) { openActionModal('delete','acetone',i,[]); }
 function renderPressureRows() {
   const container = document.getElementById('f04PressureRows');
   if (!container) return;
-  const bolleLabel = {none:'🟢 Nessuna',rare:'🟡 Sporadiche',moderate:'🟠 Moderate',intense:'🔴 Continue',aria:'⚪ Solo aria'};
+  const bolleLabel = {none:'[GREEN] Nessuna',rare:'[YELLOW] Sporadiche',moderate:'[ORANGE] Moderate',intense:'[RED] Continue',aria:'⚪ Solo aria'};
   container.innerHTML = pressureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 120px 1fr 80px">
     <strong>Giorno ${r.giorno}</strong><span>${r.data}</span>
     <span><strong>${r.pres} cmHg</strong></span>
-    <span>${bolleLabel[r.bolle]||r.bolle} — ${r.note||'—'}</span>
+    <span>${bolleLabel[r.bolle]||r.bolle} -- ${r.note||'--'}</span>
     <span style="display:flex;gap:4px">
       <button class="btn btn-sm btn-ghost" onclick="editPressure(${i})">✏️</button>
-      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deletePressure(${i})">🗑</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deletePressure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
 }
@@ -2635,14 +2635,14 @@ function deletePressure(i) { openActionModal('delete','pressure',i,[]); }
 function renderFastCureRows() {
   const container = document.getElementById('f05FastCureRows');
   if (!container) return;
-  const risLabel = {parziale:'⏳ Parziale', completo:'✅ Completo', insufficiente:'❌ Insuff.'};
+  const risLabel = {parziale:'⏳ Parziale', completo:'[OK] Completo', insufficiente:'❌ Insuff.'};
   container.innerHTML = fastCureLog.map((r,i) => `<div class="fast-cure-row" style="grid-template-columns:60px 100px 60px 60px 60px 1fr 80px 80px">
     <strong>#${r.ciclo}</strong><span>${r.data}</span><span>${r.durata}h</span>
-    <span>${r.temp}°C</span><span>${r.vol||'—'} mL</span><span>${r.note||'—'}</span>
+    <span>${r.temp}°C</span><span>${r.vol||'--'} mL</span><span>${r.note||'--'}</span>
     <span class="badge ${r.ris==='completo'?'badge-green':r.ris==='insufficiente'?'badge-orange':'badge-gray'}">${risLabel[r.ris]||r.ris}</span>
     <span style="display:flex;gap:4px">
       <button class="btn btn-sm btn-ghost" onclick="editFastCure(${i})">✏️</button>
-      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteFastCure(${i})">🗑</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteFastCure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
 }
@@ -2665,11 +2665,11 @@ function renderSlowCureRows() {
   if (!container) return;
   container.innerHTML = slowCureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 160px 1fr 80px">
     <strong>Sett. ${r.sett}</strong><span>${r.data}</span>
-    <span>${r.temp}°C / S6: ${r.strato==='si'?'✅':'—'}</span>
-    <span>${r.note||'—'}</span>
+    <span>${r.temp}°C / S6: ${r.strato==='si'?'[OK]':'--'}</span>
+    <span>${r.note||'--'}</span>
     <span style="display:flex;gap:4px">
       <button class="btn btn-sm btn-ghost" onclick="editSlowCure(${i})">✏️</button>
-      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteSlowCure(${i})">🗑</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteSlowCure(${i})">[DEL]</button>
     </span>
   </div>`).join('');
 }
@@ -2690,11 +2690,11 @@ function renderMovRows() {
   if (!container) return;
   container.innerHTML = movLog.map((r,i) => `<div class="mov-row" style="grid-template-columns:130px 90px 120px 1fr 1fr 90px 80px">
     <span class="code">${r.codice}</span><span>${r.data}</span><span>${r.tipo}</span>
-    <span>${r.dest||'—'}</span><span>${r.resp||'—'}</span>
+    <span>${r.dest||'--'}</span><span>${r.resp||'--'}</span>
     <span class="badge ${r.stato==='Ottimo'?'badge-green':r.stato==='Danneggiato'?'badge-orange':'badge-teal'}">${r.stato}</span>
     <span style="display:flex;gap:4px">
       <button class="btn btn-sm btn-ghost" onclick="editMovimento(${i})">✏️</button>
-      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteMovimento(${i})">🗑</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteMovimento(${i})">[DEL]</button>
     </span>
   </div>`).join('');
 }
@@ -2745,9 +2745,9 @@ function buildSampleSelectorBar(targetFase) {
   const activeS = activeSampleIndex >= 0 ? samples[activeSampleIndex] : null;
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-primary-highlight);border-radius:var(--radius-md);margin-bottom:var(--space-4);flex-wrap:wrap">
-      <span style="font-size:var(--text-sm);font-weight:600;color:var(--color-primary);white-space:nowrap">🔬 Campione attivo:</span>
+      <span style="font-size:var(--text-sm);font-weight:600;color:var(--color-primary);white-space:nowrap">[LAB] Campione attivo:</span>
       <select id="activeSampleSel_${targetFase}" class="form-input" style="max-width:320px;flex:1" onchange="setActiveSample(this.value,'${targetFase}')">
-        <option value="">— Seleziona campione —</option>
+        <option value="">-- Seleziona campione --</option>
         ${samples.map((s,i) => `<option value="${i}" ${activeS && samples.indexOf(activeS)===i?'selected':''}>[${s.fase}] ${s.codice} · ${s.specie} ${s.distretto} (${s.date})</option>`).join('')}
       </select>
       ${activeS ? `<span style="font-size:var(--text-xs);color:var(--color-text-muted)">Operatore: ${activeS.operator}</span>` : ''}
@@ -2764,7 +2764,7 @@ function setActiveSample(indexStr, targetFase) {
   // Restore checklist states for this sample
   restoreSamplePhaseState(s, targetFase);
   buildSampleSelectorBar(targetFase);
-  showToast(`✅ Campione attivo: ${s.codice}`);
+  showToast(`[OK] Campione attivo: ${s.codice}`);
 }
 
 function restoreSamplePhaseState(sample, fase) {
@@ -2851,7 +2851,7 @@ function refreshCompletatiTable() {
   const badge = document.getElementById('badgeCompletati');
   if (badge) badge.textContent = completati.length;
   if (!completati.length) {
-    wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-12)"><div style="font-size:2rem;margin-bottom:8px">🔬</div><h3>Nessun preparato completato</h3><p>I preparati che completano tutto il protocollo S10 appariranno qui.</p></div>';
+    wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-12)"><div style="font-size:2rem;margin-bottom:8px">[LAB]</div><h3>Nessun preparato completato</h3><p>I preparati che completano tutto il protocollo S10 appariranno qui.</p></div>';
     return;
   }
   wrap.innerHTML = `
@@ -2871,8 +2871,8 @@ function refreshCompletatiTable() {
       <tbody>
         ${completati.map(s => {
           const inv = inventory.find(i => i.codice === s.codice);
-          const collocazione = inv ? inv.ubic || '—' : '—';
-          const qualita = inv ? inv.classe || '—' : (s.cqClasse || '—');
+          const collocazione = inv ? inv.ubic || '--' : '--';
+          const qualita = inv ? inv.classe || '--' : (s.cqClasse || '--');
           const note = inv ? (inv.uso || '') : '';
           const qualBadge = qualita === 'A' ? 'badge-green' : qualita === 'B' ? 'badge-teal' : qualita === 'C' ? 'badge-orange' : 'badge-gray';
           return `<tr>
@@ -2882,7 +2882,7 @@ function refreshCompletatiTable() {
             <td>${s.operator}</td>
             <td><span class="badge badge-green" style="font-size:10px">${s.fase}</span></td>
             <td>${collocazione}</td>
-            <td>${qualita !== '—' ? `<span class="badge ${qualBadge}">${qualita}</span>` : '—'}</td>
+            <td>${qualita !== '--' ? `<span class="badge ${qualBadge}">${qualita}</span>` : '--'}</td>
             <td style="font-size:var(--text-xs);color:var(--color-text-muted);max-width:180px">${note}</td>
           </tr>`;
         }).join('')}
@@ -2905,7 +2905,7 @@ function exportCompletati() {
   a.href = URL.createObjectURL(blob);
   a.download = `preparati_completati_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
-  showToast('✅ CSV esportato.');
+  showToast('[OK] CSV esportato.');
 }
 
 </script>
@@ -2973,7 +2973,7 @@ function exportCompletati() {
   </div>
 </div>
 
-<!-- ═══ KPI DETAIL MODAL (v4.0) ═══ -->
+<!-- === KPI DETAIL MODAL (v4.0) === -->
 <div class="modal-overlay kpi-modal" id="kpiDetailModal">
   <div class="modal">
     <div class="modal-header">
