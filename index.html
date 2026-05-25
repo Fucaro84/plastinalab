@@ -220,6 +220,74 @@ textarea.form-input{resize:vertical;min-height:80px}
 .login-title{font-family:var(--font-display);font-size:var(--text-xl)}
 .login-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCPjgvzWmXB6ItBqz_AZstqDC_41KCBncY",
+  authDomain: "plastinalab.firebaseapp.com",
+  projectId: "plastinalab",
+  storageBucket: "plastinalab.firebasestorage.app",
+  messagingSenderId: "55611127694",
+  appId: "1:55611127694:web:2ab07cad341a3cc88f96df"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ── Firestore helpers ──────────────────────────────────────────
+async function fsSet(col, docId, data) {
+  await db.collection(col).doc(docId).set(data, {merge:true});
+}
+async function fsDel(col, docId) {
+  await db.collection(col).doc(docId).delete();
+}
+async function fsAdd(col, data) {
+  const ref = await db.collection(col).add(data);
+  return ref.id;
+}
+async function fsGetAll(col) {
+  const snap = await db.collection(col).orderBy('_ts','asc').get().catch(()=>db.collection(col).get());
+  return snap.docs.map(d=>({_fsId:d.id,...d.data()}));
+}
+
+// ── Persist full in-memory array to Firestore ──────────────────
+// We store each array element as a separate document using a stable docId
+async function syncArrayToFS(col, arr) {
+  // Get existing docs
+  const snap = await db.collection(col).get();
+  const batch = db.batch();
+  snap.docs.forEach(d => batch.delete(d.ref));
+  arr.forEach((item, i) => {
+    const ref = db.collection(col).doc(item._fsId || ('doc' + String(i).padStart(6,'0')));
+    batch.set(ref, {...item, _ts: i});
+  });
+  await batch.commit();
+}
+
+// ── Save single append ─────────────────────────────────────────
+async function appendToFS(col, data, arr) {
+  const ts = Date.now();
+  const ref = await db.collection(col).add({...data, _ts: ts});
+  data._fsId = ref.id;
+  arr.push(data);
+}
+
+// ── Delete by index (uses _fsId) ───────────────────────────────
+async function deleteFromFS(col, arr, index) {
+  const item = arr[index];
+  if (item && item._fsId) await db.collection(col).doc(item._fsId).delete();
+  arr.splice(index, 1);
+}
+
+// ── Update by index ────────────────────────────────────────────
+async function updateInFS(col, arr, index, changes) {
+  Object.assign(arr[index], changes);
+  const item = arr[index];
+  if (item._fsId) await db.collection(col).doc(item._fsId).set(item, {merge:true});
+}
+</script>
 </head>
 <body>
 
@@ -1387,12 +1455,15 @@ function populateOperatorSelects() {
   });
 }
 
-function addOperator() {
+async function addOperator() {
   const name = document.getElementById('opName').value.trim();
   const role = document.getElementById('opRole').value;
   if (!name) return;
   const id = 'OP' + String(operators.length+1).padStart(3,'0');
-  operators.push({id, name, role, added: new Date().toISOString().slice(0,10)});
+  const opData = {id, name, role, added: new Date().toISOString().slice(0,10), _ts:Date.now()};
+  const opRef = await db.collection('operators').add(opData);
+  opData._fsId = opRef.id;
+  operators.push(opData);
   document.getElementById('opName').value = '';
   document.getElementById('addOperatorModal').classList.remove('open');
   initOperatoriTable();
@@ -1514,7 +1585,7 @@ function calcF03Volume() {
   box.style.display = 'grid';
 }
 
-function addAcetoneEntry() {
+async function addAcetoneEntry() {
   const data = document.getElementById('f03_ac_data')?.value;
   const num = document.getElementById('f03_ac_num')?.value;
   const pur = parseFloat(document.getElementById('f03_ac_purezza')?.value);
@@ -1525,7 +1596,10 @@ function addAcetoneEntry() {
   let purClass = 'purity-ok'; let purLabel = '✅ Ottima';
   if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa — cambiare!'; }
   else if (pur < 99.5) { purClass='purity-warn'; purLabel='⚠ Pianificare cambio'; }
-  acetoneLog.push({data,num,pur,temp,azione,note});
+  const acItem = {data,num,pur,temp,azione,note,_ts:Date.now()};
+  const acRef = await db.collection('acetoneLog').add(acItem);
+  acItem._fsId = acRef.id;
+  acetoneLog.push(acItem);
   renderAcetoneRows();
   document.getElementById('f03_ac_num').value = parseInt(num)+1;
 }
@@ -1578,7 +1652,7 @@ function updateF04TecnicaInfo() {
   box.innerHTML = d.t;
 }
 
-function addPressureEntry() {
+async function addPressureEntry() {
   const data = document.getElementById('f04_p_data')?.value;
   const giorno = document.getElementById('f04_p_giorno')?.value;
   const pres = document.getElementById('f04_p_pressione')?.value;
@@ -1586,7 +1660,10 @@ function addPressureEntry() {
   const azione = document.getElementById('f04_p_azione')?.value;
   const note = document.getElementById('f04_p_note')?.value;
   if (!data||!pres) { alert('Inserire data e pressione.'); return; }
-  pressureLog.push({data,giorno,pres,bolle,azione,note});
+  const prItem = {data,giorno,pres,bolle,azione,note,_ts:Date.now()};
+  const prRef = await db.collection('pressureLog').add(prItem);
+  prItem._fsId = prRef.id;
+  pressureLog.push(prItem);
   renderPressureRows();
   document.getElementById('f04_p_giorno').value = parseInt(giorno)+1;
 }
@@ -1609,7 +1686,7 @@ function updateF05MetodoInfo() {
   box.style.display = 'block';
 }
 
-function addFastCureEntry() {
+async function addFastCureEntry() {
   const data = document.getElementById('f05_fc_data')?.value;
   const ciclo = document.getElementById('f05_fc_ciclo')?.value;
   const durata = document.getElementById('f05_fc_durata')?.value;
@@ -1618,19 +1695,25 @@ function addFastCureEntry() {
   const ris = document.getElementById('f05_fc_risultato')?.value;
   const note = document.getElementById('f05_fc_note')?.value;
   if (!data) return;
-  fastCureLog.push({data,ciclo,durata,temp,vol,ris,note});
+  const fcItem = {data,ciclo,durata,temp,vol,ris,note,_ts:Date.now()};
+  const fcRef = await db.collection('fastCureLog').add(fcItem);
+  fcItem._fsId = fcRef.id;
+  fastCureLog.push(fcItem);
   renderFastCureRows();
   document.getElementById('f05_fc_ciclo').value = parseInt(ciclo)+1;
 }
 
-function addSlowCureEntry() {
+async function addSlowCureEntry() {
   const sett = document.getElementById('f05_sc_sett')?.value;
   const data = document.getElementById('f05_sc_data')?.value;
   const temp = document.getElementById('f05_sc_temp')?.value;
   const strato = document.getElementById('f05_sc_strato')?.value;
   const note = document.getElementById('f05_sc_note')?.value;
   if (!data) return;
-  slowCureLog.push({sett,data,temp,strato,note});
+  const scItem = {sett,data,temp,strato,note,_ts:Date.now()};
+  const scRef = await db.collection('slowCureLog').add(scItem);
+  scItem._fsId = scRef.id;
+  slowCureLog.push(scItem);
   renderSlowCureRows();
   document.getElementById('f05_sc_sett').value = parseInt(sett)+1;
 }
@@ -1681,7 +1764,7 @@ function calcCQClassification() {
 // ============================================================
 // FASE 07 — INVENTARIO / MOVIMENTAZIONE
 // ============================================================
-function archiviaPreparato() {
+async function archiviaPreparato() {
   const codice = document.getElementById('f07_codice')?.value;
   const data = document.getElementById('f07_data_arch')?.value;
   const classe = document.getElementById('f07_classe_cq')?.value;
@@ -1689,9 +1772,12 @@ function archiviaPreparato() {
   const supporto = document.getElementById('f07_supporto')?.value;
   const uso = document.getElementById('f07_dest_uso')?.value;
   if (!codice||!data) { alert('Inserire codice e data.'); return; }
-  inventory.push({codice, data, classe, ubic, supporto, uso, stato:'Archiviato'});
+  const invItem = {codice, data, classe, ubic, supporto, uso, stato:'Archiviato', _ts:Date.now()};
+  const invRef = await db.collection('inventory').add(invItem);
+  invItem._fsId = invRef.id;
+  inventory.push(invItem);
   refreshInventario();
-  alert(`Preparato ${codice} aggiunto all\'inventario.`);
+  showToast(`✅ Preparato ${codice} archiviato e salvato.`);
 }
 
 function refreshInventario() {
@@ -1703,7 +1789,7 @@ function refreshInventario() {
     `</tbody></table>`;
 }
 
-function addMovimento() {
+async function addMovimento() {
   const codice = document.getElementById('f07_mov_codice')?.value;
   const data = document.getElementById('f07_mov_data')?.value;
   const tipo = document.getElementById('f07_mov_tipo')?.value;
@@ -1713,14 +1799,17 @@ function addMovimento() {
   const stato = document.getElementById('f07_mov_stato')?.value;
   const note = document.getElementById('f07_mov_note')?.value;
   if (!codice||!data) { alert('Inserire codice e data.'); return; }
-  movLog.push({codice,data,tipo,dest,resp,rientro,stato,note});
+  const movItem = {codice,data,tipo,dest,resp,rientro,stato,note,_ts:Date.now()};
+  const movRef = await db.collection('movLog').add(movItem);
+  movItem._fsId = movRef.id;
+  movLog.push(movItem);
   renderMovRows();
 }
 
 // ============================================================
 // PHASE CLOSURE
 // ============================================================
-function closePhase(num) {
+async function closePhase(num) {
   const opSel = document.getElementById(`sign${num}Operator`);
   const errEl = document.getElementById(`sign${num}Error`);
   if (!opSel.value) { errEl.innerHTML='Selezionare un operatore.'; errEl.style.display='flex'; return; }
@@ -1743,7 +1832,10 @@ function closePhase(num) {
     const distretto = document.getElementById('f01_distretto')?.value;
     const peso = document.getElementById('f01_peso')?.value;
     const dest = document.getElementById('f01_destinazione')?.value;
-    samples.push({codice:codice||'N/D', specie:specie||'N/D', distretto:distretto||'N/D', peso:peso||'—', dest:dest||'—', fase:'02 – Fissazione', operator:opSel.value, date:now.toISOString().slice(0,10)});
+    const newSample = {codice:codice||'N/D', specie:specie||'N/D', distretto:distretto||'N/D', peso:peso||'—', dest:dest||'—', fase:'02 – Fissazione', operator:opSel.value, date:now.toISOString().slice(0,10), _ts:Date.now()};
+    const sRef = await db.collection('samples').add(newSample);
+    newSample._fsId = sRef.id;
+    samples.push(newSample);
     codeCounter++;
     refreshDashboard();
     refreshCampioniTable();
@@ -1819,13 +1911,88 @@ function exportLogbook() {
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // ── Show loading overlay ───────────────────────────────────
+  const loadDiv = document.createElement('div');
+  loadDiv.id = 'fbLoadOverlay';
+  loadDiv.style.cssText = 'position:fixed;inset:0;background:var(--color-bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
+  loadDiv.innerHTML = '<div style="font-size:2rem">🔬</div><div style="font-size:1.1rem;font-weight:600;color:var(--color-text)">PlastinaLab</div><div style="font-size:.9rem;color:var(--color-text-muted)">Connessione al database in corso…</div><div class="skeleton" style="width:200px;height:6px;border-radius:99px;margin-top:8px"></div>';
+  document.body.appendChild(loadDiv);
+
+  try {
+    // ── Load all collections from Firestore ──────────────────
+    const [fsOps, fsSamples, fsAcetone, fsPressure, fsFastCure, fsSlowCure, fsMov, fsInv, fsAudit] = await Promise.all([
+      fsGetAll('operators'),
+      fsGetAll('samples'),
+      fsGetAll('acetoneLog'),
+      fsGetAll('pressureLog'),
+      fsGetAll('fastCureLog'),
+      fsGetAll('slowCureLog'),
+      fsGetAll('movLog'),
+      fsGetAll('inventory'),
+      fsGetAll('auditLog')
+    ]);
+
+    // Pre-loaded operators (default if Firestore is empty)
+    const defaultOps = [
+      {id:'OP001', name:'Francesca Rappa',   role:'Responsabile',   added:'2026-05-25'},
+      {id:'OP002', name:'Alberto Fucarino',  role:'Supervisore',    added:'2026-05-25'},
+      {id:'OP003', name:'Francesco Cappello',role:'Proprietario',   added:'2026-05-25'},
+      {id:'OP004', name:'Fabio Bucchieri',   role:'Maestro di vita',added:'2026-05-25'},
+      {id:'OP005', name:'Giuseppe Vergilio', role:'Operatore',      added:'2026-05-25'},
+      {id:'OP006', name:'Domiziana Picone',  role:'Operatrice',     added:'2026-05-25'},
+      {id:"OP007", name:"Giuseppa D'Amico",  role:'Operatrice',     added:'2026-05-25'}
+    ];
+
+    if (fsOps.length > 0) {
+      operators = fsOps;
+    } else {
+      // First run: push default operators to Firestore
+      operators = defaultOps;
+      for (const op of operators) {
+        const ref = await db.collection('operators').add({...op, _ts: Date.now()});
+        op._fsId = ref.id;
+      }
+    }
+
+    if (fsSamples.length)   samples     = fsSamples;
+    if (fsAcetone.length)   acetoneLog  = fsAcetone;
+    if (fsPressure.length)  pressureLog = fsPressure;
+    if (fsFastCure.length)  fastCureLog = fsFastCure;
+    if (fsSlowCure.length)  slowCureLog = fsSlowCure;
+    if (fsMov.length)       movLog      = fsMov;
+    if (fsInv.length)       inventory   = fsInv;
+    if (fsAudit.length)     auditLog    = fsAudit;
+
+    // Sync codeCounter from samples
+    if (samples.length > 0) {
+      const nums = samples.map(s => parseInt((s.codice||'').split('-').pop())||0);
+      codeCounter = Math.max(...nums) + 1;
+    }
+
+    // Refresh all UI
+    refreshDashboard();
+    refreshCampioniTable();
+    renderOperatorsList();
+    refreshInventario();
+
+  } catch(e) {
+    console.error('Firebase load error:', e);
+    loadDiv.innerHTML += '<div style="color:var(--color-error);font-size:.85rem;margin-top:8px">⚠ Errore connessione database. Verificare la connessione internet.</div>';
+    await new Promise(r => setTimeout(r, 3000));
+  }
+
+  document.body.removeChild(loadDiv);
+
+  // ── Original event listeners ──────────────────────────────
+
   document.getElementById('f01_specie').addEventListener('change', generateCode01);
   document.getElementById('f01_distretto').addEventListener('change', generateCode01);
   updateF05MetodoInfo();
   updateF04TecnicaInfo();
   updateF03TecnicaInfo();
   updateDefattingInfo();
+
 });
 
 // ============================================================
@@ -1883,7 +2050,7 @@ function closeActionModal() {
   _pendingAction = null;
 }
 
-function confirmAction() {
+async function confirmAction() {
   const operator = document.getElementById('actionOperatorSel').value;
   const motiv = document.getElementById('actionMotivazione').value.trim();
   const errEl = document.getElementById('actionModalError');
@@ -1911,7 +2078,11 @@ function confirmAction() {
   };
 
   if (type === 'delete') {
-    if (arr) arr.splice(index, 1);
+    if (arr) {
+      const delItem = arr[index];
+      if (delItem && delItem._fsId) await db.collection(dataset).doc(delItem._fsId).delete();
+      arr.splice(index, 1);
+    }
     entry.newData = '[ELIMINATO]';
     refreshDatasetDisplay(dataset);
   } else {
@@ -1924,10 +2095,14 @@ function confirmAction() {
       });
       Object.assign(arr[index], newVals);
       entry.newData = JSON.stringify(arr[index]);
+      const updItem = arr[index];
+      if (updItem && updItem._fsId) await db.collection(dataset).doc(updItem._fsId).set(updItem, {merge:true});
       refreshDatasetDisplay(dataset);
     }
   }
 
+  const auditRef = await db.collection('auditLog').add({...entry, _ts:Date.now()});
+  entry._fsId = auditRef.id;
   auditLog.push(entry);
   closeActionModal();
 
