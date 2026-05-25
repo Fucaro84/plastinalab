@@ -322,6 +322,9 @@ textarea.form-input{resize:vertical;min-height:80px}
     </nav>
 
     <div class="sidebar-footer">
+      <div class="theme-toggle" style="cursor:pointer;padding:var(--space-2);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2)" onclick="openAuditLog()">
+        <span>📋</span><span>Registro Modifiche</span>
+      </div>
       <div class="theme-toggle" data-theme-toggle onclick="toggleTheme()">
         <span style="font-size:var(--text-xs)">Modalità schermo</span>
         <span id="themeIcon">☀️</span>
@@ -1222,6 +1225,11 @@ textarea.form-input{resize:vertical;min-height:80px}
       <div class="form-group"><label class="form-label">Ruolo</label>
         <select class="form-input" id="opRole">
           <option value="Responsabile">Responsabile</option>
+          <option value="Supervisore">Supervisore</option>
+          <option value="Proprietario">Proprietario</option>
+          <option value="Maestro di vita">Maestro di vita</option>
+          <option value="Operatore">Operatore</option>
+          <option value="Operatrice">Operatrice</option>
           <option value="Tecnico di laboratorio">Tecnico di laboratorio</option>
           <option value="Dottorando">Dottorando / Specializzando</option>
           <option value="Studente tirocinante">Studente tirocinante</option>
@@ -1241,7 +1249,13 @@ textarea.form-input{resize:vertical;min-height:80px}
 // ============================================================
 let currentUser = null;
 let operators = [
-  {id:'OP001', name:'Admin Laboratorio', role:'Responsabile', added:'2026-01-01'}
+  {id:'OP001', name:'Francesca Rappa',   role:'Responsabile',   added:'2026-05-25'},
+  {id:'OP002', name:'Alberto Fucarino',  role:'Supervisore',    added:'2026-05-25'},
+  {id:'OP003', name:'Francesco Cappello',role:'Proprietario',   added:'2026-05-25'},
+  {id:'OP004', name:'Fabio Bucchieri',   role:'Maestro di vita',added:'2026-05-25'},
+  {id:'OP005', name:'Giuseppe Vergilio', role:'Operatore',      added:'2026-05-25'},
+  {id:'OP006', name:'Domiziana Picone',  role:'Operatrice',     added:'2026-05-25'},
+  {id:"OP007", name:"Giuseppa D'Amico",  role:'Operatrice',     added:'2026-05-25'}
 ];
 let samples = [];
 let acetoneLog = [];
@@ -1512,12 +1526,7 @@ function addAcetoneEntry() {
   if (pur < 99) { purClass='purity-crit'; purLabel='❌ Bassa — cambiare!'; }
   else if (pur < 99.5) { purClass='purity-warn'; purLabel='⚠ Pianificare cambio'; }
   acetoneLog.push({data,num,pur,temp,azione,note});
-  const container = document.getElementById('f03AcetoneRows');
-  if (!container) return;
-  const row = document.createElement('div');
-  row.className = 'acetone-row';
-  row.innerHTML = `<strong style="font-family:monospace">Bagno #${num}</strong><span>${data}</span><span class="${purClass}">${pur}%<br><small>${purLabel}</small></span><span>${temp}°C</span><span style="grid-column:span 1">${note||'—'}</span><span class="badge badge-teal" style="font-size:10px">${azione}</span>`;
-  container.prepend(row);
+  renderAcetoneRows();
   document.getElementById('f03_ac_num').value = parseInt(num)+1;
 }
 
@@ -1578,13 +1587,7 @@ function addPressureEntry() {
   const note = document.getElementById('f04_p_note')?.value;
   if (!data||!pres) { alert('Inserire data e pressione.'); return; }
   pressureLog.push({data,giorno,pres,bolle,azione,note});
-  const container = document.getElementById('f04PressureRows');
-  if (!container) return;
-  const bolleLabel = {none:'🟢 Nessuna',rare:'🟡 Sporadiche',moderate:'🟠 Moderate',intense:'🔴 Continue',aria:'⚪ Solo aria'};
-  const row = document.createElement('div');
-  row.className = 'pressure-row';
-  row.innerHTML = `<strong>Giorno ${giorno}</strong><span>${data}</span><span><strong>${pres} cmHg</strong></span><span>${bolleLabel[bolle]||bolle} — ${note||'—'}</span>`;
-  container.prepend(row);
+  renderPressureRows();
   document.getElementById('f04_p_giorno').value = parseInt(giorno)+1;
 }
 
@@ -1616,13 +1619,7 @@ function addFastCureEntry() {
   const note = document.getElementById('f05_fc_note')?.value;
   if (!data) return;
   fastCureLog.push({data,ciclo,durata,temp,vol,ris,note});
-  const container = document.getElementById('f05FastCureRows');
-  if (!container) return;
-  const risLabel = {parziale:'⏳ Parziale', completo:'✅ Completo', insufficiente:'❌ Insuff.'};
-  const row = document.createElement('div');
-  row.className = 'fast-cure-row';
-  row.innerHTML = `<strong>#${ciclo}</strong><span>${data}</span><span>${durata}h</span><span>${temp}°C</span><span>${vol||'—'} mL</span><span>${note||'—'}</span><span class="badge ${ris==='completo'?'badge-green':ris==='insufficiente'?'badge-orange':'badge-gray'}">${risLabel[ris]||ris}</span>`;
-  container.prepend(row);
+  renderFastCureRows();
   document.getElementById('f05_fc_ciclo').value = parseInt(ciclo)+1;
 }
 
@@ -1634,13 +1631,7 @@ function addSlowCureEntry() {
   const note = document.getElementById('f05_sc_note')?.value;
   if (!data) return;
   slowCureLog.push({sett,data,temp,strato,note});
-  const container = document.getElementById('f05SlowCureRows');
-  if (!container) return;
-  const row = document.createElement('div');
-  row.className = 'pressure-row';
-  row.style.gridTemplateColumns = '80px 100px 160px 1fr';
-  row.innerHTML = `<strong>Sett. ${sett}</strong><span>${data}</span><span>${temp}°C / S6: ${strato==='si'?'✅':'—'}</span><span>${note||'—'}</span>`;
-  container.prepend(row);
+  renderSlowCureRows();
   document.getElementById('f05_sc_sett').value = parseInt(sett)+1;
 }
 
@@ -1723,12 +1714,7 @@ function addMovimento() {
   const note = document.getElementById('f07_mov_note')?.value;
   if (!codice||!data) { alert('Inserire codice e data.'); return; }
   movLog.push({codice,data,tipo,dest,resp,rientro,stato,note});
-  const container = document.getElementById('f07MovRows');
-  if (!container) return;
-  const row = document.createElement('div');
-  row.className = 'mov-row';
-  row.innerHTML = `<span class="code">${codice}</span><span>${data}</span><span>${tipo}</span><span>${dest||'—'}</span><span>${resp||'—'}</span><span>${rientro||'—'}</span><span class="badge ${stato==='Ottimo'?'badge-green':stato==='Danneggiato'?'badge-orange':'badge-teal'}">${stato}</span>`;
-  container.prepend(row);
+  renderMovRows();
 }
 
 // ============================================================
@@ -1841,6 +1827,338 @@ document.addEventListener('DOMContentLoaded', () => {
   updateF03TecnicaInfo();
   updateDefattingInfo();
 });
+
+// ============================================================
+// AUDIT LOG & EDIT/DELETE SYSTEM
+// ============================================================
+let auditLog = [];
+let _pendingAction = null; // {type:'edit'|'delete', dataset, index, newData}
+
+function openActionModal(type, dataset, index, editFields) {
+  const modal = document.getElementById('actionModal');
+  const titleEl = document.getElementById('actionModalTitle');
+  const descEl = document.getElementById('actionModalDesc');
+  const editForm = document.getElementById('actionEditForm');
+  const errEl = document.getElementById('actionModalError');
+  const confirmBtn = document.getElementById('actionConfirmBtn');
+
+  errEl.style.display = 'none';
+  document.getElementById('actionMotivazione').value = '';
+
+  // Populate operator select
+  const opSel = document.getElementById('actionOperatorSel');
+  opSel.innerHTML = '<option value="">— Seleziona operatore —</option>' +
+    operators.map(op => `<option value="${op.name}">${op.name} (${op.role})</option>`).join('');
+
+  if (type === 'delete') {
+    titleEl.textContent = '🗑 Eliminazione record';
+    descEl.textContent = 'Stai per eliminare definitivamente questo record dal logbook. L\'operazione verrà tracciata nell\'audit log.';
+    editForm.style.display = 'none';
+    confirmBtn.style.background = 'var(--color-error)';
+    confirmBtn.textContent = 'Elimina definitivamente';
+  } else {
+    titleEl.textContent = '✏️ Modifica record';
+    descEl.textContent = 'Modifica i campi desiderati. La versione originale verrà conservata nell\'audit log.';
+    confirmBtn.style.background = '';
+    confirmBtn.textContent = 'Salva modifica';
+    // Build edit form
+    editForm.innerHTML = editFields.map(f =>
+      `<div class="form-group mb-3">
+        <label class="form-label">${f.label}</label>
+        ${f.type === 'select'
+          ? `<select class="form-input" id="editField_${f.key}">${f.options.map(o=>`<option value="${o}" ${o===f.value?'selected':''}>${o}</option>`).join('')}</select>`
+          : `<input type="${f.type||'text'}" class="form-input" id="editField_${f.key}" value="${f.value||''}">`
+        }
+      </div>`
+    ).join('');
+    editForm.style.display = 'block';
+  }
+
+  _pendingAction = { type, dataset, index, editFields };
+  modal.classList.add('open');
+}
+
+function closeActionModal() {
+  document.getElementById('actionModal').classList.remove('open');
+  _pendingAction = null;
+}
+
+function confirmAction() {
+  const operator = document.getElementById('actionOperatorSel').value;
+  const motiv = document.getElementById('actionMotivazione').value.trim();
+  const errEl = document.getElementById('actionModalError');
+
+  if (!operator) { errEl.innerHTML = 'Selezionare l\'operatore responsabile.'; errEl.style.display='flex'; return; }
+  if (!motiv) { errEl.innerHTML = 'Inserire la motivazione della modifica.'; errEl.style.display='flex'; return; }
+  errEl.style.display = 'none';
+
+  const { type, dataset, index, editFields } = _pendingAction;
+  const dataMap = { acetone: acetoneLog, pressure: pressureLog, fastcure: fastCureLog,
+    slowcure: slowCureLog, defatting: [], movimenti: movLog, inventario: inventory };
+  const arr = dataMap[dataset];
+  const original = arr ? JSON.parse(JSON.stringify(arr[index])) : null;
+
+  const entry = {
+    id: 'AUD' + String(auditLog.length+1).padStart(4,'0'),
+    timestamp: new Date().toISOString(),
+    operator,
+    motiv,
+    type,
+    dataset,
+    index,
+    original: original ? JSON.stringify(original) : '—',
+    newData: '—'
+  };
+
+  if (type === 'delete') {
+    if (arr) arr.splice(index, 1);
+    entry.newData = '[ELIMINATO]';
+    refreshDatasetDisplay(dataset);
+  } else {
+    // Apply edits
+    if (arr && editFields) {
+      const newVals = {};
+      editFields.forEach(f => {
+        const el = document.getElementById('editField_' + f.key);
+        if (el) newVals[f.key] = el.value;
+      });
+      Object.assign(arr[index], newVals);
+      entry.newData = JSON.stringify(arr[index]);
+      refreshDatasetDisplay(dataset);
+    }
+  }
+
+  auditLog.push(entry);
+  closeActionModal();
+
+  // Brief toast feedback
+  showToast(type === 'delete' ? '🗑 Record eliminato e tracciato' : '✅ Modifica salvata e tracciata');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('plastToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'plastToast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--color-text);color:var(--color-bg);padding:10px 18px;border-radius:var(--radius-md);font-size:var(--text-sm);z-index:999;box-shadow:var(--shadow-lg);transition:opacity .3s ease';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2800);
+}
+
+function openAuditLog() {
+  const body = document.getElementById('auditLogBody');
+  if (!auditLog.length) {
+    body.innerHTML = '<div class="empty-state" style="padding:var(--space-8)"><h3>Nessuna modifica registrata</h3><p>Le modifiche ed eliminazioni appariranno qui con traccia completa.</p></div>';
+  } else {
+    body.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Data/Ora</th><th>Operatore</th><th>Tipo</th><th>Dataset</th><th>Motivazione</th></tr></thead><tbody>` +
+      auditLog.slice().reverse().map(e => `<tr>
+        <td><span class="code">${e.id}</span></td>
+        <td style="font-size:var(--text-xs)">${new Date(e.timestamp).toLocaleString('it-IT')}</td>
+        <td>${e.operator}</td>
+        <td><span class="badge ${e.type==='delete'?'badge-orange':'badge-teal'}">${e.type==='delete'?'🗑 Eliminazione':'✏️ Modifica'}</span></td>
+        <td>${e.dataset}</td>
+        <td>${e.motiv}</td>
+      </tr>`).join('') +
+      `</tbody></table>`;
+  }
+  document.getElementById('auditModal').classList.add('open');
+}
+
+// ============================================================
+// REFRESH DISPLAY FUNCTIONS (called after edit/delete)
+// ============================================================
+function refreshDatasetDisplay(dataset) {
+  if (dataset === 'acetone') renderAcetoneRows();
+  else if (dataset === 'pressure') renderPressureRows();
+  else if (dataset === 'fastcure') renderFastCureRows();
+  else if (dataset === 'slowcure') renderSlowCureRows();
+  else if (dataset === 'movimenti') renderMovRows();
+  else if (dataset === 'inventario') { refreshInventario(); }
+}
+
+function renderAcetoneRows() {
+  const container = document.getElementById('f03AcetoneRows');
+  if (!container) return;
+  if (!acetoneLog.length) { container.innerHTML = ''; return; }
+  container.innerHTML = acetoneLog.map((r,i) => {
+    let purClass='purity-ok',purLabel='✅ Ottima';
+    if(r.pur<99){purClass='purity-crit';purLabel='❌ Bassa';}
+    else if(r.pur<99.5){purClass='purity-warn';purLabel='⚠ Pianificare';}
+    return `<div class="acetone-row" style="grid-template-columns:80px 100px 160px 120px 1fr 90px 80px">
+      <strong style="font-family:monospace">Bagno #${r.num}</strong>
+      <span>${r.data}</span>
+      <span class="${purClass}">${r.pur}%<br><small>${purLabel}</small></span>
+      <span>${r.temp}°C</span>
+      <span>${r.note||'—'}</span>
+      <span class="badge badge-teal" style="font-size:10px">${r.azione}</span>
+      <span style="display:flex;gap:4px">
+        <button class="btn btn-sm btn-ghost" title="Modifica" onclick="editAcetone(${i})">✏️</button>
+        <button class="btn btn-sm btn-ghost" title="Elimina" style="color:var(--color-error)" onclick="deleteAcetone(${i})">🗑</button>
+      </span>
+    </div>`;
+  }).join('');
+}
+
+function editAcetone(i) {
+  const r = acetoneLog[i];
+  openActionModal('edit','acetone',i,[
+    {key:'data',label:'Data',type:'date',value:r.data},
+    {key:'num',label:'N° bagno',type:'number',value:r.num},
+    {key:'pur',label:'Purezza (%)',type:'number',value:r.pur},
+    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'azione',label:'Azione',type:'select',value:r.azione,options:['mantenuto','agitato','cambiato','completato']},
+    {key:'note',label:'Note',type:'text',value:r.note}
+  ]);
+}
+function deleteAcetone(i) { openActionModal('delete','acetone',i,[]); }
+
+function renderPressureRows() {
+  const container = document.getElementById('f04PressureRows');
+  if (!container) return;
+  const bolleLabel = {none:'🟢 Nessuna',rare:'🟡 Sporadiche',moderate:'🟠 Moderate',intense:'🔴 Continue',aria:'⚪ Solo aria'};
+  container.innerHTML = pressureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 120px 1fr 80px">
+    <strong>Giorno ${r.giorno}</strong><span>${r.data}</span>
+    <span><strong>${r.pres} cmHg</strong></span>
+    <span>${bolleLabel[r.bolle]||r.bolle} — ${r.note||'—'}</span>
+    <span style="display:flex;gap:4px">
+      <button class="btn btn-sm btn-ghost" onclick="editPressure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deletePressure(${i})">🗑</button>
+    </span>
+  </div>`).join('');
+}
+function editPressure(i) {
+  const r = pressureLog[i];
+  openActionModal('edit','pressure',i,[
+    {key:'data',label:'Data',type:'date',value:r.data},
+    {key:'giorno',label:'Giorno',type:'number',value:r.giorno},
+    {key:'pres',label:'Pressione (cmHg)',type:'number',value:r.pres},
+    {key:'bolle',label:'Bolle',type:'select',value:r.bolle,options:['none','rare','moderate','intense','aria']},
+    {key:'note',label:'Note',type:'text',value:r.note}
+  ]);
+}
+function deletePressure(i) { openActionModal('delete','pressure',i,[]); }
+
+function renderFastCureRows() {
+  const container = document.getElementById('f05FastCureRows');
+  if (!container) return;
+  const risLabel = {parziale:'⏳ Parziale', completo:'✅ Completo', insufficiente:'❌ Insuff.'};
+  container.innerHTML = fastCureLog.map((r,i) => `<div class="fast-cure-row" style="grid-template-columns:60px 100px 60px 60px 60px 1fr 80px 80px">
+    <strong>#${r.ciclo}</strong><span>${r.data}</span><span>${r.durata}h</span>
+    <span>${r.temp}°C</span><span>${r.vol||'—'} mL</span><span>${r.note||'—'}</span>
+    <span class="badge ${r.ris==='completo'?'badge-green':r.ris==='insufficiente'?'badge-orange':'badge-gray'}">${risLabel[r.ris]||r.ris}</span>
+    <span style="display:flex;gap:4px">
+      <button class="btn btn-sm btn-ghost" onclick="editFastCure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteFastCure(${i})">🗑</button>
+    </span>
+  </div>`).join('');
+}
+function editFastCure(i) {
+  const r = fastCureLog[i];
+  openActionModal('edit','fastcure',i,[
+    {key:'data',label:'Data',type:'date',value:r.data},
+    {key:'ciclo',label:'N° ciclo',type:'number',value:r.ciclo},
+    {key:'durata',label:'Durata (ore)',type:'number',value:r.durata},
+    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'vol',label:'Volume S6 (mL)',type:'number',value:r.vol},
+    {key:'ris',label:'Risultato',type:'select',value:r.ris,options:['parziale','completo','insufficiente']},
+    {key:'note',label:'Note',type:'text',value:r.note}
+  ]);
+}
+function deleteFastCure(i) { openActionModal('delete','fastcure',i,[]); }
+
+function renderSlowCureRows() {
+  const container = document.getElementById('f05SlowCureRows');
+  if (!container) return;
+  container.innerHTML = slowCureLog.map((r,i) => `<div class="pressure-row" style="grid-template-columns:80px 100px 160px 1fr 80px">
+    <strong>Sett. ${r.sett}</strong><span>${r.data}</span>
+    <span>${r.temp}°C / S6: ${r.strato==='si'?'✅':'—'}</span>
+    <span>${r.note||'—'}</span>
+    <span style="display:flex;gap:4px">
+      <button class="btn btn-sm btn-ghost" onclick="editSlowCure(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteSlowCure(${i})">🗑</button>
+    </span>
+  </div>`).join('');
+}
+function editSlowCure(i) {
+  const r = slowCureLog[i];
+  openActionModal('edit','slowcure',i,[
+    {key:'sett',label:'Settimana',type:'number',value:r.sett},
+    {key:'data',label:'Data',type:'date',value:r.data},
+    {key:'temp',label:'Temperatura (°C)',type:'number',value:r.temp},
+    {key:'strato',label:'Strato S6',type:'select',value:r.strato,options:['si','no']},
+    {key:'note',label:'Note',type:'text',value:r.note}
+  ]);
+}
+function deleteSlowCure(i) { openActionModal('delete','slowcure',i,[]); }
+
+function renderMovRows() {
+  const container = document.getElementById('f07MovRows');
+  if (!container) return;
+  container.innerHTML = movLog.map((r,i) => `<div class="mov-row" style="grid-template-columns:130px 90px 120px 1fr 1fr 90px 80px">
+    <span class="code">${r.codice}</span><span>${r.data}</span><span>${r.tipo}</span>
+    <span>${r.dest||'—'}</span><span>${r.resp||'—'}</span>
+    <span class="badge ${r.stato==='Ottimo'?'badge-green':r.stato==='Danneggiato'?'badge-orange':'badge-teal'}">${r.stato}</span>
+    <span style="display:flex;gap:4px">
+      <button class="btn btn-sm btn-ghost" onclick="editMovimento(${i})">✏️</button>
+      <button class="btn btn-sm btn-ghost" style="color:var(--color-error)" onclick="deleteMovimento(${i})">🗑</button>
+    </span>
+  </div>`).join('');
+}
+function editMovimento(i) {
+  const r = movLog[i];
+  openActionModal('edit','movimenti',i,[
+    {key:'codice',label:'Codice preparato',type:'text',value:r.codice},
+    {key:'data',label:'Data',type:'date',value:r.data},
+    {key:'tipo',label:'Tipo movimento',type:'select',value:r.tipo,options:['uscita_interna','uscita_prestito','rientro','spostamento','ispezione']},
+    {key:'dest',label:'Destinazione',type:'text',value:r.dest},
+    {key:'stato',label:'Stato',type:'select',value:r.stato,options:['Ottimo','Buono','Danneggiato']},
+    {key:'note',label:'Note',type:'text',value:r.note}
+  ]);
+}
+function deleteMovimento(i) { openActionModal('delete','movimenti',i,[]); }
+
+
 </script>
+
+<!-- ===================== EDIT/DELETE MODAL ===================== -->
+<div class="modal-overlay" id="actionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="actionModalTitle">Conferma operazione</div>
+      <button class="modal-close" onclick="closeActionModal()">✕</button>
+    </div>
+    <div id="actionModalBody">
+      <p class="text-sm text-muted mb-4" id="actionModalDesc"></p>
+      <div id="actionEditForm" style="display:none"></div>
+      <div class="form-group mb-4">
+        <label class="form-label">Operatore responsabile <span style="color:var(--color-error)">*</span></label>
+        <select class="form-input" id="actionOperatorSel"></select>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label">Motivazione della modifica</label>
+        <input type="text" class="form-input" id="actionMotivazione" placeholder="es. Errore di trascrizione, dato aggiornato…">
+      </div>
+      <div id="actionModalError" class="alert alert-critical mt-2" style="display:none"></div>
+      <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-4)">
+        <button class="btn btn-ghost" onclick="closeActionModal()">Annulla</button>
+        <button class="btn btn-primary" id="actionConfirmBtn" onclick="confirmAction()">Conferma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== AUDIT LOG MODAL ===================== -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal" style="width:min(680px,95vw)">
+    <div class="modal-header">
+      <div class="modal-title">📋 Registro Modifiche (Audit Log)</div>
+      <button class="modal-close" onclick="document.getElementById('auditModal').classList.remove('open')">✕</button>
+    </div>
+    <div id="auditLogBody" style="max-height:60vh;overflow-y:auto"></div>
+  </div>
+</div>
 </body>
 </html>
