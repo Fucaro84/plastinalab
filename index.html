@@ -1304,9 +1304,10 @@ async function updateInFS(col, arr, index, changes) {
         </select>
       </div>
       <div style="display:flex;gap:var(--space-3);justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="document.getElementById('addOperatorModal').classList.remove('open')">Annulla</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('addOperatorModal').classList.remove('open');document.getElementById('addOpError').style.display='none'">Annulla</button>
         <button class="btn btn-primary" onclick="addOperator()">Aggiungi</button>
       </div>
+      <div id="addOpError" class="alert alert-critical" style="display:none;margin-top:var(--space-3)"></div>
     </div>
   </div>
 </div>
@@ -1459,7 +1460,14 @@ async function addOperator() {
   const name = document.getElementById('opName').value.trim();
   const role = document.getElementById('opRole').value;
   if (!name) return;
-  const id = 'OP' + String(operators.length+1).padStart(3,'0');
+  // Prevent duplicate names
+  if (operators.some(op => op.name.toLowerCase() === name.toLowerCase())) {
+    document.getElementById('addOpError').innerHTML = 'Un operatore con questo nominativo esiste già.';
+    document.getElementById('addOpError').style.display = 'flex';
+    return;
+  }
+  document.getElementById('addOpError').style.display = 'none';
+  const id = 'OP' + String(Date.now()).slice(-5);
   const opData = {id, name, role, added: new Date().toISOString().slice(0,10), _ts:Date.now()};
   const opRef = await db.collection('operators').add(opData);
   opData._fsId = opRef.id;
@@ -1468,15 +1476,29 @@ async function addOperator() {
   document.getElementById('addOperatorModal').classList.remove('open');
   initOperatoriTable();
   populateOperatorSelects();
+  showToast('✅ Operatore aggiunto.');
 }
 
 function initOperatoriTable() {
   const wrap = document.getElementById('operatoriTableWrap');
   if (!wrap) return;
   if (!operators.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun operatore registrato</h3><p>Aggiungere gli operatori autorizzati al laboratorio</p></div>'; return; }
-  wrap.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Nominativo</th><th>Ruolo</th><th>Registrato</th></tr></thead><tbody>` +
-    operators.map(op => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td></tr>`).join('') +
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Nominativo</th><th>Ruolo</th><th>Registrato il</th><th style="width:60px">Azioni</th></tr></thead><tbody>` +
+    operators.map((op,i) => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td><td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Rimuovi operatore" onclick="deleteOperatorPrompt(${i})">🗑</button></td></tr>`).join('') +
     `</tbody></table>`;
+}
+
+async function deleteOperatorPrompt(index) {
+  const op = operators[index];
+  if (!op) return;
+  const pwd = prompt(`Per rimuovere "${op.name}" dal registro operatori, inserire il codice laboratorio:`);
+  if (pwd === null) return;
+  if (pwd.toLowerCase() !== 'lab800a') { alert('Codice non corretto. Operazione annullata.'); return; }
+  if (op._fsId) await db.collection('operators').doc(op._fsId).delete();
+  operators.splice(index, 1);
+  initOperatoriTable();
+  populateOperatorSelects();
+  showToast('✅ Operatore rimosso dal registro.');
 }
 
 // ============================================================
@@ -1871,9 +1893,48 @@ function refreshCampioniTable() {
   const wrap = document.getElementById('campioniTableWrap');
   if (!wrap) return;
   if (!samples.length) { wrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><h3>Nessun campione registrato</h3></div>'; return; }
-  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Peso</th><th>Destinazione</th><th>Fase</th><th>Data ricezione</th></tr></thead><tbody>` +
-    samples.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie}</td><td>${s.distretto}</td><td>${s.peso} kg</td><td>${s.dest}</td><td><span class="badge badge-teal">${s.fase}</span></td><td>${s.date}</td></tr>`).join('') +
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Peso</th><th>Destinazione</th><th>Fase</th><th>Data ricezione</th><th style="width:50px"></th></tr></thead><tbody>` +
+    samples.map((s,i) => `<tr>
+      <td><span class="code">${s.codice}</span></td>
+      <td>${s.specie}</td><td>${s.distretto}</td><td>${s.peso} kg</td>
+      <td>${s.dest}</td>
+      <td><span class="badge badge-teal">${s.fase}</span></td>
+      <td>${s.date}</td>
+      <td><button class="btn btn-sm btn-ghost" style="color:var(--color-error)" title="Elimina campione" onclick="openDeleteSample(${i})">🗑</button></td>
+    </tr>`).join('') +
     `</tbody></table>`;
+}
+
+let _pendingDeleteSampleIndex = null;
+
+function openDeleteSample(index) {
+  _pendingDeleteSampleIndex = index;
+  const s = samples[index];
+  document.getElementById('deleteSampleCodeLabel').textContent = s ? s.codice : '—';
+  document.getElementById('deleteSamplePwd').value = '';
+  document.getElementById('deleteSampleError').style.display = 'none';
+  document.getElementById('deleteSampleModal').classList.add('open');
+  setTimeout(() => document.getElementById('deleteSamplePwd').focus(), 100);
+}
+
+async function confirmDeleteSample() {
+  const pwd = document.getElementById('deleteSamplePwd').value.trim();
+  const errEl = document.getElementById('deleteSampleError');
+  if (pwd.toLowerCase() !== 'lab800a') {
+    errEl.innerHTML = 'Codice non corretto. Operazione annullata.';
+    errEl.style.display = 'flex';
+    return;
+  }
+  const index = _pendingDeleteSampleIndex;
+  if (index === null || !samples[index]) return;
+  const s = samples[index];
+  if (s._fsId) await db.collection('samples').doc(s._fsId).delete();
+  samples.splice(index, 1);
+  _pendingDeleteSampleIndex = null;
+  document.getElementById('deleteSampleModal').classList.remove('open');
+  refreshDashboard();
+  refreshCampioniTable();
+  showToast('🗑 Campione eliminato dal registro.');
 }
 
 // ============================================================
@@ -1945,9 +2006,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
 
     if (fsOps.length > 0) {
-      operators = fsOps;
+      // Deduplicate by name (keep first occurrence, delete duplicates from Firestore)
+      const seen = new Map();
+      const duplicates = [];
+      for (const op of fsOps) {
+        if (seen.has(op.name)) {
+          duplicates.push(op._fsId);
+        } else {
+          seen.set(op.name, op);
+        }
+      }
+      // Delete duplicates from Firestore
+      for (const dupId of duplicates) {
+        if (dupId) await db.collection('operators').doc(dupId).delete();
+      }
+      operators = Array.from(seen.values());
     } else {
-      // First run: push default operators to Firestore
+      // First run only: push default operators to Firestore
       operators = defaultOps;
       for (const op of operators) {
         const ref = await db.collection('operators').add({...op, _ts: Date.now()});
@@ -1973,7 +2048,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Refresh all UI
     refreshDashboard();
     refreshCampioniTable();
-    renderOperatorsList();
+    initOperatoriTable();
+    populateOperatorSelects();
     refreshInventario();
 
   } catch(e) {
@@ -2298,6 +2374,31 @@ function deleteMovimento(i) { openActionModal('delete','movimenti',i,[]); }
 
 </script>
 
+
+<!-- ===================== DELETE SAMPLE MODAL ===================== -->
+<div class="modal-overlay" id="deleteSampleModal">
+  <div class="modal" style="width:min(440px,95vw)">
+    <div class="modal-header">
+      <div class="modal-title">🗑 Elimina campione</div>
+      <button class="modal-close" onclick="document.getElementById('deleteSampleModal').classList.remove('open')">✕</button>
+    </div>
+    <div style="padding:var(--space-4)">
+      <div class="alert alert-critical" style="margin-bottom:var(--space-4)">
+        <strong>Attenzione:</strong> questa operazione è irreversibile. Il campione e tutti i dati associati verranno rimossi dal registro.
+      </div>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-4)">Campione selezionato: <strong id="deleteSampleCodeLabel">—</strong></p>
+      <div class="form-group mb-3">
+        <label class="form-label">Inserire il codice laboratorio per confermare <span style="color:var(--color-error)">*</span></label>
+        <input type="text" class="form-input" id="deleteSamplePwd" placeholder="Inserire il codice di accesso…" autocomplete="off">
+      </div>
+      <div id="deleteSampleError" class="alert alert-critical" style="display:none;margin-bottom:var(--space-3)"></div>
+      <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-4)">
+        <button class="btn btn-ghost" onclick="document.getElementById('deleteSampleModal').classList.remove('open')">Annulla</button>
+        <button class="btn" style="background:var(--color-error);color:#fff" onclick="confirmDeleteSample()">Elimina definitivamente</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- ===================== EDIT/DELETE MODAL ===================== -->
 <div class="modal-overlay" id="actionModal">
   <div class="modal">
