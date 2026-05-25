@@ -155,7 +155,7 @@ textarea.form-input{resize:vertical;min-height:80px}
 
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
-.kpi-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-sm)}
+.kpi-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-sm);cursor:pointer;transition:box-shadow var(--transition-interactive),border-color var(--transition-interactive)}.kpi-card:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary)}.kpi-card .kpi-hint{font-size:var(--text-xs);color:var(--color-primary);margin-top:var(--space-1);opacity:.7}
 .kpi-value{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-primary);line-height:1}
 .kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1);text-transform:uppercase;letter-spacing:.05em}
 
@@ -219,6 +219,35 @@ textarea.form-input{resize:vertical;min-height:80px}
 .login-logo-mark{width:56px;height:56px;background:var(--color-primary);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;margin:0 auto var(--space-3)}
 .login-title{font-family:var(--font-display);font-size:var(--text-xl)}
 .login-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
+
+/* ── KPI CARDS CLICCABILI ── */
+.kpi-card{cursor:pointer;transition:box-shadow var(--transition-interactive),border-color var(--transition-interactive),transform var(--transition-interactive)}
+.kpi-card:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary);transform:translateY(-1px)}
+.kpi-hint{font-size:10px;color:var(--color-primary);margin-top:var(--space-1);opacity:.8;letter-spacing:.03em}
+
+/* ── KPI DETAIL MODAL ── */
+.kpi-modal .modal{min-width:min(720px,95vw);max-height:85vh;overflow-y:auto}
+.kpi-modal-tabs{display:flex;gap:0;border-bottom:1px solid var(--color-border);margin-bottom:var(--space-4);overflow-x:auto}
+.kpi-tab{padding:var(--space-2) var(--space-4);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all var(--transition-interactive)}
+.kpi-tab:hover{color:var(--color-text)}
+.kpi-tab.active{color:var(--color-primary);border-bottom-color:var(--color-primary);font-weight:600}
+.kpi-tab-panel{display:none}
+.kpi-tab-panel.active{display:block}
+.kpi-log-row{display:grid;gap:var(--space-2);align-items:center;padding:var(--space-2) var(--space-3);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-xs);margin-bottom:var(--space-2)}
+.kpi-log-row.r-acetone{grid-template-columns:90px 80px 70px 70px 140px 1fr}
+.kpi-log-row.r-pressure{grid-template-columns:80px 80px 80px 90px 1fr}
+.kpi-log-row.r-sample{grid-template-columns:150px 80px 100px 100px 1fr}
+.kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-faint);margin-bottom:1px}
+.kpi-val{color:var(--color-text);font-weight:500}
+
+/* ── DASHBOARD MINI LOG TABLES ── */
+.dash-log-section{margin-top:var(--space-6)}
+.dash-log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);gap:var(--space-4)}
+.dash-log-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text)}
+.dash-mini-row{display:grid;gap:var(--space-2);align-items:center;padding:var(--space-2) var(--space-3);background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-xs);margin-bottom:var(--space-1)}
+.dash-mini-row.ac{grid-template-columns:110px 80px 70px 130px 1fr}
+.dash-mini-row.pr{grid-template-columns:110px 80px 80px 80px 1fr}
+
 </style>
 
 <!-- Firebase SDK -->
@@ -329,7 +358,7 @@ async function updateInFS(col, arr, index, changes) {
         <div class="logo-icon">P</div>
         <div>
           <div class="logo-text">PlastinaLab</div>
-          <div class="logo-version">v3.0 — S10 completo</div>
+          <div class="logo-version">v4.0 — S10 completo</div>
         </div>
       </div>
     </div>
@@ -425,7 +454,8 @@ async function updateInFS(col, arr, index, changes) {
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18"/></svg>
             <span style="font-family:var(--font-display);font-size:var(--text-lg)">Campioni in lavorazione</span>
           </div>
-          <div class="card-body" style="padding:0;overflow-x:auto"><div id="dashboardTableWrap"></div></div>
+          <div class="card-body" style="padding:0;overflow-x:auto"><div id="dashboardTableWrap"></div>
+<div id="dashboardLogSection" style="margin-top:var(--space-4)"></div></div>
         </div>
       </div>
     </div>
@@ -1949,27 +1979,107 @@ async function closePhase(num) {
 // ============================================================
 function refreshDashboard() {
   const kpiGrid = document.getElementById('kpiGrid');
-  const phases = ['01','02','03','04','05','06','07'];
-  const locked = phases.filter(p => phaseLocks[p]);
+  const inLav = samples.filter(s => !phaseLocks['07'] || !inventory.find(i => i.codice === s.codice));
+  const inFiss = samples.filter(s => s.fase === 'Fase 02 – Fissazione' || s.fase === '02');
+  const inDisid = samples.filter(s => s.fase === 'Fase 03 – Disidratazione' || s.fase === '03');
+  const inImpregn = samples.filter(s => s.fase === 'Fase 04 – Impregnazione' || s.fase === '04');
+  const archiviati = inventory.length;
+
   kpiGrid.innerHTML = `
-    <div class="kpi-card"><div class="kpi-value">${samples.length}</div><div class="kpi-label">Campioni totali</div></div>
-    <div class="kpi-card"><div class="kpi-value">${samples.filter(s=>!phaseLocks['06']).length}</div><div class="kpi-label">In lavorazione</div></div>
-    <div class="kpi-card"><div class="kpi-value">${inventory.length}</div><div class="kpi-label">Archiviati</div></div>
-    <div class="kpi-card"><div class="kpi-value">${operators.length}</div><div class="kpi-label">Operatori</div></div>
-    <div class="kpi-card"><div class="kpi-value">${acetoneLog.length}</div><div class="kpi-label">Rilevaz. acetone</div></div>
-    <div class="kpi-card"><div class="kpi-value">${pressureLog.length}</div><div class="kpi-label">Rilevaz. pressione</div></div>`;
+    <div class="kpi-card" onclick="openKpiModal('totali')" title="Clicca per dettaglio">
+      <div class="kpi-value">${samples.length}</div>
+      <div class="kpi-label">Campioni totali</div>
+      <div class="kpi-hint">↗ Vedi dettaglio</div>
+    </div>
+    <div class="kpi-card" onclick="openKpiModal('lavorazione')" title="Clicca per dettaglio">
+      <div class="kpi-value">${inLav.length}</div>
+      <div class="kpi-label">In lavorazione</div>
+      <div class="kpi-hint">↗ Vedi dettaglio</div>
+    </div>
+    <div class="kpi-card" onclick="openKpiModal('archiviati')" title="Clicca per dettaglio">
+      <div class="kpi-value">${archiviati}</div>
+      <div class="kpi-label">Archiviati</div>
+      <div class="kpi-hint">↗ Vedi dettaglio</div>
+    </div>
+    <div class="kpi-card" onclick="openKpiModal('operatori')" title="Clicca per dettaglio">
+      <div class="kpi-value">${operators.length}</div>
+      <div class="kpi-label">Operatori</div>
+      <div class="kpi-hint">↗ Vedi elenco</div>
+    </div>
+    <div class="kpi-card" onclick="openKpiModal('acetone')" title="Clicca per dettaglio">
+      <div class="kpi-value">${acetoneLog.length}</div>
+      <div class="kpi-label">Rilevaz. acetone</div>
+      <div class="kpi-hint">↗ Vedi rilevazioni</div>
+    </div>
+    <div class="kpi-card" onclick="openKpiModal('pressione')" title="Clicca per dettaglio">
+      <div class="kpi-value">${pressureLog.length}</div>
+      <div class="kpi-label">Rilevaz. pressione</div>
+      <div class="kpi-hint">↗ Vedi rilevazioni</div>
+    </div>`;
+
   document.getElementById('badgeCampioni').textContent = samples.length;
   const _cBadge = document.getElementById('badgeCompletati');
   if (_cBadge && typeof getCompletatiSamples === 'function') _cBadge.textContent = getCompletatiSamples().length;
+
+  // Dashboard table
   const tableWrap = document.getElementById('dashboardTableWrap');
   if (!samples.length) {
     tableWrap.innerHTML = '<div class="empty-state" style="padding:var(--space-10)"><svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18"/></svg><h3>Nessun campione in lavorazione</h3><p class="text-muted">Registrare il primo campione dalla Fase 01</p><button class="btn btn-primary mt-4" onclick="switchView(\'fase01\',document.querySelector(\'[data-view=fase01]\'))">+ Nuovo campione</button></div>';
-    return;
+  } else {
+    tableWrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Fase attuale</th><th>Responsabile</th><th>Data</th></tr></thead><tbody>` +
+      samples.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie}</td><td>${s.distretto}</td><td><span class="badge badge-teal">${s.fase}</span></td><td>${s.operator}</td><td>${s.date}</td></tr>`).join('') +
+      `</tbody></table>`;
   }
-  tableWrap.innerHTML = `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Fase attuale</th><th>Responsabile</th><th>Data</th></tr></thead><tbody>` +
-    samples.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie}</td><td>${s.distretto}</td><td><span class="badge badge-teal">${s.fase}</span></td><td>${s.operator}</td><td>${s.date}</td></tr>`).join('') +
-    `</tbody></table>`;
+
+  // Mini log tables
+  renderDashMiniLogs();
 }
+
+function renderDashMiniLogs() {
+  const dashContent = document.getElementById('dashboardLogSection');
+  if (!dashContent) return;
+
+  let html = '';
+
+  // Acetone mini table
+  if (acetoneLog.length) {
+    const last5ac = [...acetoneLog].slice(-5).reverse();
+    html += `<div class="dash-log-section">
+      <div class="dash-log-header">
+        <span class="dash-log-title">🧪 Ultime rilevazioni acetone</span>
+        <button class="btn btn-ghost btn-sm" onclick="openKpiModal('acetone')">Vedi tutte (${acetoneLog.length})</button>
+      </div>` +
+      last5ac.map(r => `<div class="dash-mini-row ac">
+        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'—'}</span></div></div>
+        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'—'}</div></div>
+        <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'—'}%</div></div>
+        <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'—'}</div></div>
+        <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'—'}</div></div>
+      </div>`).join('') +
+      `</div>`;
+  }
+
+  // Pressione mini table
+  if (pressureLog.length) {
+    const last5pr = [...pressureLog].slice(-5).reverse();
+    html += `<div class="dash-log-section">
+      <div class="dash-log-header">
+        <span class="dash-log-title">⚗️ Ultime rilevazioni pressione S10</span>
+        <button class="btn btn-ghost btn-sm" onclick="openKpiModal('pressione')">Vedi tutte (${pressureLog.length})</button>
+      </div>` +
+      last5pr.map(r => `<div class="dash-mini-row pr">
+        <div><div class="kpi-lbl">Campione</div><div class="kpi-val"><span class="code" style="font-size:10px">${r.codice||'—'}</span></div></div>
+        <div><div class="kpi-lbl">Data</div><div class="kpi-val">${r.data||'—'}</div></div>
+        <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'—'}</div></div>
+        <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'—'} cmHg</div></div>
+        <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'—'}</div></div>
+      </div>`).join('') +
+      `</div>`;
+  }
+
+  dashContent.innerHTML = html;
+}
+
 
 function refreshCampioniTable() {
   const wrap = document.getElementById('campioniTableWrap');
@@ -2011,12 +2121,30 @@ async function confirmDeleteSample() {
   if (index === null || !samples[index]) return;
   const s = samples[index];
   if (s._fsId) await db.collection('samples').doc(s._fsId).delete();
+  // Remove from inventory too (v4.0)
+  const deletedCodice = s.codice;
+  const invIdx = inventory.findIndex(i => i.codice === deletedCodice);
+  if (invIdx !== -1) {
+    const invItem = inventory[invIdx];
+    if (invItem.fsId) await db.collection('inventory').doc(invItem.fsId).delete();
+    inventory.splice(invIdx, 1);
+  }
+  // Remove acetone readings for this sample
+  const acToDelete = acetoneLog.filter(r => r.codice === deletedCodice);
+  for (const r of acToDelete) { if (r.fsId) await db.collection('acetoneLog').doc(r.fsId).delete(); }
+  acetoneLog = acetoneLog.filter(r => r.codice !== deletedCodice);
+  // Remove pressure readings for this sample
+  const prToDelete = pressureLog.filter(r => r.codice === deletedCodice);
+  for (const r of prToDelete) { if (r.fsId) await db.collection('pressureLog').doc(r.fsId).delete(); }
+  pressureLog = pressureLog.filter(r => r.codice !== deletedCodice);
+
   samples.splice(index, 1);
   _pendingDeleteSampleIndex = null;
   document.getElementById('deleteSampleModal').classList.remove('open');
   refreshDashboard();
   refreshCampioniTable();
-  showToast('🗑 Campione eliminato dal registro.');
+  refreshInventario();
+  showToast('🗑 Campione, archivio e tutte le rilevazioni eliminati definitivamente.');
 }
 
 // ============================================================
@@ -2054,6 +2182,137 @@ function exportLogbook() {
 // ============================================================
 // INIT
 // ============================================================
+document.addEventListener('
+// ═══════════════════════════════════════════════════════════
+// KPI DETAIL MODAL  (v4.0)
+// ═══════════════════════════════════════════════════════════
+function openKpiModal(type) {
+  const overlay = document.getElementById('kpiDetailModal');
+  const titleEl = document.getElementById('kpiModalTitle');
+  const body    = document.getElementById('kpiModalBody');
+
+  let title = '';
+  let html  = '';
+
+  switch(type) {
+    case 'totali': {
+      title = 'Campioni totali';
+      const all  = samples;
+      const lav  = samples.filter(s => !inventory.find(i => i.codice === s.codice));
+      const arch = inventory;
+      html = `<div class="kpi-modal-tabs">
+        <button class="kpi-tab active" onclick="kpiSwitchTab(this,'kpi-all')">Tutti (${all.length})</button>
+        <button class="kpi-tab" onclick="kpiSwitchTab(this,'kpi-active')">Attivi (${lav.length})</button>
+        <button class="kpi-tab" onclick="kpiSwitchTab(this,'kpi-arch')">Archiviati (${arch.length})</button>
+      </div>
+      <div id="kpi-all" class="kpi-tab-panel active">${renderSampleRows(all)}</div>
+      <div id="kpi-active" class="kpi-tab-panel">${renderSampleRows(lav)}</div>
+      <div id="kpi-arch" class="kpi-tab-panel">${renderInventoryRows(arch)}</div>`;
+      break;
+    }
+    case 'lavorazione': {
+      title = 'Campioni in lavorazione';
+      const lav = samples.filter(s => !inventory.find(i => i.codice === s.codice));
+      html = renderSampleRows(lav);
+      break;
+    }
+    case 'archiviati': {
+      title = 'Preparati archiviati';
+      html = renderInventoryRows(inventory);
+      break;
+    }
+    case 'operatori': {
+      title = 'Operatori registrati';
+      if (!operators.length) { html = '<p class="text-muted">Nessun operatore registrato.</p>'; break; }
+      html = `<table class="data-table"><thead><tr><th>ID</th><th>Nominativo</th><th>Ruolo</th><th>Aggiunto il</th></tr></thead><tbody>` +
+        operators.map(op => `<tr><td><span class="code">${op.id}</span></td><td>${op.name}</td><td><span class="badge badge-teal">${op.role}</span></td><td>${op.added}</td></tr>`).join('') +
+        `</tbody></table>`;
+      break;
+    }
+    case 'acetone': {
+      title = 'Rilevazioni acetone — Logbook completo';
+      const bySample = {};
+      acetoneLog.forEach(r => { const k = r.codice||'N/D'; if (!bySample[k]) bySample[k]=[]; bySample[k].push(r); });
+      const keys = Object.keys(bySample);
+      if (!keys.length) { html = '<p class="text-muted">Nessuna rilevazione registrata.</p>'; break; }
+      const tabs = keys.map((k,i) => `<button class="kpi-tab ${i===0?'active':''}" onclick="kpiSwitchTab(this,'aclog-${i}')">${k} (${bySample[k].length})</button>`).join('');
+      const panels = keys.map((k,i) => `<div id="aclog-${i}" class="kpi-tab-panel ${i===0?'active':''}">`+
+        `<div class="kpi-log-row r-acetone" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Bagno N°</span><span>Purezza</span><span>Temp.</span><span>Operatore</span><span>Azione</span></div>`+
+        bySample[k].map(r => `<div class="kpi-log-row r-acetone">
+          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'—'} ${r.ora||''}</div></div>
+          <div><div class="kpi-lbl">Bagno N°</div><div class="kpi-val">${r.num||'—'}</div></div>
+          <div><div class="kpi-lbl">Purezza</div><div class="kpi-val ${r.pur>=99?'purity-ok':r.pur>=95?'purity-warn':'purity-crit'}">${r.pur||'—'}%</div></div>
+          <div><div class="kpi-lbl">Temperatura</div><div class="kpi-val">${r.temp||'—'}°C</div></div>
+          <div><div class="kpi-lbl">Operatore</div><div class="kpi-val">${r.oper||r.operatore||'—'}</div></div>
+          <div><div class="kpi-lbl">Azione</div><div class="kpi-val">${r.azione||'—'}</div></div>
+        </div>`).join('') +
+        `</div>`).join('');
+      html = `<div class="kpi-modal-tabs">${tabs}</div>${panels}`;
+      break;
+    }
+    case 'pressione': {
+      title = 'Rilevazioni pressione S10 — Logbook completo';
+      const bySample = {};
+      pressureLog.forEach(r => { const k = r.codice||'N/D'; if (!bySample[k]) bySample[k]=[]; bySample[k].push(r); });
+      const keys = Object.keys(bySample);
+      if (!keys.length) { html = '<p class="text-muted">Nessuna rilevazione registrata.</p>'; break; }
+      const tabs = keys.map((k,i) => `<button class="kpi-tab ${i===0?'active':''}" onclick="kpiSwitchTab(this,'prlog-${i}')">${k} (${bySample[k].length})</button>`).join('');
+      const panels = keys.map((k,i) => `<div id="prlog-${i}" class="kpi-tab-panel ${i===0?'active':''}">`+
+        `<div class="kpi-log-row r-pressure" style="font-weight:600;background:var(--color-surface-offset)"><span>Data/Ora</span><span>Giorno</span><span>Pressione</span><span>Bolle</span><span>Operatore / Note</span></div>`+
+        bySample[k].map(r => `<div class="kpi-log-row r-pressure">
+          <div><div class="kpi-lbl">Data/Ora</div><div class="kpi-val">${r.data||'—'} ${r.ora||''}</div></div>
+          <div><div class="kpi-lbl">Giorno</div><div class="kpi-val">Gg. ${r.giorno||'—'}</div></div>
+          <div><div class="kpi-lbl">Pressione</div><div class="kpi-val">${r.pres||'—'} cmHg</div></div>
+          <div><div class="kpi-lbl">Bolle</div><div class="kpi-val">${r.bolle||'—'}</div></div>
+          <div><div class="kpi-lbl">Operatore / Note</div><div class="kpi-val">${r.oper||r.operatore||'—'}${r.note?' — '+r.note:''}</div></div>
+        </div>`).join('') +
+        `</div>`).join('');
+      html = `<div class="kpi-modal-tabs">${tabs}</div>${panels}`;
+      break;
+    }
+    default:
+      title = 'Dettaglio';
+      html = '<p class="text-muted">Nessun dato disponibile.</p>';
+  }
+
+  titleEl.textContent = title;
+  body.innerHTML = html;
+  overlay.classList.add('open');
+}
+
+function kpiSwitchTab(btn, panelId) {
+  const tabsContainer = btn.closest('.kpi-modal-tabs');
+  if (!tabsContainer) return;
+  tabsContainer.querySelectorAll('.kpi-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const body = document.getElementById('kpiModalBody');
+  body.querySelectorAll('.kpi-tab-panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(panelId);
+  if (target) target.classList.add('active');
+}
+
+function renderSampleRows(arr) {
+  if (!arr.length) return '<p class="text-muted" style="padding:var(--space-4)">Nessun campione in questa categoria.</p>';
+  return `<table class="data-table"><thead><tr><th>Codice</th><th>Specie</th><th>Distretto</th><th>Fase</th><th>Operatore</th><th>Data</th></tr></thead><tbody>` +
+    arr.map(s => `<tr><td><span class="code">${s.codice}</span></td><td>${s.specie||'—'}</td><td>${s.distretto||'—'}</td><td><span class="badge badge-teal">${s.fase||'—'}</span></td><td>${s.operator||'—'}</td><td>${s.date||'—'}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function renderInventoryRows(arr) {
+  if (!arr.length) return '<p class="text-muted" style="padding:var(--space-4)">Nessun preparato archiviato.</p>';
+  return `<table class="data-table"><thead><tr><th>Codice</th><th>Data archiviazione</th><th>Classe CQ</th><th>Ubicazione</th><th>Destinazione</th></tr></thead><tbody>` +
+    arr.map(p => `<tr><td><span class="code">${p.codice}</span></td><td>${p.data}</td><td><span class="badge ${p.classe==='A'?'badge-green':p.classe==='B'?'badge-gold':'badge-orange'}">${p.classe}</span></td><td>${p.ubic||'—'}</td><td>${p.uso||'—'}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+
+
+// Close kpiDetailModal on background click
+document.addEventListener('click', function(e) {
+  const overlay = document.getElementById('kpiDetailModal');
+  if (overlay && e.target === overlay) overlay.classList.remove('open');
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   // ── Show loading overlay ───────────────────────────────────
   const loadDiv = document.createElement('div');
@@ -2714,5 +2973,17 @@ function exportCompletati() {
     <div id="auditLogBody" style="max-height:60vh;overflow-y:auto"></div>
   </div>
 </div>
+
+<!-- ═══ KPI DETAIL MODAL (v4.0) ═══ -->
+<div class="modal-overlay kpi-modal" id="kpiDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="kpiModalTitle">Dettaglio</div>
+      <button class="modal-close" onclick="document.getElementById('kpiDetailModal').classList.remove('open')" aria-label="Chiudi">✕</button>
+    </div>
+    <div id="kpiModalBody"></div>
+  </div>
+</div>
+
 </body>
 </html>
